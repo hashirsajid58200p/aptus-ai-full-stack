@@ -51,7 +51,7 @@ export default function Hero() {
             variants={fadeInUp}
             className="text-lg md:text-xl text-[#1a1a1a] font-medium leading-relaxed max-w-xl"
           >
-            Aptus is a drop-in AI chatbot widget for your website. Install the npm package, paste your token, and you're live — no backend to host, no complex setup, no waiting around.
+            Aptus AI is a drop-in AI chatbot widget for your website. Install the npm package, paste your token, and you're live — no backend to host, no complex setup, no waiting around.
           </motion.p>
 
           <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 pt-2">

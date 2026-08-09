@@ -72,7 +72,7 @@ const TestChatbot = () => {
           Live Sandbox
         </span>
         <h3 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase">
-          Test Aptus Chatbot
+          Test Aptus AI Chatbot
         </h3>
       </div>
 
@@ -103,7 +103,7 @@ const TestChatbot = () => {
           type="text"
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
-          placeholder="Ask your trained Aptus assistant..."
+          placeholder="Ask your trained Aptus AI assistant..."
           className="flex-1 p-3 bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-500 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
           disabled={loading}
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}

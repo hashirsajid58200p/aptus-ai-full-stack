@@ -19,19 +19,16 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white border-b-3 border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo and Brand */}
-          <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer" onClick={() => router.push("/")}>
+          {/* Logo */}
+          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => router.push("/")}>
             <Image
               src="/aptus-logo.png"
-              alt="Aptus Logo"
-              width={48}
+              alt="Aptus"
+              width={160}
               height={48}
-              className="object-contain hover:scale-105 transition-transform"
+              className="h-12 w-auto object-contain hover:scale-105 transition-transform"
               priority
             />
-            <span className="text-3xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
-              APTUS
-            </span>
           </div>
 
           {/* Desktop Menu */}

@@ -44,7 +44,7 @@ export default function About() {
           </h2>
 
           <p className="text-lg text-[#1a1a1a] font-medium leading-relaxed">
-            Aptus lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-widget</code> handles the chat UI — zero servers to configure or host.
+            Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-widget</code> handles the chat UI — zero servers to configure or host.
           </p>
 
           {/* 3-Step Setup */}
@@ -53,7 +53,7 @@ export default function About() {
               <span className="bg-[#FF4D00] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">1</span>
               <div>
                 <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Train Your Chatbot</h4>
-                <p className="text-sm font-medium text-gray-700">Add your business FAQs in the Aptus Dashboard to build custom AI knowledge.</p>
+                <p className="text-sm font-medium text-gray-700">Add your business FAQs in the Aptus AI Dashboard to build custom AI knowledge.</p>
               </div>
             </div>
 

@@ -51,10 +51,12 @@ app.use(limiter);
 const userRoutes = require("./routes/userRoutes");
 const chatbotRoutes = require("./routes/chatbotRoute");
 const sessionRoutes = require("./routes/sessionRoute");
+const adminRoutes = require("./routes/adminRoutes");
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
 app.use("/api/v1/session", sessionRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is healthy!" });

@@ -7,7 +7,7 @@ export default function Faq() {
     {
       question: "Do I need to set up my own backend or server?",
       answer:
-        "No. Aptus handles the AI models and data hosting — you just install the npm widget and connect it with your token.",
+        "No. Aptus AI handles the AI models and data hosting — you just install the npm widget and connect it with your token.",
     },
     {
       question: "Which frameworks does the widget support?",
@@ -15,14 +15,14 @@ export default function Faq() {
         "React and Next.js today, with more framework support (Vue, Svelte, HTML vanilla) planned.",
     },
     {
-      question: "How do I integrate Aptus into my website?",
+      question: "How do I integrate Aptus AI into my website?",
       answer:
-        "Run `npm install aptus-widget`, copy your API token from your Aptus owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
+        "Run `npm install aptus-widget`, copy your API token from your Aptus AI owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
     },
     {
       question: "How do I train the chatbot on my business data?",
       answer:
-        "Sign up, add your business Q&As or FAQs in your dashboard, and Aptus automatically updates the chatbot's knowledge base in real time.",
+        "Sign up, add your business Q&As or FAQs in your dashboard, and Aptus AI automatically updates the chatbot's knowledge base in real time.",
     },
     {
       question: "Can I customize the look of the chat widget?",
@@ -49,7 +49,7 @@ export default function Faq() {
             FREQUENTLY ASKED QUESTIONS
           </h2>
           <p className="text-gray-800 text-lg font-medium">
-            Everything you need to know about embedding Aptus into your site.
+            Everything you need to know about embedding Aptus AI into your site.
           </p>
         </motion.div>
 

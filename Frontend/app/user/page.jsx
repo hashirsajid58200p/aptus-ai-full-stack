@@ -80,15 +80,12 @@ export default function UserDashboard() {
         } md:block w-64 bg-white p-5 h-screen fixed top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 md:z-0 md:relative`}
       >
         <div className="flex items-center gap-3 py-3 border-b-3 border-[#1a1a1a] mb-6">
-          <Link href={"/"} className="flex items-center gap-2">
+          <Link href={"/"} className="flex items-center">
             <img
               src="/aptus-logo.png"
-              alt="Aptus Logo"
-              className="h-10 w-10 object-contain"
+              alt="Aptus"
+              className="h-10 w-auto object-contain"
             />
-            <h2 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
-              APTUS
-            </h2>
           </Link>
         </div>
 

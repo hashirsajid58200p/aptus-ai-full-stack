@@ -36,11 +36,11 @@ const Token = () => {
           API Key
         </span>
         <h3 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase">
-          Aptus Chatbot Token
+          Aptus AI Chatbot Token
         </h3>
       </div>
       <p className="mb-4 text-[#1a1a1a] font-semibold text-sm">
-        Use this unique token to integrate the Aptus chatbot widget into your website:
+        Use this unique token to integrate the Aptus AI chatbot widget into your website:
       </p>
       <input
         value={user?.chatbot_token || ''}

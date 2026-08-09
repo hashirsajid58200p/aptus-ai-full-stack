@@ -44,6 +44,10 @@ logs/
 *.tsbuildinfo
 next-env.d.ts
 
+# Credentials & Secrets
+credentials.txt
+new_env.txt
+
 # OS / Editor files
 .vscode/
 .idea/

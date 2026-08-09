@@ -4,7 +4,7 @@ import { ReduxProvider } from "./redux-provider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Aptus — Drop-in AI Chatbot Widget",
+  title: "Aptus AI — Drop-in AI Chatbot Widget",
   description: "Drop-in AI chatbot component for React & Next.js — install via npm and go live in seconds.",
 };
 

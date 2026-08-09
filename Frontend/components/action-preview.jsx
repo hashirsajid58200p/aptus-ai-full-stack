@@ -25,7 +25,7 @@ export default function ActionPreview() {
           </h2>
 
           <p className="text-lg text-[#1a1a1a] font-medium leading-relaxed">
-            Once installed, the Aptus widget blends into your web application layout smoothly. It provides your visitors with an instant AI support interface while sending analytics and training feedback straight back to your owner dashboard.
+            Once installed, the Aptus AI widget blends into your web application layout smoothly. It provides your visitors with an instant AI support interface while sending analytics and training feedback straight back to your owner dashboard.
           </p>
 
           <div className="space-y-3 font-bold text-sm text-[#1a1a1a]">
