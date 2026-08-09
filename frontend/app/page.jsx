@@ -5,7 +5,7 @@ import About from "@/components/about";
 import Faq from "@/components/faq";
 import Feature from "@/components/feature";
 import ActionPreview from "@/components/action-preview";
-import { ChatBot } from "aptus-widget";
+import { ChatBot } from "aptus-ai-chatbot";
 import { useEffect } from "react";
 import { loadUser } from "@/slices/userSlice";
 import { useDispatch } from "react-redux";

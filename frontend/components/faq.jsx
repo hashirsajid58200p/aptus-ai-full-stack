@@ -17,7 +17,7 @@ export default function Faq() {
     {
       question: "How do I integrate Aptus AI into my website?",
       answer:
-        "Run `npm install aptus-widget`, copy your API token from your Aptus AI owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
+        "Run `npm install aptus-ai-chatbot`, copy your API token from your Aptus AI owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
     },
     {
       question: "How do I train the chatbot on my business data?",

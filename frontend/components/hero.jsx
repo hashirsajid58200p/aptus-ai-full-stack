@@ -29,7 +29,7 @@ export default function Hero() {
             variants={fadeInUp}
             className="inline-flex items-center gap-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm px-3 py-1 text-xs font-black uppercase tracking-wider text-[#1a1a1a]"
           >
-            <Code className="w-4 h-4" /> npm install aptus-widget
+            <Code className="w-4 h-4" /> npm install aptus-ai-chatbot
           </motion.div>
 
           <motion.h1

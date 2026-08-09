@@ -7,7 +7,7 @@ export default function KeyBenefitsSection() {
   const benefits = [
     {
       title: "One-Line Install",
-      description: "npm install aptus-widget — that's the whole setup. No servers, no SDKs to configure, no backend to host.",
+      description: "npm install aptus-ai-chatbot — that's the whole setup. No servers, no SDKs to configure, no backend to host.",
       icon: Terminal,
       badgeBg: "bg-[#FF4D00]",
     },
@@ -40,7 +40,7 @@ export default function KeyBenefitsSection() {
           Built For Developers
         </span>
         <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] uppercase mb-4 tracking-tight">
-          WHY DEVELOPERS CHOOSE <span className="underline decoration-[#FF4D00] decoration-4">APTUS</span>
+          WHY DEVELOPERS CHOOSE <span className="underline decoration-[#FF4D00] decoration-4">APTUS AI</span>
         </h2>
         <p className="text-lg font-medium text-[#1a1a1a]">
           Designed from the ground up to be lightweight, developer-friendly, and instant to deploy.
