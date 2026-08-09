@@ -54,7 +54,7 @@ export default function Home() {
 
       <ChatBot 
         token="A1ED-7127544F-1EBAF3E7" 
-        apiUrl={process.env.NEXT_PUBLIC_API_URL || "https://quick-start-ai-backend.vercel.app/api/v1"}
+        apiUrl={process.env.NEXT_PUBLIC_API_URL || "https://aptus-ai-backend.vercel.app/api/v1"}
         theme="aptus"
         wantToShowSuggestions={true}
       />
