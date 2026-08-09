@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { loadUser } from "@/slices/userSlice";
 import { useDispatch } from "react-redux";
 import dynamic from "next/dynamic";
+import baseurl from "@/store/baseurl";
 
 const ChatBotWidget = dynamic(
   () => import("aptus-ai-chatbot-widget").then((mod) => mod.ChatBot),
@@ -45,7 +46,7 @@ export default function Home() {
       {/* Live npm package ChatBot widget integration */}
       <ChatBotWidget
         token="A1ED-7127544F-1EBAF3E7"
-        apiUrl={process.env.NEXT_PUBLIC_API_URL || "/api/v1"}
+        apiUrl={baseurl}
         theme="aptus"
         wantToShowSuggestions={true}
       />
