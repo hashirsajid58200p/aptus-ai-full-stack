@@ -44,7 +44,7 @@ export default function About() {
           </h2>
 
           <p className="text-lg text-[#1a1a1a] font-medium leading-relaxed">
-            Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-ai-chatbot</code> handles the chat UI — zero servers to configure or host.
+            Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-ai-chatbot-widget</code> handles the chat UI — zero servers to configure or host.
           </p>
 
           {/* 3-Step Setup */}
@@ -63,7 +63,7 @@ export default function About() {
                 <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Install NPM Package</h4>
                 <div className="mt-1 bg-[#1a1a1a] text-[#BFF000] font-mono text-xs p-2 flex items-center gap-2">
                   <Terminal className="w-4 h-4 text-white" />
-                  <code>npm install aptus-ai-chatbot</code>
+                  <code>npm install aptus-ai-chatbot-widget</code>
                 </div>
               </div>
             </div>

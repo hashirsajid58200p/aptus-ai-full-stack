@@ -7,7 +7,7 @@ export default function KeyBenefitsSection() {
   const benefits = [
     {
       title: "One-Line Install",
-      description: "npm install aptus-ai-chatbot — that's the whole setup. No servers, no SDKs to configure, no backend to host.",
+      description: "npm install aptus-ai-chatbot-widget — that's the whole setup. No servers, no SDKs to configure, no backend to host.",
       icon: Terminal,
       badgeBg: "bg-[#FF4D00]",
     },

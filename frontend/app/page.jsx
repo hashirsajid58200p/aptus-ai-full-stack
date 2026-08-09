@@ -1,4 +1,5 @@
 "use client";
+
 import Hero from "@/components/hero";
 import NavBar from "@/components/navbar";
 import About from "@/components/about";
@@ -8,6 +9,12 @@ import ActionPreview from "@/components/action-preview";
 import { useEffect } from "react";
 import { loadUser } from "@/slices/userSlice";
 import { useDispatch } from "react-redux";
+import dynamic from "next/dynamic";
+
+const ChatBotWidget = dynamic(
+  () => import("aptus-ai-chatbot-widget").then((mod) => mod.ChatBot),
+  { ssr: false }
+);
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -34,6 +41,14 @@ export default function Home() {
       <section id="faq">
         <Faq />
       </section>
+
+      {/* Live npm package ChatBot widget integration */}
+      <ChatBotWidget
+        token="A1ED-7127544F-1EBAF3E7"
+        apiUrl={process.env.NEXT_PUBLIC_API_URL || "/api/v1"}
+        theme="aptus"
+        wantToShowSuggestions={true}
+      />
 
       {/* Neo-brutalist Footer */}
       <footer className="bg-white border-t-3 border-[#1a1a1a] py-10 px-6 mt-auto">
