@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
+import baseurl from "@/store/baseurl";
 import { ShieldCheck, Lock, Mail, ArrowLeft } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -12,8 +13,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100/api/v1";
+  const API_URL = baseurl;
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();

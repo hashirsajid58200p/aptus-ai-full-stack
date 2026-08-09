@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import baseurl from "@/store/baseurl";
 import {
   Building2,
   MessageSquare,
@@ -36,8 +37,7 @@ import {
 export default function AdminDashboardPage() {
   const router = useRouter();
 
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100/api/v1";
+  const API_URL = baseurl;
 
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
