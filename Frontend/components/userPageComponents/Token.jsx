@@ -30,24 +30,31 @@ const Token = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h3 className="text-xl font-bold mb-4 text-black-500">API Token</h3>
-      <p className="mb-4 text-gray-700">
-        Use this token to integrate our chat service into your website:
+    <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8">
+      <div className="flex items-center gap-3 border-b-2 border-[#1a1a1a] pb-4 mb-4">
+        <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase tracking-wider">
+          API Key
+        </span>
+        <h3 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase">
+          Aptus Chatbot Token
+        </h3>
+      </div>
+      <p className="mb-4 text-[#1a1a1a] font-semibold text-sm">
+        Use this unique token to integrate the Aptus chatbot widget into your website:
       </p>
       <input
         value={user?.chatbot_token || ''}
         readOnly
-        className="w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-800 mb-4"
+        className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] font-mono text-sm py-3 px-4 text-[#1a1a1a] mb-4 font-bold shadow-neo-sm focus:outline-none"
       />
-      <p className="text-sm text-gray-500 mb-4">
-        Keep this token secret. Do not share it publicly.
+      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-6">
+        ⚠️ Keep this token secret. Do not share it publicly.
       </p>
       <button
-        className="bg-[#9e45f1] hover:bg-[#6c2794] text-white px-4 py-2 rounded "
+        className="btn-neo-primary px-6 py-3 text-sm font-extrabold"
         onClick={handleGenerateNewToken}
       >
-        Reset Token
+        RESET TOKEN
       </button>
     </div>
   );

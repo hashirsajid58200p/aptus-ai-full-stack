@@ -5,113 +5,82 @@ import { motion } from "framer-motion";
 export default function Faq() {
   const faqData = [
     {
-      question: "What is QuickStart AI?",
+      question: "Do I need to set up my own backend or server?",
       answer:
-        "QuickStart AI is an AI-powered chat solution that allows businesses to offer instant, real-time customer support by integrating a simple npm package into their website.",
+        "No. Aptus handles the AI models and data hosting — you just install the npm widget and connect it with your token.",
     },
     {
-      question: "How do I integrate QuickStart AI into my website?",
+      question: "Which frameworks does the widget support?",
       answer:
-        "Once you sign up and add your business, you’ll receive an npm package that you can install into your website. Configure it via your personalized dashboard to match your business needs.",
+        "React and Next.js today, with more framework support (Vue, Svelte, HTML vanilla) planned.",
     },
     {
-      question: "Will QuickStart AI slow down my website?",
+      question: "How do I integrate Aptus into my website?",
       answer:
-        "No! QuickStart AI is built to be lightweight, ensuring that your website maintains optimal speed and performance.",
+        "Run `npm install aptus-widget`, copy your API token from your Aptus owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
     },
     {
-      question: "How secure is the chat data?",
+      question: "How do I train the chatbot on my business data?",
       answer:
-        "We prioritize security, ensuring that all chat data is securely stored and protected by industry-standard security protocols.",
+        "Sign up, add your business Q&As or FAQs in your dashboard, and Aptus automatically updates the chatbot's knowledge base in real time.",
     },
     {
       question: "Can I customize the look of the chat widget?",
       answer:
-        "Yes, you can fully customize the chat widget to match your website’s branding and style, ensuring a seamless user experience for your customers.",
+        "Yes! You can choose built-in theme presets or pass custom styling options to seamlessly match your website's branding.",
     },
   ];
 
   return (
-    <section className="relative max-w-screen-xl mx-auto px-4 py-28 gap-12 md:px-8 flex flex-col justify-center items-center text-[black] 
-    w-full md:w-[50%] sm:w-[100%]
-    ">
-      {/* Title Section */}
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.3 }}
-        className="flex flex-col gap-3 justify-center items-center bg-white"
-      >
-        <h4 className="text-3xl font-bold sm:text-4xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700 bg-clip-text text-transparent">
-          FAQ
-        </h4>
-        <p className="max-w-xl text-gray-500 text-center">
-          Here are some of our frequently asked questions. If you have any other
-          questions, feel free to email us.
-        </p>
-      </motion.div>
-
-      {/* Accordion Section */}
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.6 }}
-        className="max-w-2xl w-full border border-gray-300 rounded-md p-4 bg-gradient-to-b from-purple-100 to-indigo-100 shadow-lg"
-      >
-        <Accordion
-          motionProps={{
-            variants: {
-              enter: {
-                y: 0,
-                opacity: 1,
-                height: "auto",
-                transition: {
-                  height: {
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                    duration: 1,
-                  },
-                  opacity: {
-                    easings: "ease",
-                    duration: 1,
-                  },
-                },
-              },
-              exit: {
-                y: -10,
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: {
-                    easings: "ease",
-                    duration: 0.25,
-                  },
-                  opacity: {
-                    easings: "ease",
-                    duration: 0.3,
-                  },
-                },
-              },
-            },
-          }}
+    <section id="faq" className="bg-[#FDF9F0] py-16 px-6 border-b-3 border-[#1a1a1a] flex flex-col items-center">
+      <div className="max-w-4xl w-full flex flex-col items-center gap-10">
+        {/* Title Section */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center"
         >
-          {faqData.map((item, index) => (
-            <AccordionItem
-              key={index}
-              aria-label={item.question}
-              title={item.question}
-              className=" w-[100%]" 
-            >
-              <div className=" w-[100%]  items-center ">
-                {item.answer}
-              </div>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </motion.div>
+          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs px-3 py-1 uppercase tracking-widest inline-block mb-3">
+            Developer FAQs
+          </span>
+          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] uppercase mb-3">
+            FREQUENTLY ASKED QUESTIONS
+          </h2>
+          <p className="text-gray-800 text-lg font-medium">
+            Everything you need to know about embedding Aptus into your site.
+          </p>
+        </motion.div>
+
+        {/* Accordion Section */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8"
+        >
+          <Accordion variant="splitted" className="gap-4">
+            {faqData.map((item, index) => (
+              <AccordionItem
+                key={index}
+                aria-label={item.question}
+                title={
+                  <span className="font-syne font-bold text-base sm:text-lg text-[#1a1a1a] uppercase">
+                    {item.question}
+                  </span>
+                }
+                className="bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm rounded-none px-4 py-2 font-medium text-[#1a1a1a]"
+              >
+                <div className="pt-2 text-gray-900 font-semibold leading-relaxed border-t border-[#1a1a1a]/20">
+                  {item.answer}
+                </div>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </motion.div>
+      </div>
     </section>
   );
 }

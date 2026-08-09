@@ -27,7 +27,6 @@ export default function AuthForm() {
     name: "",
     email: "",
     password: "",
-
     bussinessName: "",
     bussinessDescription: "",
     bussinessCategory: "",
@@ -37,6 +36,7 @@ export default function AuthForm() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+
   const toggleAuthMode = () => setIsSignUp(!isSignUp);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -47,8 +47,8 @@ export default function AuthForm() {
   };
 
   useEffect(() => {
-    if(user){
-      router.push("/user")
+    if (user) {
+      router.push("/user");
     }
   }, [user, router]);
 
@@ -57,7 +57,6 @@ export default function AuthForm() {
       toast.success("User registered successfully");
       dispatch(clearState());
       dispatch(loadUser());
-      // clear form data
       setFormData({
         name: "",
         email: "",
@@ -71,20 +70,18 @@ export default function AuthForm() {
       toast.success("User logged in successfully");
       dispatch(clearState());
       dispatch(loadUser());
-      // clear form data
       setLoginData({
         email: "",
         password: "",
       });
-
     }
     if (error) {
-      // Show error message
       console.log(error);
       toast.error(error);
       dispatch(clearState());
     }
   }, [isUserRegistered, isUserLogged, error, dispatch]);
+
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
@@ -96,83 +93,82 @@ export default function AuthForm() {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    console.log(formData);
-    dispatch(signUp(formData)); 
+    dispatch(signUp(formData));
   };
 
   useEffect(() => {
     dispatch(loadUser());
-  }, []); // only on mount
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!user) return; // guard
+    if (!user) return;
     router.push("/user");
-  }, [user]); // only react to user changes
+  }, [user, router]);
 
   return (
-    <div className="text-black min-h-screen flex items-center justify-center bg-gradient-to-r bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="text-[#1a1a1a] min-h-screen flex items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="absolute top-5 left-5">
         <button
-          className="flex items-center"
+          className="flex items-center gap-2 p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
           onClick={() => (window.location.href = "/")}
         >
-          <ArrowLeft className="mr-2 h-8 w-8 text-purple-600 font-extrabold " />
+          <ArrowLeft className="h-6 w-6 text-[#1a1a1a]" />
+          <span className="font-extrabold text-sm uppercase">Home</span>
         </button>
       </div>
 
-      <div className="max-w-md w-full space-y-8 shadow-xl">
+      <div className="max-w-md w-full space-y-6">
         <div className="text-center">
           <img
-            src="/file.png"
-            alt="Site Logo"
-            className="h-20 w-auto mx-auto cursor-pointer"
+            src="/aptus-logo.png"
+            alt="Aptus Logo"
+            className="h-16 w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
-          <h2 className="mt-6 text-3xl font-bold text-purple-500">
-            Welcome to QuickStart.AI
+          <h2 className="font-syne text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
+            WELCOME TO <span className="text-[#FF4D00]">APTUS</span>
           </h2>
-          <p className="mt-2 text-sm text-black">
+          <p className="mt-2 text-sm font-semibold text-gray-700">
             {isSignUp
-              ? "Create an account to get started with Chatbot Integration"
-              : "Sign in to your account"}
+              ? "Create an account to get started with Aptus Chatbot Integration"
+              : "Sign in to manage your Aptus AI assistant"}
           </p>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="bg-white py-8 px-6 shadow rounded-lg"
+          transition={{ duration: 0.5 }}
+          className="bg-white p-8 border-3 border-[#1a1a1a] shadow-neo-lg"
         >
-          <form className="space-y-6">
-            <div className="rounded-md shadow-sm space-y-4">
+          <form className="space-y-5">
+            <div className="space-y-4">
               {isSignUp && (
-                <>
-                  <div>
-                    <label htmlFor="name" className="sr-only">
-                      Name
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        className="appearance-none rounded-full relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white"
-                        placeholder="Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                      />
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-400" />
-                      </div>
+                <div>
+                  <label htmlFor="name" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                      placeholder="Your Full Name"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-gray-500" />
                     </div>
                   </div>
-                </>
+                </div>
               )}
+
               <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
+                <label htmlFor="email-address" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                  Email Address
                 </label>
                 <div className="relative">
                   <input
@@ -180,19 +176,19 @@ export default function AuthForm() {
                     name="email"
                     type="email"
                     required
-                    className="appearance-none rounded-full relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white "
+                    className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="Email address"
                     value={isSignUp ? formData.email : loginData.email}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer">
-                    <MdEmail className="h-5 w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <MdEmail className="h-5 w-5 text-gray-500" />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="sr-only">
+                <label htmlFor="password" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -201,21 +197,21 @@ export default function AuthForm() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="appearance-none rounded-full relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white"
+                    className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="Password"
                     value={isSignUp ? formData.password : loginData.password}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer">
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
                     {showPassword ? (
                       <EyeOff
                         onClick={togglePasswordVisibility}
-                        className="h-5 w-5 text-gray-400"
+                        className="h-5 w-5 text-gray-500"
                       />
                     ) : (
                       <Eye
                         onClick={togglePasswordVisibility}
-                        className="h-5 w-5 text-gray-400"
+                        className="h-5 w-5 text-gray-500"
                       />
                     )}
                   </div>
@@ -225,7 +221,7 @@ export default function AuthForm() {
               {isSignUp && (
                 <>
                   <div>
-                    <label htmlFor="businessName" className="sr-only">
+                    <label htmlFor="businessName" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Name
                     </label>
                     <div className="relative">
@@ -234,19 +230,19 @@ export default function AuthForm() {
                         name="bussinessName"
                         type="text"
                         required
-                        className="appearance-none rounded-full relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Name"
                         value={formData.bussinessName}
                         onChange={handleChange}
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Building className="h-5 w-5 text-gray-400" />
+                        <Building className="h-5 w-5 text-gray-500" />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="businessDescription" className="sr-only">
+                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Description
                     </label>
                     <div className="relative">
@@ -254,19 +250,19 @@ export default function AuthForm() {
                         id="businessDescription"
                         name="bussinessDescription"
                         required
-                        className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Description"
                         value={formData.bussinessDescription}
                         onChange={handleChange}
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Clipboard className="h-5 w-5 text-gray-400" />
+                        <Clipboard className="h-5 w-5 text-gray-500" />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="businessCategory" className="sr-only">
+                    <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Category
                     </label>
                     <div className="relative">
@@ -275,45 +271,44 @@ export default function AuthForm() {
                         name="bussinessCategory"
                         type="text"
                         required
-                        className="appearance-none rounded-full relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm bg-white"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Category"
                         value={formData.bussinessCategory}
                         onChange={handleChange}
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Briefcase className="h-5 w-5 text-gray-400" />
+                        <Briefcase className="h-5 w-5 text-gray-500" />
                       </div>
                     </div>
                   </div>
-
                 </>
               )}
 
-              <div>
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={loading}
                   onClick={isSignUp ? handleSignUp : handleLogin}
-                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 ${
+                  className={`w-full btn-neo-primary py-3 px-4 font-extrabold text-base ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
                   {loading
-                    ? "Loading..."
+                    ? "LOADING..."
                     : isSignUp
-                    ? "Create Account"
-                    : "Sign In"}
+                    ? "CREATE ACCOUNT"
+                    : "SIGN IN"}
                 </button>
               </div>
             </div>
           </form>
 
-          <div className="flex items-center justify-center mt-6">
-            <p className="text-sm text-gray-600">
+          <div className="flex items-center justify-center mt-6 pt-4 border-t-2 border-gray-200">
+            <p className="text-sm font-bold text-[#1a1a1a]">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}
               <button
                 onClick={toggleAuthMode}
-                className="font-medium text-purple-500 hover:text-purple-600 ml-2"
+                className="font-black text-[#FF4D00] hover:underline ml-2 uppercase"
               >
                 {isSignUp ? "Sign In" : "Sign Up"}
               </button>

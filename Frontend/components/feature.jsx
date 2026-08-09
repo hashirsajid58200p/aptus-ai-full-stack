@@ -1,74 +1,84 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { FaHeadset, FaPalette, FaTools } from 'react-icons/fa';
+import { Terminal, Key, Palette } from 'lucide-react';
 
 export default function KeyBenefitsSection() {
+  const benefits = [
+    {
+      title: "One-Line Install",
+      description: "npm install aptus-widget — that's the whole setup. No servers, no SDKs to configure, no backend to host.",
+      icon: Terminal,
+      badgeBg: "bg-[#FF4D00]",
+    },
+    {
+      title: "Token-Based Setup",
+      description: "Register your business, grab your unique token, paste it into the component. Your chatbot is instantly connected to your trained data.",
+      icon: Key,
+      badgeBg: "bg-[#2D31FA]",
+    },
+    {
+      title: "Fully Themeable",
+      description: "Match your brand with built-in themes, custom colors, and flexible positioning — the widget adapts to your site, not the other way around.",
+      icon: Palette,
+      badgeBg: "bg-[#BFF000]",
+    }
+  ];
+
   return (
     <motion.div
-      className="bg-gradient-to-b from-gray-50 to-white text-black py-12 px-6 sm:px-10 lg:px-20 flex flex-col items-center gap-12"
+      id="features"
+      className="bg-[#FDF9F0] text-[#1a1a1a] py-16 px-6 sm:px-10 lg:px-20 border-b-3 border-[#1a1a1a] flex flex-col items-center gap-12"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 , delay: 0.3 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
     >
       {/* Header Section */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <div className="text-purple-600 text-sm font-semibold mb-2 uppercase tracking-wider">
-          Key Features
-        </div>
-        <h2 className="text-4xl font-extrabold bg-gradient-to-b from-purple-500 to-purple-700 bg-clip-text text-transparent sm:text-5xl mb-4">
-          Why Choose Us?
+      <div className="text-center max-w-2xl">
+        <span className="bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs px-3 py-1 uppercase tracking-widest inline-block mb-3">
+          Built For Developers
+        </span>
+        <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] uppercase mb-4 tracking-tight">
+          WHY DEVELOPERS CHOOSE <span className="underline decoration-[#FF4D00] decoration-4">APTUS</span>
         </h2>
-        <p className="text-gray-600 mb-8 text-base sm:text-lg">
-          Discover the benefits that make our services stand out from the rest.
+        <p className="text-lg font-medium text-[#1a1a1a]">
+          Designed from the ground up to be lightweight, developer-friendly, and instant to deploy.
         </p>
-      </motion.div>
+      </div>
 
-      {/* Benefits Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full lg:max-w-7xl">
-        {[
-          {
-            title: "Customer Support",
-            description: "Dedicated support to assist you whenever you need it.",
-            icon: FaHeadset,
-          },
-          {
-            title: "Modern Design",
-            description: "Stay ahead with cutting-edge, modern design tailored for you.",
-            icon: FaPalette,
-          },
-          {
-            title: "Customization",
-            description: "Personalize your experience and make it your own.",
-            icon: FaTools,
-          }
-        ].map((benefit, index) => (
+      {/* Feature Icons Composite Banner (Single Cohesive Graphic Block) */}
+      <div className="w-full max-w-5xl bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4">
+        <img
+          src="/feature-icons.png"
+          alt="Aptus Feature Icon Set Banner"
+          className="w-full h-auto object-contain border-2 border-[#1a1a1a]"
+        />
+      </div>
+
+      {/* 3 Written Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl">
+        {benefits.map((benefit, index) => (
           <motion.div
             key={index}
-            className="bg-white rounded-xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center border-black hover:shadow-purple-500/40"
+            className="bg-white border-3 border-[#1a1a1a] shadow-neo p-8 flex flex-col items-start hover:shadow-neo-lg hover:-translate-y-1 transition-all duration-200"
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ delay: index * 0.1, duration: 0.6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.15, duration: 0.5 }}
           >
-            <div className="text-purple-600 text-4xl mb-4">
-              <benefit.icon />
+            <div className={`p-4 border-2 border-[#1a1a1a] shadow-neo-sm text-3xl mb-6 ${benefit.badgeBg}`}>
+              <benefit.icon className={benefit.badgeBg === "bg-[#BFF000]" ? "text-[#1a1a1a] w-7 h-7" : "text-white w-7 h-7"} />
             </div>
-            <h3 className="text-xl font-semibold bg-gradient-to-b from-purple-500 to-purple-700 bg-clip-text text-transparent mb-2">
+            <h3 className="font-syne text-xl font-extrabold text-[#1a1a1a] uppercase mb-3">
               {benefit.title}
             </h3>
-            <p className="text-gray-500 text-base">
+            <p className="text-base font-medium text-gray-800 leading-relaxed">
               {benefit.description}
             </p>
           </motion.div>
         ))}
       </div>
     </motion.div>
-
   );
 }

@@ -1,84 +1,91 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@nextui-org/button";
+import { Terminal, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function About() {
   return (
-    <div className="my-10 relative flex justify-center items-center bg-white text-gray-800">
-      <section
-        id="about"
-        className="max-w-screen-xl mx-auto px-4  gap-20 md:px-8 flex flex-col md:flex-row items-center"
-      >
-        {/* Right section: Text with animation and better content */}
+    <div id="how-it-works" className="py-16 bg-white border-b-3 border-[#1a1a1a]">
+      <section className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
+        {/* Left Side: Graphic Block */}
         <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1.2 }}
-          className="flex flex-col justify-center items-center md:items-start space-y-6 max-w-lg mx-auto text-center md:text-left flex-1"
+          initial={{ x: -40, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="flex-1 w-full"
         >
-          {/* Heading */}
-          <h2 className="text-4xl font-semibold tracking-tight md:text-5xl text-gray-700">
-            Welcome to{" "}
-            <span className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-transparent bg-clip-text">
-              QuickStart AI
-            </span>
-          </h2>
-
-          {/* Subheading with a more engaging message */}
-          <div className="flex justify-center items-center text-left mb-4">
-            <p className="text-lg contain-content text-gray-600 md:text-xl">
-              Revolutionize your customer support with our AI-powered live chat
-              solution. QuickStart AI automates real-time interactions, ensuring
-              customers get instant, personalized assistance—no agents required!
-            </p>
+          <div className="bg-[#2D31FA] p-3 border-3 border-[#1a1a1a] shadow-neo-lg transform -rotate-1">
+            <div className="bg-white border-2 border-[#1a1a1a] p-2">
+              <img
+                src="/how-it-works.png"
+                alt="How Aptus Works"
+                className="w-full h-auto object-cover border border-[#1a1a1a]"
+              />
+            </div>
           </div>
-
-          {/* Highlight points */}
-          <ul className="text-gray-600 space-y-2 list-disc list-inside w-full text-left pl-6">
-            <li>
-              Seamlessly integrates with any website through our simple npm
-              package.
-            </li>
-            <li>Empowers businesses to provide 24/7 customer support.</li>
-            <li>
-              Manage interactions and track customer engagement from a
-              personalized dashboard.
-            </li>
-            <li>
-              Enhances customer satisfaction and reduces response time to
-              seconds.
-            </li>
-          </ul>
-
-          {/* Call to action with better styling */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-8"
-          >
-            <Button
-              className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-l text-white px-8 py-3 rounded-full text-lg transition duration-300 shadow-lg hover:shadow-xl"
-            >
-              Explore More
-            </Button>
-          </motion.div>
         </motion.div>
 
-        {/* Left section: Image with smooth fade-in */}
-
+        {/* Right Side: Text & Code Instructions */}
         <motion.div
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1.2 }}
-          className="mt-12 md:mt-0  flex-1"
+          initial={{ x: 40, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="flex-1 space-y-6"
         >
-          <img
-            src="/fea3.png"
-            alt="AI-Powered Chat Solution"
-            className="rounded-lg  transform hover:scale-105 transition duration-500 ease-in-out"
-          />
+          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs px-3 py-1 uppercase tracking-widest inline-block">
+            3-Step Integration
+          </span>
+
+          <h2 className="font-syne text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
+            TRAIN ON DASHBOARD. <br />
+            <span className="text-[#2D31FA]">PASTE ONE LINE.</span>
+          </h2>
+
+          <p className="text-lg text-[#1a1a1a] font-medium leading-relaxed">
+            Aptus lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-widget</code> handles the chat UI — zero servers to configure or host.
+          </p>
+
+          {/* 3-Step Setup */}
+          <div className="space-y-4 pt-2">
+            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#FF4D00] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">1</span>
+              <div>
+                <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Train Your Chatbot</h4>
+                <p className="text-sm font-medium text-gray-700">Add your business FAQs in the Aptus Dashboard to build custom AI knowledge.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#2D31FA] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">2</span>
+              <div>
+                <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Install NPM Package</h4>
+                <div className="mt-1 bg-[#1a1a1a] text-[#BFF000] font-mono text-xs p-2 flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-white" />
+                  <code>npm install aptus-widget</code>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#BFF000] text-[#1a1a1a] font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">3</span>
+              <div>
+                <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Embed & Launch</h4>
+                <p className="text-sm font-medium text-gray-700">Paste your API token into the component and your chatbot is instantly live!</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => window.location.href = "/start"}
+              className="btn-neo-primary px-8 py-3 rounded-none text-base flex items-center gap-2"
+            >
+              CREATE YOUR CHATBOT NOW
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </motion.div>
       </section>
     </div>

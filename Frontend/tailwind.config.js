@@ -11,6 +11,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        dark: '#1a1a1a',
+        cream: '#fdf9f0',
+        brand: {
+          orange: '#FF4D00',
+          blue: '#2D31FA',
+          lime: '#BFF000',
+          dark: '#1A1A1A',
+        },
         light: 'hsl(var(--light))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -52,41 +60,32 @@ module.exports = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
-        // Add neon green
-        neon: '#39FF14',
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      boxShadow: {
+        'neo': '4px 4px 0px #1a1a1a',
+        'neo-lg': '8px 8px 0px #1a1a1a',
+        'neo-sm': '2px 2px 0px #1a1a1a',
+        'neo-accent': '4px 4px 0px #BFF000',
+        'neo-primary': '4px 4px 0px #FF4D00',
+      },
+      borderWidth: {
+        '3': '3px',
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      fontFamily: {
+        syne: ['Syne', 'sans-serif'],
+        space: ['Space Grotesk', 'sans-serif'],
+        playfair: ['Playfair Display', 'serif'],
+      },
     },
   },
   darkMode: ['class', 'class'],
   plugins: [
-    nextui({
-      layout: {
-        disabledOpacity: '0.3', // opacity-[0.3]
-        radius: {
-          small: '4px', // rounded-small
-          medium: '6px', // rounded-medium
-          large: '8px', // rounded-large
-        },
-        borderWidth: {
-          small: '1px', // border-small
-          medium: '2px', // border-medium
-          large: '3px', // border-large
-        },
-      },
-      themes: {
-        light: {},
-        dark: {},
-      },
-    }),
+    nextui(),
     require('tailwindcss-animate'),
   ],
 };

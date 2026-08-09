@@ -324,7 +324,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                 </ul>
               </AlertDialogDescription>
               <div className="mt-4 flex justify-end space-x-2">
-                <AlertDialogCancel className="bg-[#9e45f1] hover:bg-[#6c2794] text-white px-4 py-2 rounded-lg border-none">
+                <AlertDialogCancel className="btn-neo px-4 py-2 text-xs">
                   Close
                 </AlertDialogCancel>
               </div>
@@ -375,7 +375,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         }
                         className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:ring focus:ring-blue-500"
                       />
-                      <FaRobot className="absolute right-3 top-3 text-xl text-[#9e45f1]" />
+                      <FaRobot className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
                     </div>
                   </div>
 
@@ -404,7 +404,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         rows={4}
                         className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400"
                       />
-                      <FaCommentDots className="absolute right-3 top-3 text-xl text-[#9e45f1]" />
+                      <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
                     </div>
                   </div>
                 </div>
@@ -417,7 +417,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                 type="button"
                 onClick={handleAddField}
                 variant="outline"
-                className="flex items-center gap-2 border-[#9e45f1] text-[#9e45f1] hover:bg-purple-50 font-semibold"
+                className="flex items-center gap-2 border-2 border-[#1a1a1a] bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm font-extrabold"
               >
                 <Plus className="w-5 h-5" /> Add Another Question
               </Button>
@@ -427,12 +427,9 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             <Button
               type="button"
               onClick={handleGenerateAI}
-              className="w-full py-3 text-lg font-semibold bg-neon transition-all relative text-white bg-purple-600"
-              style={{
-                background: "linear-gradient(90deg, #FF00FF 0%, #FFA500 100%)",
-              }}
+              className="w-full btn-neo-secondary py-3 text-base flex items-center justify-center gap-2"
             >
-              <AiFillThunderbolt className="text-xl mr-2" /> Generate with AI
+              <AiFillThunderbolt className="text-xl" /> Generate with AI
             </Button>
 
             {loading && (
@@ -470,7 +467,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                       <Button
                         type="button"
                         onClick={() => handlePickQuestion(q)}
-                        className="mt-2 bg-[#9e45f1] hover:bg-[#6c2794] rounded-xl text-white"
+                        className="mt-2 btn-neo-primary px-3 py-1 text-xs"
                       >
                         Select
                       </Button>
@@ -483,9 +480,9 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full py-3 text-lg font-semibold bg-[#9e45f1] hover:bg-[#6c2794] text-white"
+              className="w-full btn-neo-primary py-3 text-base font-extrabold"
             >
-              Submit
+              SUBMIT BUSINESS DETAILS
             </Button>
           </form>
         </CardContent>
@@ -529,7 +526,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                       <div className="relative p-6 bg-white text-gray-800 rounded-xl transition-transform transform hover:scale-105 max-h-[35vh] min-h-[35vh]">
                         <div className="h-full relative group">
                           <CardHeader className="flex flex-row align-middle gap-3 pr-20">
-                            <FaRobot className="text-2xl text-[#9e45f1]" />
+                            <FaRobot className="text-2xl text-[#FF4D00]" />
                             <CardTitle className="text-lg">
                               {item.question}
                             </CardTitle>
@@ -542,7 +539,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                             <button
                               type="button"
                               onClick={() => handleOpenEdit(item)}
-                              className="p-2 text-[#9e45f1] hover:text-[#6c2794] transition-all"
+                              className="p-2 text-[#1a1a1a] hover:text-[#FF4D00] transition-all"
                               title="Edit"
                             >
                               <Pencil className="w-5 h-5" />
@@ -603,7 +600,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           e.stopPropagation();
                           handleOpenEdit(detail);
                         }}
-                        className="w-4 h-4 text-[#9e45f1] hover:text-[#6c2794] cursor-pointer"
+                        className="w-4 h-4 text-[#1a1a1a] hover:text-[#FF4D00] cursor-pointer"
                       />
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -654,7 +651,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
         <DialogContent className="bg-white text-gray-900 max-w-lg rounded-xl p-6 shadow-2xl border">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              <MdOutlineEdit className="text-[#9e45f1] text-2xl" /> Edit Question & Answer
+              <MdOutlineEdit className="text-[#FF4D00] text-2xl" /> Edit Question & Answer
             </DialogTitle>
             <DialogDescription className="text-sm text-gray-500">
               Update the question and answer for your chatbot's training context.
@@ -679,7 +676,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   required
                   className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 focus:ring focus:ring-blue-500"
                 />
-                <FaRobot className="absolute right-3 top-3 text-xl text-[#9e45f1]" />
+                <FaRobot className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
               </div>
             </div>
 
@@ -701,7 +698,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   rows={4}
                   className="mt-2 block w-full border border-gray-200 bg-white text-gray-900"
                 />
-                <FaCommentDots className="absolute right-3 top-3 text-xl text-[#9e45f1]" />
+                <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
               </div>
             </div>
 
@@ -716,7 +713,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
               </Button>
               <Button
                 type="submit"
-                className="bg-[#9e45f1] hover:bg-[#6c2794] text-white font-semibold"
+                className="btn-neo-primary font-extrabold px-5 py-2 text-sm"
               >
                 Save Changes
               </Button>

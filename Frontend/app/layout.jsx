@@ -1,28 +1,26 @@
 import "./globals.css";
 import { Providers } from "./providers";
-
 import { ReduxProvider } from "./redux-provider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Quickstart",
-  description: "Chat Support Saas.",
+  title: "Aptus — Drop-in AI Chatbot Widget",
+  description: "Drop-in AI chatbot component for React & Next.js — install via npm and go live in seconds.",
 };
 
 export default function RootLayout({ children }) {
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* add favicon here */}
-        <link rel="icon" href="/favicon-32x32.png"/>       
-
+        <link rel="icon" href="/aptus-logo.png" />
+        <link rel="alternate icon" href="/favicon-32x32.png" />
       </head>
-      <body >
+      <body className="bg-[#FDF9F0] text-[#1A1A1A]">
         <ReduxProvider>
-        <Providers>
-        <Toaster position="top-center" />
-          {children}</Providers>
+          <Providers>
+            <Toaster position="top-center" />
+            {children}
+          </Providers>
         </ReduxProvider>
       </body>
     </html>

@@ -22,9 +22,8 @@ export default function UserDashboard() {
   const { isLoggedOut, loading, user, isInitialized } = useSelector((state) => state.user);
 
   const [activeTab, setActiveTab] = useState("business details");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For responsive sidebar toggle
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Define tabs
   const tabs = [
     { name: "business details", icon: <Briefcase /> },
     { name: "test chatbot", icon: <MessageSquare /> },
@@ -32,12 +31,12 @@ export default function UserDashboard() {
   ];
 
   const router = useRouter();
+
   useEffect(() => {
     dispatch(loadUser());
   }, [dispatch]);
 
   useEffect(() => {
-    // Only check redirect if auth initialization has finished
     if (isInitialized && !user) {
       router.push("/start");
       clearState();
@@ -66,39 +65,48 @@ export default function UserDashboard() {
 
   if (!isInitialized) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-screen bg-[#FDF9F0]">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 text-gray-800">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#FDF9F0] text-[#1a1a1a]">
       {/* Sidebar */}
       <aside
         className={`${
           isSidebarOpen ? "block" : "hidden"
-        } md:block w-64 bg-white p-4 h-screen fixed top-0 left-0 shadow-lg z-50 md:z-0 md:relative`}
+        } md:block w-64 bg-white p-5 h-screen fixed top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 md:z-0 md:relative`}
       >
-        <div className="flex gap-[3px] items-center py-4">
-          <Link href={"/"} className="flex items-center">
-            <img src="/file.png" alt="quickstart" className="h-12 w-12" />
-            <h2 className="text-3xl font-bold text-[#9e45f1]">Quickstart</h2>
+        <div className="flex items-center gap-3 py-3 border-b-3 border-[#1a1a1a] mb-6">
+          <Link href={"/"} className="flex items-center gap-2">
+            <img
+              src="/aptus-logo.png"
+              alt="Aptus Logo"
+              className="h-10 w-10 object-contain"
+            />
+            <h2 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
+              APTUS
+            </h2>
           </Link>
         </div>
-        <nav className="space-y-4 mt-3">
+
+        <nav className="space-y-3">
           {tabs.map((tab) => {
             const isLocked =
               tab.name !== "business details" &&
               (!user?.bussinessDetails || user.bussinessDetails.length < 5);
+            const isActive = activeTab === tab.name;
+
             return (
               <button
                 key={tab.name}
-                className={`text-lg open-sans-headings flex items-center w-full text-left py-3 px-5 rounded transition-all duration-300 ${
-                  activeTab === tab.name && !isLocked
-                    ? "bg-[#9E45F1] text-white"
-                    : "hover:bg-gray-200 text-gray-700"
-                } ${isLocked ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`flex items-center w-full text-left py-3 px-4 uppercase text-sm font-extrabold border-2 border-[#1a1a1a] transition-all duration-150 ${
+                  isActive && !isLocked
+                    ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                    : "bg-white hover:bg-[#BFF000] text-[#1a1a1a]"
+                } ${isLocked ? "opacity-50 cursor-not-allowed bg-gray-100" : ""}`}
                 onClick={() => {
                   if (isLocked) {
                     toast.error(
@@ -109,23 +117,16 @@ export default function UserDashboard() {
                     return;
                   }
                   setActiveTab(tab.name);
-                  setIsSidebarOpen(false); // Close the sidebar after clicking a tab
+                  setIsSidebarOpen(false);
                 }}
               >
-                {/* Update the icon color based on the activeTab */}
-                <span
-                  className={`mr-3 text-2xl ${
-                    activeTab === tab.name && !isLocked
-                      ? "text-white"
-                      : "text-gray-600"
-                  }`}
-                >
+                <span className={`mr-3 text-lg ${isActive && !isLocked ? "text-white" : "text-[#1a1a1a]"}`}>
                   {tab.icon}
                 </span>
-                <span className="text-lg font-semibold flex-1">
-                  {tab.name.charAt(0).toUpperCase() + tab.name.slice(1)}
+                <span className="flex-1">
+                  {tab.name}
                 </span>
-                {isLocked && <span className="text-sm text-gray-400">🔒</span>}
+                {isLocked && <span className="text-xs">🔒</span>}
               </button>
             );
           })}
@@ -133,28 +134,28 @@ export default function UserDashboard() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8 ml-0  h-screen overflow-y-auto">
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold text-[#661fa8] roboty-headings font-extrabold">
+      <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
+        <header className="flex justify-between items-center pb-6 border-b-3 border-[#1a1a1a] mb-8 bg-white p-6 shadow-neo">
+          <h1 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#1a1a1a] uppercase">
             {activeTab === "business details"
-              ? `Welcome, ${user?.name}`
-              : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+              ? `WELCOME, ${user?.name || "USER"}`
+              : activeTab}
           </h1>
 
           <div className="flex items-center space-x-4">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-full hover:from-red-600 hover:to-red-700 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="flex items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
             >
               <LogOut className="h-4 w-4" />
-              <span>Logout</span>
+              <span>LOGOUT</span>
             </button>
             <button
-              className="block md:hidden p-2 rounded-md hover:bg-gray-200 "
+              className="block md:hidden p-2 bg-[#BFF000] border-2 border-[#1a1a1a]"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               <svg
-                className="w-6 h-6"
+                className="w-6 h-6 text-[#1a1a1a]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -163,7 +164,7 @@ export default function UserDashboard() {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   d="M4 6h16M4 12h16m-7 6h7"
                 />
               </svg>

@@ -16,64 +16,69 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md border-b-4 border-transparent rounded-b-lg border-gradient-purple backdrop-blur-md transition-all">
+    <nav className="sticky top-0 z-50 bg-white border-b-3 border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo and Brand */}
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer" onClick={() => router.push("/")}>
             <Image
-              src="/file.png"
-              alt="QuickStart"
-              width={70}
-              height={70}
-              className="cursor-pointer"
-              onClick={() => router.push("/")}
+              src="/aptus-logo.png"
+              alt="Aptus Logo"
+              width={48}
+              height={48}
+              className="object-contain hover:scale-105 transition-transform"
+              priority
             />
-            <span className="ml-1 text-3xl font-bold text-purple-600">
-              QuickStart
+            <span className="text-3xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
+              APTUS
             </span>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <div className="hidden sm:flex sm:space-x-8">
             <a
-              href="#about"
-              className="border-transparent text-gray-700 hover:border-purple-500 hover:text-purple-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              href="#how-it-works"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
-              ABOUT
+              HOW IT WORKS
             </a>
             <a
               href="#features"
-              className="border-transparent text-gray-700 hover:border-purple-500 hover:text-purple-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FEATURES
             </a>
             <a
+              href="#action-preview"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
+            >
+              IN ACTION
+            </a>
+            <a
               href="#faq"
-              className="border-transparent text-gray-700 hover:border-purple-500 hover:text-purple-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FAQ
             </a>
           </div>
 
           {/* Desktop Buttons */}
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            {/* Display the proper button based on login status */}
+          <div className="hidden sm:flex sm:items-center gap-3">
             {loading ? (
-              <div className="ml-2 w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+              <div className="w-28 h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
             ) : user ? (
               <Button
                 onClick={() => router.push("/user")}
-                className="ml-2 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white hover:bg-gradient-to-l rounded-full transition-all ease-in-out duration-300"
+                className="btn-neo px-6 py-2 rounded-none"
               >
                 DASHBOARD
               </Button>
             ) : (
               <Button
                 onClick={() => router.push("/start")}
-                className="ml-2 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white hover:bg-gradient-to-l rounded-full transition-all ease-in-out duration-300"
+                className="btn-neo-primary px-6 py-2 rounded-none"
               >
-                JOIN US
+                GET TOKEN
               </Button>
             )}
           </div>
@@ -82,61 +87,59 @@ export default function Navbar() {
           <div className="flex sm:hidden">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-800 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 text-[#1a1a1a] border-2 border-[#1a1a1a] bg-[#BFF000] focus:outline-none"
             >
-              {isOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <a
-                href="#about"
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-              >
-                ABOUT
-              </a>
-              <a
-                href="#features"
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-              >
-                FEATURES
-              </a>
-              <a
-                href="#faq"
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-              >
-                FAQ
-              </a>
+          <div className="sm:hidden border-t-3 border-[#1a1a1a] bg-[#FDF9F0] py-4 px-2 space-y-3">
+            <a
+              href="#how-it-works"
+              className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
+            >
+              HOW IT WORKS
+            </a>
+            <a
+              href="#features"
+              className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
+            >
+              FEATURES
+            </a>
+            <a
+              href="#action-preview"
+              className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
+            >
+              IN ACTION
+            </a>
+            <a
+              href="#faq"
+              className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
+            >
+              FAQ
+            </a>
 
-              {/* Mobile Buttons */}
-              <div className="mt-4 space-y-1">
-                {/* Display the proper button based on login status */}
-                {loading ? (
-                  <div className="w-full h-8 rounded-full bg-gray-200 animate-pulse"></div>
-                ) : user ? (
-                  <Button
-                    onClick={() => router.push("/user")}
-                    className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white hover:bg-gradient-to-l rounded-full transition-all ease-in-out duration-300"
-                  >
-                    DASHBOARD
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => router.push("/start")}
-                    className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white hover:bg-gradient-to-l rounded-full transition-all ease-in-out duration-300"
-                  >
-                    JOIN US
-                  </Button>
-                )}
-              </div>
+            <div className="pt-2">
+              {loading ? (
+                <div className="w-full h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
+              ) : user ? (
+                <Button
+                  onClick={() => router.push("/user")}
+                  className="w-full btn-neo py-3 rounded-none"
+                >
+                  DASHBOARD
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => router.push("/start")}
+                  className="w-full btn-neo-primary py-3 rounded-none"
+                >
+                  GET TOKEN
+                </Button>
+              )}
             </div>
           </div>
         )}
