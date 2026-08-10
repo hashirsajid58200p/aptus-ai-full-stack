@@ -5,11 +5,13 @@ import {
   Briefcase,
   MessageSquare,
   Coins,
+  History,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
 import Token from "components/userPageComponents/Token";
 import TestChatbot from "components/userPageComponents/TestChatbot";
+import Sessions from "components/userPageComponents/Sessions";
 import { useRouter } from "next/navigation";
 import { logout, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +29,7 @@ export default function UserDashboard() {
   const tabs = [
     { name: "business details", icon: <Briefcase /> },
     { name: "test chatbot", icon: <MessageSquare /> },
+    { name: "sessions", icon: <History /> },
     { name: "token", icon: <Coins /> },
   ];
 
@@ -172,6 +175,7 @@ export default function UserDashboard() {
         {/* Render content based on active tab */}
         {activeTab === "business details" && <BussinessDetails />}
         {activeTab === "test chatbot" && <TestChatbot />}
+        {activeTab === "sessions" && <Sessions />}
         {activeTab === "token" && <Token />}
       </main>
     </div>

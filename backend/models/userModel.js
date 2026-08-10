@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    allowedDomain: {
+        type: String,
+        default: null,
+    },
     bussinessName: {
         type: String,
         required: true,

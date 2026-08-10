@@ -17,16 +17,18 @@ IMPORTANT RULES:
 - Always respond directly to what the user just said`;
 
 exports.getResponse = catchAsyncError(async (req, res, next) => {
-  const { messages, message, session_id, chatbot_id } = req.body;
+  const { messages, message, session_id } = req.body;
 
-  if (!messages || !message || !session_id || !chatbot_id) {
+  if (!message || !session_id) {
     return res.status(400).json({
       success: false,
-      message: "Please enter all fields",
+      message: "Please enter message and session_id",
     });
   }
 
-  const owner = await User.findById(chatbot_id);
+  // Owner and chatbot_id are securely attached by validateWidget middleware
+  const owner = req.owner;
+  const chatbot_id = req.chatbot_id;
 
   const bussinessDetails = owner.bussinessDetails;
 
@@ -41,8 +43,16 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     .map(detail => `Q: ${detail.question}\nA: ${detail.answer}`)
     .join("\n");
 
-  const messagesText = messages.length > 0
-    ? messages.map(detail => `Customer: ${detail.question}\nBot: ${detail.answer}`).join("\n")
+  const messagesText = Array.isArray(messages) && messages.length > 0
+    ? messages.map(msg => {
+        if (msg.role && msg.message) {
+          return `${msg.role === 'user' ? 'Customer' : 'Bot'}: ${msg.message}`;
+        }
+        if (msg.question && msg.answer) {
+          return `Customer: ${msg.question}\nBot: ${msg.answer}`;
+        }
+        return '';
+      }).filter(Boolean).join("\n")
     : "No previous messages";
 
   const groqAI = new GroqAI();

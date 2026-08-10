@@ -22,11 +22,13 @@ const TestChatbot = () => {
       setMessageInput("");
       setLoading(true);
 
+      // Pair user questions with bot answers cleanly, skipping initial welcome greeting offset
+      const conversationHistory = messages.filter((msg, idx) => !(idx === 0 && msg.sender === "Bot"));
       const formattedMessages = [];
-      for (let i = 0; i < messages.length - 1; i += 2) {
-        const userMsg = messages[i];
-        const botMsg = messages[i + 1];
-        if (userMsg && botMsg) {
+      for (let i = 0; i < conversationHistory.length - 1; i += 2) {
+        const userMsg = conversationHistory[i];
+        const botMsg = conversationHistory[i + 1];
+        if (userMsg && userMsg.sender === "You" && botMsg && botMsg.sender === "Bot") {
           formattedMessages.push({
             question: userMsg.message,
             answer: botMsg.message,

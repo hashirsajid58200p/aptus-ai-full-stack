@@ -1,30 +1,20 @@
+const mongoose = require("mongoose");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const Message = require("../models/messageModel");
 const Session = require("../models/sessionModel");
 const User = require("../models/userModel");
 
 exports.createSession = catchAsyncError(async (req, res, next) => {
-    const {
-        username,
-        email,
-        chatbotId
-    } = req.body;
+    const { username, email } = req.body;
 
-    if (!username || !email || !chatbotId) {
+    if (!username || !email) {
         return res.status(400).json({
             success: false,
-            message: "Please enter all fields"
+            message: "Please enter username and email"
         });
     }
 
-    const chatbot = await User.findById(chatbotId);
-
-    if (!chatbot) {
-        return res.status(404).json({
-            success: false,
-            message: "Chatbot not found"
-        });
-    }
+    const chatbotId = req.chatbot_id;
 
     const session = await Session.create({
         username,
@@ -40,14 +30,23 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
 });
 
 exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
-    const { sessionId, chatbotId, botMessage, userMessage } = req.body;
+    const { sessionId, botMessage, userMessage } = req.body;
 
-    if (!sessionId || !chatbotId || !botMessage || !userMessage) {
+    if (!sessionId || !botMessage || !userMessage) {
         return res.status(400).json({
             success: false,
-            message: "Please enter all fields"
+            message: "Please enter all required fields"
         });
     }
+
+    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid session ID format"
+        });
+    }
+
+    const chatbotId = req.chatbot_id;
 
     const session = await Session.findById(sessionId);
 
@@ -82,3 +81,17 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
         message: "Message added successfully"
     });
 });
+
+exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
+    const ownerId = req.user._id;
+
+    const sessions = await Session.find({ chatbotId: ownerId })
+        .populate("messages")
+        .sort({ createdAt: -1 });
+
+    res.status(200).json({
+        success: true,
+        sessions
+    });
+});
+
