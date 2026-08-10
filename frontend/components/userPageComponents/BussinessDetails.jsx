@@ -54,12 +54,36 @@ import Loader from "../Loader";
 const BusinessDetails = () => {
   const dispatch = useDispatch();
   const [layout, setLayout] = useState("carousel");
+  const [carouselApi, setCarouselApi] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState([]);
   const {
     isBusinessDetailsAdded,
     isBusinessDetailsUpdated,
     isBusinessDetailsDeleted,
     user,
   } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    setScrollSnaps(carouselApi.scrollSnapList());
+    setSelectedIndex(carouselApi.selectedScrollSnap());
+
+    const onSelect = () => {
+      setSelectedIndex(carouselApi.selectedScrollSnap());
+    };
+
+    carouselApi.on("select", onSelect);
+    carouselApi.on("reInit", () => {
+      setScrollSnaps(carouselApi.scrollSnapList());
+      setSelectedIndex(carouselApi.selectedScrollSnap());
+    });
+
+    return () => {
+      carouselApi.off("select", onSelect);
+    };
+  }, [carouselApi]);
 
   // Dynamic Q&A list state
   const [qaList, setQaList] = useState([
@@ -367,11 +391,11 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           handleFieldChange(item.id, "question", e.target.value)
                         }
                         required
-                        placeholder="What is our Company Objective? 🚀"
+                        placeholder="What is our Company Objective?"
                         onFocus={(e) => (e.target.placeholder = "")}
                         onBlur={(e) =>
                           (e.target.placeholder =
-                            "What is our Company Objective? 🚀")
+                            "What is our Company Objective?")
                         }
                         className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:ring focus:ring-blue-500"
                       />
@@ -395,14 +419,14 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           handleFieldChange(item.id, "answer", e.target.value)
                         }
                         required
-                        placeholder="Our objective is to provide the best services to our customers... 💼"
+                        placeholder="Our objective is to provide the best services to our customers..."
                         onFocus={(e) => (e.target.placeholder = "")}
                         onBlur={(e) =>
                           (e.target.placeholder =
-                            "Our objective is to provide the best services to our customers... 💼")
+                            "Our objective is to provide the best services to our customers...")
                         }
                         rows={4}
-                        className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400"
+                        className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 resize-none max-h-40 overflow-y-auto"
                       />
                       <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
                     </div>
@@ -513,6 +537,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
           {layout === "carousel" ? (
             <div className="w-full max-w-4xl mt-8">
               <Carousel
+                setApi={setCarouselApi}
                 plugins={[
                   Autoplay({
                     delay: 3000,
@@ -523,62 +548,77 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                 <CarouselContent>
                   {user?.bussinessDetails?.map((item, index) => (
                     <CarouselItem key={item._id || index}>
-                      <div className="relative p-6 bg-white text-gray-800 rounded-xl transition-transform transform hover:scale-105 max-h-[35vh] min-h-[35vh]">
+                      <div className="relative p-6 bg-white text-gray-800 rounded-xl max-h-[35vh] min-h-[35vh]">
                         <div className="h-full relative group">
-                          <CardHeader className="flex flex-row align-middle gap-3 pr-20">
-                            <FaRobot className="text-2xl text-[#FF4D00]" />
+                          <CardHeader className="flex flex-row items-center gap-3">
+                            <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
                             <CardTitle className="text-lg">
                               {item.question}
                             </CardTitle>
+                            <div className="ml-auto flex items-center gap-1 shrink-0">
+                              {/* Edit Icon */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(item)}
+                                className="p-2 text-[#1a1a1a] hover:text-[#FF4D00] transition-all"
+                                title="Edit"
+                              >
+                                <Pencil className="w-5 h-5" />
+                              </button>
+
+                              {/* Delete Icon */}
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <button className="p-2 text-red-500 hover:text-red-700 transition-all">
+                                    <MdDeleteOutline className="text-2xl" />
+                                  </button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
+                                  <AlertDialogTitle className="text-lg font-semibold mb-2">
+                                    Delete Confirmation
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-gray-600">
+                                    Are you sure you want to delete this business detail?
+                                  </AlertDialogDescription>
+                                  <div className="mt-4 flex justify-end space-x-2">
+                                    <AlertDialogCancel className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none px-4 py-2 rounded-lg">
+                                      Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(item._id)}
+                                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </div>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
                           </CardHeader>
                           <CardContent className="pt-2">
                             <p>{item.answer}</p>
                           </CardContent>
-                          <div className="absolute top-3 right-3 flex items-center gap-1">
-                            {/* Edit Icon */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(item)}
-                              className="p-2 text-[#1a1a1a] hover:text-[#FF4D00] transition-all"
-                              title="Edit"
-                            >
-                              <Pencil className="w-5 h-5" />
-                            </button>
-
-                            {/* Delete Icon */}
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <button className="p-2 text-red-500 hover:text-red-700 transition-all">
-                                  <MdDeleteOutline className="text-2xl" />
-                                </button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
-                                <AlertDialogTitle className="text-lg font-semibold mb-2">
-                                  Delete Confirmation
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-gray-600">
-                                  Are you sure you want to delete this business detail?
-                                </AlertDialogDescription>
-                                <div className="mt-4 flex justify-end space-x-2">
-                                  <AlertDialogCancel className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none px-4 py-2 rounded-lg">
-                                    Cancel
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(item._id)}
-                                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </div>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
                         </div>
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
               </Carousel>
+              {user?.bussinessDetails?.length > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {scrollSnaps.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => carouselApi?.scrollTo(index)}
+                      className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                        index === selectedIndex ? "bg-[#FF4D00]" : "bg-gray-300"
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="accordion space-y-4">
@@ -696,7 +736,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   }
                   required
                   rows={4}
-                  className="mt-2 block w-full border border-gray-200 bg-white text-gray-900"
+                  className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 resize-none max-h-40 overflow-y-auto"
                 />
                 <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
               </div>
