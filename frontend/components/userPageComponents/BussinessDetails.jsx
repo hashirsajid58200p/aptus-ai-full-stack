@@ -406,8 +406,8 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen text-[#1a1a1a]">
-      {/* Neo-brutalist Company Details Card */}
-      <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl relative z-10 overflow-hidden">
+      {/* Neo-brutalist Company Details Card with Sharp Edges */}
+      <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg relative z-10">
         <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b-3 border-[#1a1a1a] bg-white">
           <div className="flex items-center gap-2">
             <CardTitle className="text-2xl font-semibold text-black-500">
@@ -424,11 +424,11 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                 </button>
               </AlertDialogTrigger>
 
-              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
-                <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
+              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] p-6 shadow-neo-lg">
+                <AlertDialogTitle className="text-lg font-bold uppercase text-[#1a1a1a] mb-2">
                   How to Provide Business Details
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                <AlertDialogDescription className="text-gray-700 font-medium text-sm">
                   <p className="mb-4">
                     To help us train our AI model effectively, please provide
                     detailed answers to the following:
@@ -491,7 +491,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           (e.target.placeholder =
                             "What is our Company Objective?")
                         }
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm rounded-lg py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
                       />
                       <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
                     </div>
@@ -520,7 +520,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                             "Our objective is to provide the best services to our customers...")
                         }
                         rows={4}
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto rounded-lg py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
                       />
                       <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
                     </div>
@@ -558,11 +558,11 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
               </div>
             )}
 
-            {/* Display AI-generated Questions */}
+            {/* Display AI-generated Questions with Sharp Edges & Original Clean Font */}
             {generatedQuestions.length > 0 && (
-              <div className="mt-6 p-5 border-3 border-[#1a1a1a] bg-[#FDF9F0] rounded-xl shadow-neo-sm space-y-4">
+              <div className="mt-6 p-5 border-3 border-[#1a1a1a] bg-[#FDF9F0] shadow-neo-sm space-y-4">
                 <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
-                  <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] flex items-center gap-2">
+                  <h3 className="text-base font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
                     <AiFillThunderbolt className="text-[#FF4D00] text-xl" />
                     AI-Generated Questions
                   </h3>
@@ -581,19 +581,19 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   {generatedQuestions.map((q, index) => (
                     <div
                       key={index}
-                      className="bg-white border-2 border-[#1a1a1a] p-4 rounded-lg shadow-neo-sm"
+                      className="bg-white border-2 border-[#1a1a1a] p-4 shadow-neo-sm"
                     >
                       <div
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <h4 className="font-extrabold text-sm text-[#1a1a1a] font-syne">{q.question}</h4>
+                        <h4 className="font-semibold text-sm text-[#1a1a1a]">{q.question}</h4>
                         <span className="text-[#FF4D00] font-black text-sm ml-2">
                           {selectedQuestionIndex === index ? "▲" : "▼"}
                         </span>
                       </div>
                       {selectedQuestionIndex === index && (
-                        <div className="mt-3 pt-2 border-t-2 border-gray-100 text-xs font-bold text-gray-700 leading-relaxed font-space">
+                        <div className="mt-3 pt-2 border-t-2 border-gray-100 text-xs font-normal text-gray-700 leading-relaxed">
                           {q.answer}
                         </div>
                       )}
@@ -621,7 +621,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
         </CardContent>
       </div>
 
-      {/* Floating Carousel / Accordion List with Neo-Brutalist Site Theme */}
+      {/* Floating Carousel / Accordion List with Sharp Edges & Clean Original Fonts */}
       <div className="w-full max-w-4xl mt-8">
         <div className="p-2">
           {/* Layout Toggle Icons */}
@@ -629,7 +629,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             <button
               type="button"
               onClick={() => handleToggleLayout("carousel")}
-              className={`p-2 border-2 border-[#1a1a1a] rounded-lg transition-all cursor-pointer ${
+              className={`p-2 border-2 border-[#1a1a1a] transition-all cursor-pointer ${
                 layout === "carousel"
                   ? "bg-[#FF4D00] text-white shadow-neo-sm"
                   : "bg-white text-[#1a1a1a] hover:bg-[#BFF000]"
@@ -641,7 +641,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             <button
               type="button"
               onClick={() => handleToggleLayout("accordion")}
-              className={`p-2 border-2 border-[#1a1a1a] rounded-lg transition-all cursor-pointer ${
+              className={`p-2 border-2 border-[#1a1a1a] transition-all cursor-pointer ${
                 layout === "accordion"
                   ? "bg-[#FF4D00] text-white shadow-neo-sm"
                   : "bg-white text-[#1a1a1a] hover:bg-[#BFF000]"
@@ -662,17 +662,17 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                     delay: 3500,
                   }),
                 ]}
-                className="rounded-xl overflow-hidden relative"
+                className="overflow-hidden relative"
               >
                 <CarouselContent>
                   {user?.bussinessDetails?.map((item, index) => (
                     <CarouselItem key={item._id || index}>
-                      <div className="relative p-6 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo rounded-xl max-h-[38vh] min-h-[38vh] flex flex-col justify-between">
+                      <div className="relative p-6 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo max-h-[38vh] min-h-[38vh] flex flex-col justify-between">
                         <div className="h-full relative flex flex-col justify-between">
                           <div>
                             <div className="flex items-center gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
                               <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
-                              <CardTitle className="text-base sm:text-lg font-extrabold font-syne text-[#1a1a1a] uppercase flex-1">
+                              <CardTitle className="text-base sm:text-lg font-bold text-[#1a1a1a] flex-1">
                                 {item.question}
                               </CardTitle>
                               <div className="ml-auto flex items-center gap-2 shrink-0">
@@ -680,7 +680,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                                 <button
                                   type="button"
                                   onClick={() => handleOpenEdit(item)}
-                                  className="p-2 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                                  className="p-2 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                                   title="Edit"
                                 >
                                   <Pencil className="w-4 h-4" />
@@ -691,14 +691,14 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                                   <AlertDialogTrigger asChild>
                                     <button
                                       type="button"
-                                      className="p-2 bg-red-600 border-2 border-[#1a1a1a] text-white rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                                      className="p-2 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                                       title="Delete"
                                     >
                                       <Trash2 className="w-4 h-4" />
                                     </button>
                                   </AlertDialogTrigger>
-                                  <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
-                                    <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
+                                  <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] p-6 shadow-neo-lg">
+                                    <AlertDialogTitle className="text-lg font-bold uppercase text-[#1a1a1a] mb-2">
                                       Delete Confirmation
                                     </AlertDialogTitle>
                                     <AlertDialogDescription className="text-gray-700 font-bold text-sm">
@@ -721,7 +721,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                             </div>
 
                             <div className="pt-1">
-                              <p className="text-sm font-medium text-gray-700 leading-relaxed font-space">
+                              <p className="text-sm font-normal text-gray-700 leading-relaxed">
                                 {item.answer}
                               </p>
                             </div>
@@ -739,7 +739,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                       key={index}
                       type="button"
                       onClick={() => carouselApi?.scrollTo(index)}
-                      className={`h-3 w-3 rounded-full border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                      className={`h-3 w-3 border-2 border-[#1a1a1a] transition-all cursor-pointer ${
                         index === selectedIndex
                           ? "bg-[#FF4D00] scale-110 shadow-neo-sm"
                           : "bg-white"
@@ -753,15 +753,15 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
           ) : (
             <div className="accordion space-y-4">
               {user?.bussinessDetails?.map((detail, index) => (
-                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm rounded-xl bg-white overflow-hidden">
+                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm bg-white overflow-hidden">
                   <div
                     onClick={() => {
                       const panel = document.getElementById(`panel-${index}`);
                       if (panel) panel.classList.toggle("hidden");
                     }}
-                    className="flex px-5 py-3.5 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between font-extrabold border-b-2 border-[#1a1a1a]"
+                    className="flex px-5 py-3.5 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between border-b-2 border-[#1a1a1a]"
                   >
-                    <button className="w-full text-left font-extrabold font-syne text-sm text-[#1a1a1a] uppercase">
+                    <button className="w-full text-left font-bold text-sm text-[#1a1a1a]">
                       {detail.question}
                     </button>
                     <span className="flex gap-2 items-center shrink-0">
@@ -771,7 +771,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           e.stopPropagation();
                           handleOpenEdit(detail);
                         }}
-                        className="p-1.5 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                        className="p-1.5 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all"
                         title="Edit"
                       >
                         <Pencil className="w-3.5 h-3.5" />
@@ -782,14 +782,14 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           <button
                             type="button"
                             onClick={(e) => e.stopPropagation()}
-                            className="p-1.5 bg-red-600 border-2 border-[#1a1a1a] text-white rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                            className="p-1.5 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
-                          <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
+                        <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] p-6 shadow-neo-lg">
+                          <AlertDialogTitle className="text-lg font-bold uppercase text-[#1a1a1a] mb-2">
                             Delete Confirmation
                           </AlertDialogTitle>
                           <AlertDialogDescription className="text-gray-700 font-bold text-sm">
@@ -813,7 +813,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   </div>
                   <div
                     id={`panel-${index}`}
-                    className="px-5 py-4 bg-[#FDF9F0] text-gray-800 font-medium text-sm border-t-2 border-[#1a1a1a] leading-relaxed font-space"
+                    className="px-5 py-4 bg-[#FDF9F0] text-gray-700 font-normal text-sm border-t-2 border-[#1a1a1a] leading-relaxed"
                   >
                     <p>{detail.answer}</p>
                   </div>
@@ -824,11 +824,11 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
         </div>
       </div>
 
-      {/* Edit Modal (Aligned with site theme) */}
+      {/* Edit Modal (Sharp Edges & Clean Fonts) */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-white text-[#1a1a1a] max-w-lg border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6 font-space">
+        <DialogContent className="bg-white text-[#1a1a1a] max-w-lg border-3 border-[#1a1a1a] shadow-neo-lg p-6">
           <DialogHeader>
-            <DialogTitle className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] flex items-center gap-2">
+            <DialogTitle className="text-xl font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
               <MdOutlineEdit className="text-[#FF4D00] text-2xl" /> Edit Question & Answer
             </DialogTitle>
             <DialogDescription className="text-xs font-bold text-gray-600">
@@ -852,7 +852,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                     }))
                   }
                   required
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm rounded-lg py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
                 />
                 <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
               </div>
@@ -874,7 +874,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   }
                   required
                   rows={4}
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto rounded-lg py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
                 />
                 <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
               </div>
