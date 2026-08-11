@@ -120,16 +120,16 @@ export default function AuthForm() {
 
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
+          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight mb-2">
+            {isSignUp ? "WELCOME TO" : "SIGN IN TO"}
+          </h2>
           <img
             src="/aptus-logo.png"
             alt="Aptus Logo"
-            className="h-16 w-auto mx-auto cursor-pointer object-contain mb-3"
+            className="h-14 w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
-          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
-            {isSignUp ? "WELCOME" : "SIGN IN"}
-          </h2>
-          <p className="mt-2 text-sm font-semibold text-gray-700">
+          <p className="text-sm font-semibold text-gray-700">
             {isSignUp
               ? "Create an account to get started with Aptus Chatbot Integration"
               : "Sign in to manage your Aptus AI assistant"}
@@ -246,27 +246,6 @@ export default function AuthForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
-                      Business Description
-                    </label>
-                    <div className="relative">
-                      <textarea
-                        id="businessDescription"
-                        name="bussinessDescription"
-                        required
-                        rows={3}
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
-                        placeholder="Business Description"
-                        value={formData.bussinessDescription}
-                        onChange={handleChange}
-                      />
-                      <div className="absolute top-3 left-0 pl-3 flex items-center pointer-events-none">
-                        <Clipboard className="h-5 w-5 text-gray-500" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
                     <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Category
                     </label>
@@ -283,6 +262,27 @@ export default function AuthForm() {
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Briefcase className="h-5 w-5 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                      Business Description
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        id="businessDescription"
+                        name="bussinessDescription"
+                        required
+                        rows={3}
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
+                        placeholder="Business Description"
+                        value={formData.bussinessDescription}
+                        onChange={handleChange}
+                      />
+                      <div className="absolute top-3 left-0 pl-3 flex items-center pointer-events-none">
+                        <Clipboard className="h-5 w-5 text-gray-500" />
                       </div>
                     </div>
                   </div>
