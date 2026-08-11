@@ -54,7 +54,7 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-lg sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold text-[#1a1a1a] uppercase leading-snug tracking-tight"
+            className="font-syne text-lg sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold text-[#1a1a1a] uppercase leading-normal tracking-tight space-y-2 sm:space-y-2.5"
           >
             <span className="block whitespace-nowrap">INSTALL PACKAGE.</span>
             <motion.span
