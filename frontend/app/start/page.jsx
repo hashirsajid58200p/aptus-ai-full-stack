@@ -9,6 +9,7 @@ import {
   Eye,
   EyeOff,
   User,
+  Lock,
 } from "lucide-react";
 import { signUp, login, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -126,11 +127,7 @@ export default function AuthForm() {
             onClick={() => router.push("/")}
           />
           <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
-            {isSignUp ? (
-              <>WELCOME TO <span className="text-[#FF4D00]">APTUS AI</span></>
-            ) : (
-              <>SIGN IN TO <span className="text-[#FF4D00]">APTUS AI</span></>
-            )}
+            {isSignUp ? "WELCOME" : "SIGN IN"}
           </h2>
           <p className="mt-2 text-sm font-semibold text-gray-700">
             {isSignUp
@@ -206,6 +203,9 @@ export default function AuthForm() {
                     value={isSignUp ? formData.password : loginData.password}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-500" />
+                  </div>
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
                     {showPassword ? (
                       <EyeOff
