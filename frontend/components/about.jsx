@@ -38,9 +38,12 @@ export default function About() {
             3-Step Integration
           </span>
 
-          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight space-y-[4px]">
-            <span className="block whitespace-nowrap">TRAIN ON DASHBOARD.</span>
-            <span className="text-[#2D31FA] block whitespace-nowrap">PASTE ONE LINE.</span>
+          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold uppercase leading-tight tracking-tight whitespace-nowrap flex items-center gap-2 sm:gap-3">
+            <span className="text-[#FF4D00]">TRAIN</span>
+            <span className="text-[#1a1a1a]">➔</span>
+            <span className="text-[#2D31FA]">INSTALL</span>
+            <span className="text-[#1a1a1a]">➔</span>
+            <span className="text-[#16A34A]">EMBED</span>
           </h2>
 
           <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[575px]">
