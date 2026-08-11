@@ -125,8 +125,12 @@ export default function AuthForm() {
             className="h-16 w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
-          <h2 className="font-syne text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
-            WELCOME TO <span className="text-[#FF4D00]">APTUS</span>
+          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] uppercase tracking-tight">
+            {isSignUp ? (
+              <>WELCOME TO <span className="text-[#FF4D00]">APTUS AI</span></>
+            ) : (
+              <>SIGN IN TO <span className="text-[#FF4D00]">APTUS AI</span></>
+            )}
           </h2>
           <p className="mt-2 text-sm font-semibold text-gray-700">
             {isSignUp
@@ -154,7 +158,7 @@ export default function AuthForm() {
                       name="name"
                       type="text"
                       required
-                      className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                      className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                       placeholder="Your Full Name"
                       value={formData.name}
                       onChange={handleChange}
@@ -176,7 +180,7 @@ export default function AuthForm() {
                     name="email"
                     type="email"
                     required
-                    className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                    className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="Email address"
                     value={isSignUp ? formData.email : loginData.email}
                     onChange={isSignUp ? handleChange : handleLoginChange}
@@ -197,7 +201,7 @@ export default function AuthForm() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                    className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="Password"
                     value={isSignUp ? formData.password : loginData.password}
                     onChange={isSignUp ? handleChange : handleLoginChange}
@@ -230,7 +234,7 @@ export default function AuthForm() {
                         name="bussinessName"
                         type="text"
                         required
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Name"
                         value={formData.bussinessName}
                         onChange={handleChange}
@@ -250,7 +254,7 @@ export default function AuthForm() {
                         id="businessDescription"
                         name="bussinessDescription"
                         required
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Description"
                         value={formData.bussinessDescription}
                         onChange={handleChange}
@@ -271,7 +275,7 @@ export default function AuthForm() {
                         name="bussinessCategory"
                         type="text"
                         required
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Business Category"
                         value={formData.bussinessCategory}
                         onChange={handleChange}
