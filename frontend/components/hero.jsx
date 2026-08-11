@@ -1,7 +1,7 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "components/ui/button";
-import { ArrowRight, Code } from 'lucide-react';
+import { ArrowRight, Code, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fadeInUp = {
@@ -15,6 +15,14 @@ const staggerContainer = {
 };
 
 export default function Hero() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyNpm = () => {
+    navigator.clipboard.writeText("npm install aptus-ai-chatbot-widget");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -30,28 +38,40 @@ export default function Hero() {
             className="inline-flex items-center gap-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm px-3 py-1 text-xs font-black uppercase tracking-wider text-[#1a1a1a]"
           >
             <Code className="w-4 h-4" /> npm install aptus-ai-chatbot-widget
+            <button
+              type="button"
+              onClick={handleCopyNpm}
+              className="ml-1 hover:opacity-70 transition flex items-center focus:outline-none"
+              title="Copy install command"
+            >
+              {copied ? (
+                <Check className="w-3.5 h-3.5 text-[#1a1a1a]" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
           </motion.div>
 
           <motion.h1
             variants={fadeInUp}
             className="font-syne text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#1a1a1a] uppercase leading-none tracking-tight"
           >
-            PLUG IN.{" "}
+            INSTALL PACKAGE.{" "}
             <motion.span
               variants={fadeInUp}
               className="font-playfair italic text-[#FF4D00] font-bold normal-case inline-block"
             >
-              GO LIVE.
+              EMBED TOKEN.
             </motion.span>{" "}
             <br />
-            THAT'S IT.
+            GO LIVE.
           </motion.h1>
 
           <motion.p
             variants={fadeInUp}
             className="text-lg md:text-xl text-[#1a1a1a] font-medium leading-relaxed max-w-xl"
           >
-            Aptus AI is a drop-in AI chatbot widget for your website. Install the npm package, paste your token, and you're live — no backend to host, no complex setup, no waiting around.
+            Aptus AI turns your business FAQs into a live, on-brand chatbot widget. Install the package, paste your token, and you're done — no backend to host, no complex setup, no code to maintain.
           </motion.p>
 
           <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 pt-2">
@@ -63,7 +83,7 @@ export default function Hero() {
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Button>
             <Button
-              onClick={() => window.location.href = "#how-it-works"}
+              onClick={() => window.location.href = "/docs"}
               className="btn-neo text-base sm:text-lg px-8 py-4 rounded-none flex items-center gap-2"
             >
               VIEW DOCS
@@ -73,13 +93,13 @@ export default function Hero() {
 
         {/* Right Side with Hero Illustration */}
         <motion.div variants={fadeInUp} className="lg:w-1/2 flex justify-center relative">
-          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-lg">
+          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-xl">
             {/* Sticker Badge Decorative Accent */}
             <motion.div
               initial={{ rotate: -8, scale: 0.9 }}
               animate={{ rotate: [-8, 2, -8] }}
               transition={{ duration: 6, repeat: Infinity, repeatType: "mirror" }}
-              className="absolute -top-6 -right-6 z-20 w-28 sm:w-36 pointer-events-none drop-shadow-md"
+              className="absolute -top-6 -right-6 z-20 w-28 sm:w-36 pointer-events-none border-2 border-[#1a1a1a] shadow-neo-sm bg-white p-1"
             >
               <img
                 src="/sticker-badges.png"
