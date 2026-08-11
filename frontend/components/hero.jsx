@@ -59,7 +59,7 @@ export default function Hero() {
             INSTALL PACKAGE.{" "}
             <motion.span
               variants={fadeInUp}
-              className="font-playfair italic text-[#FF4D00] font-bold inline-block"
+              className="text-[#FF4D00] inline-block"
             >
               EMBED TOKEN.
             </motion.span>{" "}
