@@ -92,7 +92,7 @@ export default function Hero() {
 
         {/* Right Side with Hero Illustration */}
         <motion.div variants={fadeInUp} className="lg:w-1/2 flex justify-center relative">
-          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-[490px]">
+          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-[505px]">
             {/* Sticker Badge Decorative Accent */}
             <motion.div
               initial={{ rotate: -8, scale: 0.9 }}
