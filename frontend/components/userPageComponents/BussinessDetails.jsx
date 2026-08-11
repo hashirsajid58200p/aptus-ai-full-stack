@@ -53,51 +53,118 @@ import { AiFillThunderbolt } from "react-icons/ai";
 import Loader from "../Loader";
 
 const getRandomFallbackQuestions = (category, description) => {
-  const pool = [
+  const categoryName = category || "our domain";
+  const desc = description || "our products and services";
+
+  const questionPools = [
     {
-      question: `What primary products or services does your business offer?`,
-      answer: `We specialize in ${category || "our domain"} solutions tailored to customer requirements.`,
+      q: [
+        `What primary services or products does your business offer in ${categoryName}?`,
+        `Can you provide an overview of your main ${categoryName} solutions?`,
+        `What key offerings do you specialize in for ${categoryName}?`,
+      ],
+      a: [
+        `We provide comprehensive ${categoryName} solutions tailored to customer requirements. ${desc}`,
+        `Our team specializes in top-tier ${categoryName} designed for quality and reliability.`,
+        `We offer end-to-end ${categoryName} services focused on customer satisfaction.`,
+      ],
     },
     {
-      question: `What are your standard business operating hours?`,
-      answer: `We are open Monday through Friday, 9:00 AM to 6:00 PM.`,
+      q: [
+        `What are your standard business operating hours?`,
+        `When is customer support available during the week?`,
+        `What hours can clients contact your support team?`,
+      ],
+      a: [
+        `Our support team is available Monday through Friday, from 9:00 AM to 6:00 PM EST.`,
+        `We operate Monday to Friday during standard business hours with online support.`,
+        `Customer support is active 5 days a week from 9 AM to 6 PM EST.`,
+      ],
     },
     {
-      question: `How can customers reach customer support?`,
-      answer: `You can reach our dedicated support team via our official website contact channels or email.`,
+      q: [
+        `How can customers contact your team for support or inquiries?`,
+        `What is the best way to reach your sales or support channel?`,
+        `Do you have an official contact method for general questions?`,
+      ],
+      a: [
+        `You can reach us directly via our website contact form or official email support channel.`,
+        `Our support team responds promptly through our official website contact channels.`,
+        `Feel free to message us anytime through our website contact form or support portal.`,
+      ],
     },
     {
-      question: `Do you offer custom pricing packages or consultations?`,
-      answer: `Yes, we offer custom pricing depending on your specific requirements. Contact us for a quote.`,
+      q: [
+        `Do you offer custom pricing packages or consultations?`,
+        `Are there flexible pricing plans tailored for different business needs?`,
+        `How does pricing work for custom project requests?`,
+      ],
+      a: [
+        `Yes! We offer customized plans and consultations based on your specific requirements.`,
+        `We provide flexible options to suit businesses of all sizes. Contact us for a custom quote.`,
+        `Our pricing is adaptable to your exact project scope and required features.`,
+      ],
     },
     {
-      question: `What makes your business unique?`,
-      answer: description || `We focus on delivering high-quality, customer-centric services with fast turnaround times.`,
+      q: [
+        `What makes your company stand out from competitors?`,
+        `Why should clients choose your ${categoryName} solutions?`,
+        `What is the core mission and unique value of your business?`,
+      ],
+      a: [
+        `We combine high quality, fast response times, and tailored solutions for client success.`,
+        `Our emphasis on reliability, customer satisfaction, and custom solutions sets us apart.`,
+        `We pride ourselves on high quality standards, clear communication, and dedicated service.`,
+      ],
     },
     {
-      question: `What is your standard cancellation or return policy?`,
-      answer: `We offer a customer-friendly return policy. Please check our terms for detailed steps.`,
+      q: [
+        `How long does the setup or onboarding process take?`,
+        `What can new customers expect during initial onboarding?`,
+        `Is it easy to get started with your ${categoryName}?`,
+      ],
+      a: [
+        `Getting started is quick and seamless — onboarding usually takes just a few simple steps!`,
+        `Our streamlined onboarding process ensures you get up and running smoothly without friction.`,
+        `We guide you step-by-step to ensure rapid setup without technical complexity.`,
+      ],
     },
     {
-      question: `How fast is the setup or onboarding process?`,
-      answer: `Onboarding is quick and seamless, taking only a few simple steps to get started.`,
+      q: [
+        `Do you provide technical support and maintenance after purchase?`,
+        `What post-launch assistance do you offer to clients?`,
+        `Will I get regular maintenance and support after signing up?`,
+      ],
+      a: [
+        `Yes, we provide ongoing technical support and maintenance to ensure optimal performance.`,
+        `Our team remains available for post-setup support and answering technical questions.`,
+        `We stand by our clients with reliable ongoing assistance whenever needed.`,
+      ],
     },
     {
-      question: `Do you provide post-launch support and maintenance?`,
-      answer: `Yes, we provide ongoing maintenance and technical assistance to all active clients.`,
+      q: [
+        `What is your policy regarding returns, refunds, or cancellations?`,
+        `Are clients able to modify or cancel their subscription plan?`,
+        `Do you offer transparent refund and cancellation terms?`,
+      ],
+      a: [
+        `We maintain a transparent policy — you can contact support for plan changes or refund info.`,
+        `We prioritize customer satisfaction and provide straightforward terms for plan adjustments.`,
+        `Our policy is built on transparency. Please review our terms or contact support for help.`,
+      ],
     },
-    {
-      question: `Are demo or trial options available?`,
-      answer: `Yes, you can test out interactive features or request a walkthrough with our support team.`,
-    },
-    {
-      question: `Where is your company located?`,
-      answer: `We operate online with global accessibility and remote support for worldwide clients.`,
-    }
   ];
 
-  const shuffled = [...pool].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 5);
+  const shuffledPools = [...questionPools].sort(() => Math.random() - 0.5);
+
+  return shuffledPools.slice(0, 5).map((item) => {
+    const qIndex = Math.floor(Math.random() * item.q.length);
+    const aIndex = Math.floor(Math.random() * item.a.length);
+    return {
+      question: item.q[qIndex],
+      answer: item.a[aIndex],
+    };
+  });
 };
 
 const BusinessDetails = () => {
@@ -246,7 +313,7 @@ const BusinessDetails = () => {
   const handleGenerateAI = async () => {
     setLoading(true);
     setGeneratedQuestions([]);
-    const randomSeed = Math.floor(Math.random() * 100000);
+    const randomSeed = Math.floor(Math.random() * 1000000);
     const businessDetails = `
       Business Name: ${user?.bussinessName || "N/A"},
       Business Category: ${user?.bussinessCategory || "N/A"},
@@ -331,18 +398,19 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
 
   if (loading && generatedQuestions.length === 0 && qaList.length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-[#FDF9F0]">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen text-gray-700">
-      <div className="bg-white w-full max-w-4xl rounded-xl shadow-xl relative z-10 transform transition-transform">
-        <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b border-gray-100">
+    <div className="relative flex flex-col items-center justify-center min-h-screen text-[#1a1a1a]">
+      {/* Neo-brutalist Company Details Card */}
+      <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl relative z-10 overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b-3 border-[#1a1a1a] bg-white">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-2xl font-bold text-gray-900 font-syne uppercase">
+            <CardTitle className="text-2xl font-semibold text-black-500">
               Company Details
             </CardTitle>
             <AlertDialog>
@@ -356,13 +424,13 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                 </button>
               </AlertDialogTrigger>
 
-              <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
-                <AlertDialogTitle className="text-lg font-semibold mb-2">
+              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
+                <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
                   How to Provide Business Details
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-600">
+                <AlertDialogDescription className="text-gray-700 font-bold text-sm">
                   <p className="mb-4">
-                    To help us train our models effectively, please provide
+                    To help us train our AI model effectively, please provide
                     detailed answers to the following:
                   </p>
                   <ul className="list-disc pl-5 mb-4 space-y-1">
@@ -373,7 +441,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   </ul>
                 </AlertDialogDescription>
                 <div className="mt-4 flex justify-end space-x-2">
-                  <AlertDialogCancel className="btn-neo px-4 py-2 text-xs">
+                  <AlertDialogCancel className="btn-neo px-5 py-2 text-xs font-extrabold uppercase">
                     Close
                   </AlertDialogCancel>
                 </div>
@@ -382,18 +450,18 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
           </div>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="p-6 sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Dynamic list of Questions and Answers */}
             <div className="space-y-6">
               {qaList.map((item, index) => (
-                <div key={item.id} className="relative space-y-4 pt-2 border-b pb-4 last:border-b-0">
+                <div key={item.id} className="relative space-y-4 pt-2 border-b-2 border-gray-200 pb-6 last:border-b-0">
                   {qaList.length > 1 && (
                     <div className="flex justify-end">
                       <button
                         type="button"
                         onClick={() => handleRemoveField(item.id)}
-                        className="text-red-500 hover:text-red-700 text-sm flex items-center gap-1 transition font-bold"
+                        className="text-red-600 hover:text-red-800 text-xs font-extrabold uppercase tracking-wider flex items-center gap-1 transition"
                         title="Remove Question"
                       >
                         <Trash2 className="w-4 h-4" /> Remove
@@ -404,7 +472,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   <div>
                     <label
                       htmlFor={`question-${item.id}`}
-                      className="block text-sm font-semibold text-gray-800"
+                      className="block text-xs font-black uppercase text-[#1a1a1a] mb-1"
                     >
                       Company Related Question
                     </label>
@@ -423,16 +491,16 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           (e.target.placeholder =
                             "What is our Company Objective?")
                         }
-                        className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:ring focus:ring-blue-500"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm rounded-lg py-2.5 pl-3 pr-10"
                       />
-                      <FaRobot className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
+                      <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
                     </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor={`answer-${item.id}`}
-                      className="block text-sm font-semibold text-gray-800"
+                      className="block text-xs font-black uppercase text-[#1a1a1a] mb-1"
                     >
                       Answer
                     </label>
@@ -452,9 +520,9 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                             "Our objective is to provide the best services to our customers...")
                         }
                         rows={4}
-                        className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 resize-none max-h-40 overflow-y-auto"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto rounded-lg py-2.5 pl-3 pr-10"
                       />
-                      <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
+                      <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
                     </div>
                   </div>
                 </div>
@@ -462,14 +530,14 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             </div>
 
             {/* Single Add Question Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-2">
               <Button
                 type="button"
                 onClick={handleAddField}
                 variant="outline"
-                className="flex items-center gap-2 border-2 border-[#1a1a1a] bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm font-extrabold"
+                className="flex items-center gap-2 border-2 border-[#1a1a1a] bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm font-extrabold text-xs uppercase hover:bg-[#a6d000] transition-colors"
               >
-                <Plus className="w-5 h-5" /> Add Another Question
+                <Plus className="w-4 h-4" /> Add Another Question
               </Button>
             </div>
 
@@ -478,7 +546,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
               type="button"
               onClick={handleGenerateAI}
               disabled={loading}
-              className="w-full btn-neo-secondary py-3 text-base flex items-center justify-center gap-2 font-extrabold"
+              className="w-full btn-neo-secondary py-3 text-sm uppercase flex items-center justify-center gap-2 font-extrabold shadow-neo-sm"
             >
               <AiFillThunderbolt className="text-xl text-[#FF4D00]" />
               {loading ? "Generating Questions..." : "Generate with AI"}
@@ -492,8 +560,8 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
 
             {/* Display AI-generated Questions */}
             {generatedQuestions.length > 0 && (
-              <div className="mt-6 p-4 border-2 border-[#1a1a1a] bg-[#FDF9F0] rounded-xl shadow-neo-sm">
-                <div className="flex items-center justify-between mb-4 border-b-2 border-[#1a1a1a] pb-3">
+              <div className="mt-6 p-5 border-3 border-[#1a1a1a] bg-[#FDF9F0] rounded-xl shadow-neo-sm space-y-4">
+                <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
                   <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] flex items-center gap-2">
                     <AiFillThunderbolt className="text-[#FF4D00] text-xl" />
                     AI-Generated Questions
@@ -502,7 +570,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                     type="button"
                     onClick={handleGenerateAI}
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold hover:bg-[#a6d000] transition-colors"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase hover:bg-[#a6d000] transition-colors cursor-pointer"
                     title="Generate new questions"
                   >
                     <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -519,13 +587,13 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <h4 className="font-extrabold text-sm text-[#1a1a1a]">{q.question}</h4>
-                        <span className="text-[#FF4D00] font-black text-sm">
+                        <h4 className="font-extrabold text-sm text-[#1a1a1a] font-syne">{q.question}</h4>
+                        <span className="text-[#FF4D00] font-black text-sm ml-2">
                           {selectedQuestionIndex === index ? "▲" : "▼"}
                         </span>
                       </div>
                       {selectedQuestionIndex === index && (
-                        <div className="mt-3 pt-2 border-t border-gray-200 text-xs font-medium text-gray-700 leading-relaxed">
+                        <div className="mt-3 pt-2 border-t-2 border-gray-100 text-xs font-bold text-gray-700 leading-relaxed font-space">
                           {q.answer}
                         </div>
                       )}
@@ -545,7 +613,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full btn-neo-primary py-3 text-base font-extrabold"
+              className="w-full btn-neo-primary py-3.5 text-base font-extrabold uppercase shadow-neo-sm"
             >
               SUBMIT BUSINESS DETAILS
             </Button>
@@ -553,92 +621,111 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
         </CardContent>
       </div>
 
-      {/* Floating Carousel / Accordion List */}
+      {/* Floating Carousel / Accordion List with Neo-Brutalist Site Theme */}
       <div className="w-full max-w-4xl mt-8">
-        <div className="p-4">
+        <div className="p-2">
           {/* Layout Toggle Icons */}
-          <div className="flex justify-end mb-4 space-x-4">
-            <LayoutGrid
+          <div className="flex justify-end mb-4 gap-2">
+            <button
+              type="button"
               onClick={() => handleToggleLayout("carousel")}
-              className={`cursor-pointer text-gray-500 hover:text-blue-500 transition ${
-                layout === "carousel" ? "text-blue-500" : ""
+              className={`p-2 border-2 border-[#1a1a1a] rounded-lg transition-all cursor-pointer ${
+                layout === "carousel"
+                  ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                  : "bg-white text-[#1a1a1a] hover:bg-[#BFF000]"
               }`}
-              size={24}
-            />
-            <List
+              title="Carousel View"
+            >
+              <LayoutGrid size={20} />
+            </button>
+            <button
+              type="button"
               onClick={() => handleToggleLayout("accordion")}
-              className={`cursor-pointer text-gray-500 hover:text-blue-500 transition ${
-                layout === "accordion" ? "text-blue-500" : ""
+              className={`p-2 border-2 border-[#1a1a1a] rounded-lg transition-all cursor-pointer ${
+                layout === "accordion"
+                  ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                  : "bg-white text-[#1a1a1a] hover:bg-[#BFF000]"
               }`}
-              size={24}
-            />
+              title="List View"
+            >
+              <List size={20} />
+            </button>
           </div>
 
           {/* Conditionally render based on selected layout */}
           {layout === "carousel" ? (
-            <div className="w-full max-w-4xl mt-8">
+            <div className="w-full max-w-4xl">
               <Carousel
                 setApi={setCarouselApi}
                 plugins={[
                   Autoplay({
-                    delay: 3000,
+                    delay: 3500,
                   }),
                 ]}
-                className="rounded-xl shadow-xl overflow-hidden relative"
+                className="rounded-xl overflow-hidden relative"
               >
                 <CarouselContent>
                   {user?.bussinessDetails?.map((item, index) => (
                     <CarouselItem key={item._id || index}>
-                      <div className="relative p-6 bg-white text-gray-800 rounded-xl max-h-[35vh] min-h-[35vh]">
-                        <div className="h-full relative group">
-                          <CardHeader className="flex flex-row items-center gap-3">
-                            <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
-                            <CardTitle className="text-lg">
-                              {item.question}
-                            </CardTitle>
-                            <div className="ml-auto flex items-center gap-1 shrink-0">
-                              {/* Edit Icon */}
-                              <button
-                                type="button"
-                                onClick={() => handleOpenEdit(item)}
-                                className="p-2 text-[#1a1a1a] hover:text-[#FF4D00] transition-all"
-                                title="Edit"
-                              >
-                                <Pencil className="w-5 h-5" />
-                              </button>
+                      <div className="relative p-6 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo rounded-xl max-h-[38vh] min-h-[38vh] flex flex-col justify-between">
+                        <div className="h-full relative flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
+                              <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
+                              <CardTitle className="text-base sm:text-lg font-extrabold font-syne text-[#1a1a1a] uppercase flex-1">
+                                {item.question}
+                              </CardTitle>
+                              <div className="ml-auto flex items-center gap-2 shrink-0">
+                                {/* Edit Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEdit(item)}
+                                  className="p-2 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </button>
 
-                              {/* Delete Icon */}
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <button className="p-2 text-red-500 hover:text-red-700 transition-all">
-                                    <MdDeleteOutline className="text-2xl" />
-                                  </button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
-                                  <AlertDialogTitle className="text-lg font-semibold mb-2">
-                                    Delete Confirmation
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription className="text-gray-600">
-                                    Are you sure you want to delete this business detail?
-                                  </AlertDialogDescription>
-                                  <div className="mt-4 flex justify-end space-x-2">
-                                    <AlertDialogCancel className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none px-4 py-2 rounded-lg">
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDelete(item._id)}
-                                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                                {/* Delete Button */}
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className="p-2 bg-red-600 border-2 border-[#1a1a1a] text-white rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                                      title="Delete"
                                     >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </div>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
+                                    <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
+                                      Delete Confirmation
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                                      Are you sure you want to delete this business detail?
+                                    </AlertDialogDescription>
+                                    <div className="mt-6 flex justify-end space-x-3">
+                                      <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDelete(item._id)}
+                                        className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </div>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
                             </div>
-                          </CardHeader>
-                          <CardContent className="pt-2">
-                            <p>{item.answer}</p>
-                          </CardContent>
+
+                            <div className="pt-1">
+                              <p className="text-sm font-medium text-gray-700 leading-relaxed font-space">
+                                {item.answer}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </CarouselItem>
@@ -652,8 +739,10 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                       key={index}
                       type="button"
                       onClick={() => carouselApi?.scrollTo(index)}
-                      className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                        index === selectedIndex ? "bg-[#FF4D00]" : "bg-gray-300"
+                      className={`h-3 w-3 rounded-full border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                        index === selectedIndex
+                          ? "bg-[#FF4D00] scale-110 shadow-neo-sm"
+                          : "bg-white"
                       }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
@@ -664,59 +753,67 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
           ) : (
             <div className="accordion space-y-4">
               {user?.bussinessDetails?.map((detail, index) => (
-                <div key={detail._id || index} className="border rounded-lg bg-white">
+                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm rounded-xl bg-white overflow-hidden">
                   <div
                     onClick={() => {
                       const panel = document.getElementById(`panel-${index}`);
                       if (panel) panel.classList.toggle("hidden");
                     }}
-                    className="flex px-4 py-2 bg-gray-50 rounded-t-lg hover:bg-gray-100 cursor-pointer items-center justify-between"
+                    className="flex px-5 py-3.5 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between font-extrabold border-b-2 border-[#1a1a1a]"
                   >
-                    <button className="w-full text-left font-medium text-gray-800">
+                    <button className="w-full text-left font-extrabold font-syne text-sm text-[#1a1a1a] uppercase">
                       {detail.question}
                     </button>
-                    <span className="flex gap-3 items-center shrink-0">
-                      <Pencil
+                    <span className="flex gap-2 items-center shrink-0">
+                      <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenEdit(detail);
                         }}
-                        className="w-4 h-4 text-[#1a1a1a] hover:text-[#FF4D00] cursor-pointer"
-                      />
+                        className="p-1.5 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                        title="Edit"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Trash2
+                          <button
+                            type="button"
                             onClick={(e) => e.stopPropagation()}
-                            color="red"
-                            className="w-4 h-4 cursor-pointer z-50"
-                          />
+                            className="p-1.5 bg-red-600 border-2 border-[#1a1a1a] text-white rounded-lg shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
-                          <AlertDialogTitle className="text-lg font-semibold mb-2">
+                        <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-xl p-6 shadow-neo-lg font-space">
+                          <AlertDialogTitle className="text-lg font-extrabold font-syne uppercase text-[#1a1a1a] mb-2">
                             Delete Confirmation
                           </AlertDialogTitle>
-                          <AlertDialogDescription className="text-gray-600">
+                          <AlertDialogDescription className="text-gray-700 font-bold text-sm">
                             Are you sure you want to delete this detail?
                           </AlertDialogDescription>
-                          <div className="mt-4 flex justify-end space-x-2">
-                            <AlertDialogCancel className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none px-4 py-2 rounded-lg">
+                          <div className="mt-6 flex justify-end space-x-3">
+                            <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
                               Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(detail._id)}
-                              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                              className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
                             >
                               Delete
                             </AlertDialogAction>
                           </div>
                         </AlertDialogContent>
                       </AlertDialog>
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                      <ChevronDown className="w-5 h-5 text-[#1a1a1a] ml-1" />
                     </span>
                   </div>
                   <div
                     id={`panel-${index}`}
-                    className="px-4 py-2 bg-gray-50 hidden rounded-b-lg border-t-2"
+                    className="px-5 py-4 bg-[#FDF9F0] text-gray-800 font-medium text-sm border-t-2 border-[#1a1a1a] leading-relaxed font-space"
                   >
                     <p>{detail.answer}</p>
                   </div>
@@ -727,21 +824,21 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
         </div>
       </div>
 
-      {/* Edit Modal (Aligned with theme) */}
+      {/* Edit Modal (Aligned with site theme) */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-white text-gray-900 max-w-lg rounded-xl p-6 shadow-2xl border">
+        <DialogContent className="bg-white text-[#1a1a1a] max-w-lg border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6 font-space">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <DialogTitle className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] flex items-center gap-2">
               <MdOutlineEdit className="text-[#FF4D00] text-2xl" /> Edit Question & Answer
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
+            <DialogDescription className="text-xs font-bold text-gray-600">
               Update the question and answer for your chatbot's training context.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleUpdateSubmit} className="space-y-4 mt-4">
             <div>
-              <label htmlFor="edit-question" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="edit-question" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Company Related Question
               </label>
               <div className="relative">
@@ -755,14 +852,14 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                     }))
                   }
                   required
-                  className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 focus:ring focus:ring-blue-500"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm rounded-lg py-2.5 pl-3 pr-10"
                 />
-                <FaRobot className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
+                <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
               </div>
             </div>
 
             <div>
-              <label htmlFor="edit-answer" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="edit-answer" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Answer
               </label>
               <div className="relative">
@@ -777,24 +874,24 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   }
                   required
                   rows={4}
-                  className="mt-2 block w-full border border-gray-200 bg-white text-gray-900 resize-none max-h-40 overflow-y-auto"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto rounded-lg py-2.5 pl-3 pr-10"
                 />
-                <FaCommentDots className="absolute right-3 top-3 text-xl text-[#FF4D00]" />
+                <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
               </div>
             </div>
 
-            <DialogFooter className="flex justify-end space-x-2 pt-4 border-t">
+            <DialogFooter className="flex justify-end space-x-2 pt-4 border-t-2 border-gray-200">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsEditOpen(false)}
-                className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none"
+                className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="btn-neo-primary font-extrabold px-5 py-2 text-sm"
+                className="btn-neo-primary font-extrabold px-5 py-2 text-xs uppercase shadow-neo-sm"
               >
                 Save Changes
               </Button>
