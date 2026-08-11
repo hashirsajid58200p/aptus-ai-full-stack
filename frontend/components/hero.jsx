@@ -27,7 +27,7 @@ export default function Hero() {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="bg-[#FDF9F0] border-b-3 border-[#1a1a1a] py-14 md:py-22 relative overflow-hidden"
+      className="bg-[#FDF9F0] border-b-3 border-[#1a1a1a] py-[64px] md:py-[88px] relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 relative z-10">
         
@@ -35,7 +35,7 @@ export default function Hero() {
         <motion.div variants={staggerContainer} className="lg:w-1/2 space-y-6">
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm px-3.5 py-1.5 text-xs sm:text-sm font-black uppercase tracking-wider text-[#1a1a1a]"
+            className="inline-flex items-center gap-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm px-[14px] py-[6px] text-[13px] font-black uppercase tracking-wider text-[#1a1a1a]"
           >
             <Code className="w-4 h-4" /> npm install aptus-ai-chatbot-widget
             <button
@@ -54,7 +54,7 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-xl sm:text-3xl md:text-[32px] lg:text-[36px] xl:text-[42px] font-extrabold text-[#1a1a1a] uppercase leading-normal tracking-tight space-y-2.5 sm:space-y-3"
+            className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-normal tracking-tight space-y-[10px]"
           >
             <span className="block whitespace-nowrap">INSTALL PACKAGE.</span>
             <motion.span
@@ -68,7 +68,7 @@ export default function Hero() {
 
           <motion.p
             variants={fadeInUp}
-            className="text-base sm:text-lg md:text-xl text-[#1a1a1a] font-medium leading-relaxed max-w-xl"
+            className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[530px]"
           >
             Aptus AI turns your business FAQs into a live, on-brand chatbot widget. Install the package, paste your token, and you're done — no backend to host, no complex setup, no code to maintain.
           </motion.p>
@@ -76,14 +76,14 @@ export default function Hero() {
           <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 pt-2">
             <Button
               onClick={() => window.location.href = "/start"}
-              className="btn-neo-primary text-base sm:text-lg px-7 py-3.5 rounded-none flex items-center gap-2.5"
+              className="btn-neo-primary text-[15px] sm:text-[17px] px-[26px] py-[13px] rounded-none flex items-center gap-2.5"
             >
               GET YOUR TOKEN
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Button>
             <Button
               onClick={() => window.location.href = "/docs"}
-              className="btn-neo text-base sm:text-lg px-7 py-3.5 rounded-none flex items-center gap-2.5"
+              className="btn-neo text-[15px] sm:text-[17px] px-[26px] py-[13px] rounded-none flex items-center gap-2.5"
             >
               VIEW DOCS
             </Button>
@@ -92,7 +92,7 @@ export default function Hero() {
 
         {/* Right Side with Hero Illustration */}
         <motion.div variants={fadeInUp} className="lg:w-1/2 flex justify-center relative">
-          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-xl">
+          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-[520px]">
             {/* Sticker Badge Decorative Accent */}
             <motion.div
               initial={{ rotate: -8, scale: 0.9 }}
