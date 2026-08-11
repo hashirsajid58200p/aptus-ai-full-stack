@@ -52,6 +52,15 @@ import toast from "react-hot-toast";
 import { AiFillThunderbolt } from "react-icons/ai";
 import Loader from "../Loader";
 
+const shuffleArray = (array) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
 const getRandomFallbackQuestions = (category, description) => {
   const categoryName = category || "our domain";
   const desc = description || "our products and services";
@@ -153,9 +162,33 @@ const getRandomFallbackQuestions = (category, description) => {
         `Our policy is built on transparency. Please review our terms or contact support for help.`,
       ],
     },
+    {
+      q: [
+        `What safety and privacy measures do you take to protect client data?`,
+        `Is user data stored securely on your platform?`,
+        `How do you ensure data confidentiality for ${categoryName}?`,
+      ],
+      a: [
+        `We enforce strict encryption and data privacy standards to keep your information secure.`,
+        `Client data is encrypted at rest and in transit following industry security best practices.`,
+        `Your security is our top priority. We never share confidential business details with third parties.`,
+      ],
+    },
+    {
+      q: [
+        `Can your ${categoryName} system integrate with third-party tools?`,
+        `Do you support API integrations or automated workflows?`,
+        `Is it possible to connect your service with external platforms?`,
+      ],
+      a: [
+        `Yes, our platform supports flexible API connections and widget integrations.`,
+        `We provide simple integration options to seamlessly sync with your current workflow.`,
+        `Our solutions are designed to fit effortlessly into your existing software ecosystem.`,
+      ],
+    },
   ];
 
-  const shuffledPools = [...questionPools].sort(() => Math.random() - 0.5);
+  const shuffledPools = shuffleArray(questionPools);
 
   return shuffledPools.slice(0, 5).map((item) => {
     const qIndex = Math.floor(Math.random() * item.q.length);
@@ -493,7 +526,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         }
                         className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
                       />
-                      <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
+                      <FaRobot className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
                   </div>
 
@@ -522,7 +555,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         rows={4}
                         className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
                       />
-                      <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
+                      <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
                   </div>
                 </div>
@@ -751,27 +784,27 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
               )}
             </div>
           ) : (
-            <div className="accordion space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {user?.bussinessDetails?.map((detail, index) => (
-                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm bg-white overflow-hidden">
+                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm bg-white overflow-hidden flex flex-col justify-between">
                   <div
                     onClick={() => {
                       const panel = document.getElementById(`panel-${index}`);
                       if (panel) panel.classList.toggle("hidden");
                     }}
-                    className="flex px-5 py-3.5 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between border-b-2 border-[#1a1a1a]"
+                    className="flex px-4 py-3 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between border-b-2 border-[#1a1a1a]"
                   >
-                    <button className="w-full text-left font-bold text-sm text-[#1a1a1a]">
+                    <button className="w-full text-left font-bold text-xs sm:text-sm text-[#1a1a1a] line-clamp-1 pr-2">
                       {detail.question}
                     </button>
-                    <span className="flex gap-2 items-center shrink-0">
+                    <span className="flex gap-1.5 items-center shrink-0">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenEdit(detail);
                         }}
-                        className="p-1.5 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                        className="p-1 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all"
                         title="Edit"
                       >
                         <Pencil className="w-3.5 h-3.5" />
@@ -782,7 +815,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           <button
                             type="button"
                             onClick={(e) => e.stopPropagation()}
-                            className="p-1.5 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                            className="p-1 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -808,12 +841,12 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           </div>
                         </AlertDialogContent>
                       </AlertDialog>
-                      <ChevronDown className="w-5 h-5 text-[#1a1a1a] ml-1" />
+                      <ChevronDown className="w-4 h-4 text-[#1a1a1a] ml-0.5" />
                     </span>
                   </div>
                   <div
                     id={`panel-${index}`}
-                    className="px-5 py-4 bg-[#FDF9F0] text-gray-700 font-normal text-sm border-t-2 border-[#1a1a1a] leading-relaxed"
+                    className="px-4 py-3 bg-[#FDF9F0] text-gray-700 font-normal text-xs border-t-2 border-[#1a1a1a] leading-relaxed"
                   >
                     <p>{detail.answer}</p>
                   </div>

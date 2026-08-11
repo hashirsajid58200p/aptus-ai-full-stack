@@ -12,12 +12,14 @@ export async function generateContent(prompt, options = {}) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      cache: 'no-store',
       body: JSON.stringify({
         message: options.message || prompt,
         prompt: prompt,
         messages: options.messages || [],
         session_id: options.session_id,
         chatbot_id: options.chatbot_id,
+        _t: Date.now(),
       }),
     });
 

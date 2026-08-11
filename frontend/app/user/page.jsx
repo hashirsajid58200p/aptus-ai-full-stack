@@ -146,7 +146,7 @@ export default function UserDashboard() {
 
       {/* Main content */}
       <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
-        <header className="flex justify-between items-center pb-6 border-b-3 border-[#1a1a1a] mb-8 bg-white p-6 shadow-neo">
+        <header className="flex justify-between items-center border-3 border-[#1a1a1a] mb-8 bg-white p-6 shadow-neo">
           <h1 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#1a1a1a] uppercase">
             {activeTab === "business details"
               ? `WELCOME, ${user?.name || "USER"}`
