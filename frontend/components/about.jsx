@@ -43,26 +43,26 @@ export default function About() {
             <span className="text-[#1a1a1a]">➔</span>
             <span className="text-[#2D31FA]">INSTALL</span>
             <span className="text-[#1a1a1a]">➔</span>
-            <span className="text-[#BFF000] [text-shadow:_1.5px_1.5px_0_#1a1a1a]">EMBED</span>
+            <span className="text-[#BFF000]">EMBED</span>
           </h2>
 
-          <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[650px]">
+          <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[720px]">
             Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-ai-chatbot-widget</code> handles the chat UI — zero servers to configure or host.
           </p>
 
           {/* 3-Step Setup */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
-              <span className="bg-[#FF4D00] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">1</span>
-              <div>
+            <div className="flex items-center gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#FF4D00] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a] shrink-0">1</span>
+              <div className="flex-1">
                 <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Train Your Chatbot</h4>
                 <p className="text-sm font-medium text-gray-700">Add your business FAQs in the Aptus AI Dashboard to build custom AI knowledge.</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
-              <span className="bg-[#2D31FA] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">2</span>
-              <div>
+            <div className="flex items-center gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#2D31FA] text-white font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a] shrink-0">2</span>
+              <div className="flex-1">
                 <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Install NPM Package</h4>
                 <div className="mt-1 bg-[#1a1a1a] text-[#BFF000] font-mono text-xs p-2 flex items-center gap-2">
                   <Terminal className="w-4 h-4 text-white" />
@@ -71,9 +71,9 @@ export default function About() {
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
-              <span className="bg-[#BFF000] text-[#1a1a1a] font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a]">3</span>
-              <div>
+            <div className="flex items-center gap-4 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <span className="bg-[#BFF000] text-[#1a1a1a] font-extrabold text-sm w-7 h-7 flex items-center justify-center border border-[#1a1a1a] shrink-0">3</span>
+              <div className="flex-1">
                 <h4 className="font-syne font-bold text-base uppercase text-[#1a1a1a]">Embed & Launch</h4>
                 <p className="text-sm font-medium text-gray-700">Paste your API token into the component and your chatbot is instantly live!</p>
               </div>
