@@ -32,16 +32,16 @@ export default function Home() {
       <section id="hero">
         <Hero />
       </section>
-      <section id="how-it-works">
+      <section id="how-it-works" className="scroll-mt-28">
         <About />
       </section>
-      <section id="features">
+      <section id="features" className="scroll-mt-28">
         <Feature />
       </section>
-      <section id="action-preview">
+      <section id="action-preview" className="scroll-mt-28">
         <ActionPreview />
       </section>
-      <section id="faq">
+      <section id="faq" className="scroll-mt-28">
         <Faq />
       </section>
 
