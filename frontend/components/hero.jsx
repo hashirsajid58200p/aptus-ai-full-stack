@@ -68,7 +68,7 @@ export default function Hero() {
 
           <motion.p
             variants={fadeInUp}
-            className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[530px]"
+            className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[575px]"
           >
             Aptus AI turns your business FAQs into a live, on-brand chatbot widget. Install the package, paste your token, and you're done — no backend to host, no complex setup, no code to maintain.
           </motion.p>
