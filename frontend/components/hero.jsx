@@ -54,12 +54,12 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#1a1a1a] uppercase leading-none tracking-tight"
+            className="font-syne text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] uppercase leading-none tracking-tight"
           >
             INSTALL PACKAGE.{" "}
             <motion.span
               variants={fadeInUp}
-              className="font-playfair italic text-[#FF4D00] font-bold normal-case inline-block"
+              className="font-playfair italic text-[#FF4D00] font-bold inline-block"
             >
               EMBED TOKEN.
             </motion.span>{" "}
