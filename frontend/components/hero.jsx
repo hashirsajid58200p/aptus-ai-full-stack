@@ -68,7 +68,7 @@ export default function Hero() {
 
           <motion.p
             variants={fadeInUp}
-            className="text-lg md:text-xl text-[#1a1a1a] font-medium leading-relaxed max-w-xl"
+            className="text-base md:text-lg text-[#1a1a1a] font-medium leading-relaxed max-w-lg"
           >
             Aptus AI turns your business FAQs into a live, on-brand chatbot widget. Install the package, paste your token, and you're done — no backend to host, no complex setup, no code to maintain.
           </motion.p>
@@ -76,14 +76,14 @@ export default function Hero() {
           <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 pt-2">
             <Button
               onClick={() => window.location.href = "/start"}
-              className="btn-neo-primary text-base sm:text-lg px-8 py-4 rounded-none flex items-center gap-3"
+              className="btn-neo-primary text-sm sm:text-base px-6 py-3 rounded-none flex items-center gap-2"
             >
               GET YOUR TOKEN
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Button>
             <Button
               onClick={() => window.location.href = "/docs"}
-              className="btn-neo text-base sm:text-lg px-8 py-4 rounded-none flex items-center gap-2"
+              className="btn-neo text-sm sm:text-base px-6 py-3 rounded-none flex items-center gap-2"
             >
               VIEW DOCS
             </Button>
