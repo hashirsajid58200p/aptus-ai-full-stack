@@ -6,7 +6,7 @@ import About from "@/components/about";
 import Faq from "@/components/faq";
 import Feature from "@/components/feature";
 import ActionPreview from "@/components/action-preview";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { loadUser } from "@/slices/userSlice";
 import { useDispatch } from "react-redux";
 import dynamic from "next/dynamic";
@@ -19,9 +19,11 @@ const ChatBotWidget = dynamic(
 
 export default function Home() {
   const dispatch = useDispatch();
+  const [currentYear, setCurrentYear] = useState(2026);
 
   useEffect(() => {
     dispatch(loadUser());
+    setCurrentYear(new Date().getFullYear());
   }, [dispatch]);
 
   return (
@@ -62,7 +64,7 @@ export default function Home() {
             />
           </div>
           <p className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a]">
-            © {new Date().getFullYear()} APTUS AI — DROP-IN NPM CHATBOT WIDGET. ALL RIGHTS RESERVED.
+            © {currentYear} APTUS AI — DROP-IN NPM CHATBOT WIDGET. ALL RIGHTS RESERVED.
           </p>
         </div>
       </footer>

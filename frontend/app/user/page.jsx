@@ -18,6 +18,17 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import Loader from "components/Loader";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "components/ui/alert-dialog";
 
 export default function UserDashboard() {
   const dispatch = useDispatch();
@@ -143,13 +154,37 @@ export default function UserDashboard() {
           </h1>
 
           <div className="flex items-center space-x-4">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>LOGOUT</span>
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>LOGOUT</span>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
+                    Confirm Logout
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                    Are you sure you want to log out of your account?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-6 flex flex-row gap-3 justify-end">
+                  <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleLogout}
+                    className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
+                  >
+                    Yes, Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <button
               className="block md:hidden p-2 bg-[#BFF000] border-2 border-[#1a1a1a]"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}

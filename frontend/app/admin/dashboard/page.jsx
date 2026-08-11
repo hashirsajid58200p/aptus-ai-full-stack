@@ -291,8 +291,12 @@ export default function AdminDashboardPage() {
             </Link>
 
             <button
-              onClick={handleLogout}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF4D00] text-white font-extrabold border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#e04400] transition-colors"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to log out of the admin panel?")) {
+                  handleLogout();
+                }
+              }}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF4D00] text-white font-extrabold border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#e04400] transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>

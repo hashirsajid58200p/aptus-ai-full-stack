@@ -8,6 +8,7 @@ import {
   Trash2,
   Plus,
   Pencil,
+  RotateCw,
 } from "lucide-react";
 import { generateJSONContent } from "@/lib/groq";
 
@@ -50,6 +51,54 @@ import {
 import toast from "react-hot-toast";
 import { AiFillThunderbolt } from "react-icons/ai";
 import Loader from "../Loader";
+
+const getRandomFallbackQuestions = (category, description) => {
+  const pool = [
+    {
+      question: `What primary products or services does your business offer?`,
+      answer: `We specialize in ${category || "our domain"} solutions tailored to customer requirements.`,
+    },
+    {
+      question: `What are your standard business operating hours?`,
+      answer: `We are open Monday through Friday, 9:00 AM to 6:00 PM.`,
+    },
+    {
+      question: `How can customers reach customer support?`,
+      answer: `You can reach our dedicated support team via our official website contact channels or email.`,
+    },
+    {
+      question: `Do you offer custom pricing packages or consultations?`,
+      answer: `Yes, we offer custom pricing depending on your specific requirements. Contact us for a quote.`,
+    },
+    {
+      question: `What makes your business unique?`,
+      answer: description || `We focus on delivering high-quality, customer-centric services with fast turnaround times.`,
+    },
+    {
+      question: `What is your standard cancellation or return policy?`,
+      answer: `We offer a customer-friendly return policy. Please check our terms for detailed steps.`,
+    },
+    {
+      question: `How fast is the setup or onboarding process?`,
+      answer: `Onboarding is quick and seamless, taking only a few simple steps to get started.`,
+    },
+    {
+      question: `Do you provide post-launch support and maintenance?`,
+      answer: `Yes, we provide ongoing maintenance and technical assistance to all active clients.`,
+    },
+    {
+      question: `Are demo or trial options available?`,
+      answer: `Yes, you can test out interactive features or request a walkthrough with our support team.`,
+    },
+    {
+      question: `Where is your company located?`,
+      answer: `We operate online with global accessibility and remote support for worldwide clients.`,
+    }
+  ];
+
+  const shuffled = [...pool].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 5);
+};
 
 const BusinessDetails = () => {
   const dispatch = useDispatch();
@@ -196,63 +245,34 @@ const BusinessDetails = () => {
 
   const handleGenerateAI = async () => {
     setLoading(true);
+    setGeneratedQuestions([]);
+    const randomSeed = Math.floor(Math.random() * 100000);
     const businessDetails = `
       Business Name: ${user?.bussinessName || "N/A"},
       Business Category: ${user?.bussinessCategory || "N/A"},
       Business Description: ${user?.bussinessDescription || "N/A"}
     `;
 
-    const prompt = `Generate exactly 5 AI questions for the following business details from user perspective (end users) which a user can ask from a chatbot about the business: ${businessDetails}.
-
-Please return an array of exactly 5 questions in JSON format. Each question should be an object with "question" and "answer" properties. Format: [{"question": "What are your business hours?", "answer": "We are open Monday to Friday 9 AM to 6 PM"}]`;
+    const prompt = `Generate exactly 5 NEW, unique, and creative questions for the following business from customer perspective (Variation Seed: ${randomSeed}): ${businessDetails}.
+Make sure to generate fresh questions on diverse topics (e.g. pricing, support, features, policies, workflow).
+Please return an array of exactly 5 questions in JSON format. Each question should be an object with "question" and "answer" properties. Format: [{"question": "...", "answer": "..."}]`;
 
     try {
       const questions = await generateJSONContent(prompt);
 
-      if (Array.isArray(questions)) {
+      if (Array.isArray(questions) && questions.length > 0) {
         setGeneratedQuestions(questions);
-      } else if (questions?.content && Array.isArray(questions.content)) {
+      } else if (questions?.content && Array.isArray(questions.content) && questions.content.length > 0) {
         setGeneratedQuestions(questions.content);
       } else {
-        setGeneratedQuestions([
-          {
-            question: "What services do you offer?",
-            answer: `We specialize in ${user?.bussinessCategory || "various services"} and provide comprehensive solutions.`,
-          },
-          {
-            question: "How can I contact support?",
-            answer: "You can reach out to our team through our official support channel.",
-          },
-          {
-            question: "What makes your business unique?",
-            answer: user?.bussinessDescription || "We are committed to providing top-quality services.",
-          },
-          {
-            question: "What are your business hours?",
-            answer: "We are typically open Monday to Friday, 9 AM to 6 PM.",
-          },
-          {
-            question: "Do you offer custom pricing or packages?",
-            answer: "Please reach out to our team to discuss custom pricing packages suited to your needs.",
-          },
-        ]);
+        setGeneratedQuestions(getRandomFallbackQuestions(user?.bussinessCategory, user?.bussinessDescription));
       }
     } catch (error) {
       console.error("Error generating AI questions:", error);
-      toast.error("An error occurred while generating AI questions.");
-      setGeneratedQuestions([
-        {
-          question: "What services do you offer?",
-          answer: `We specialize in ${user?.bussinessCategory || "various services"} and provide comprehensive solutions.`,
-        },
-        {
-          question: "How can I contact support?",
-          answer: "You can reach out to our team through our official support channel.",
-        },
-      ]);
+      setGeneratedQuestions(getRandomFallbackQuestions(user?.bussinessCategory, user?.bussinessDescription));
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handlePickQuestion = (questionObj) => {
@@ -309,7 +329,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
     dispatch,
   ]);
 
-  if (loading) {
+  if (loading && generatedQuestions.length === 0 && qaList.length === 0) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />
@@ -320,43 +340,49 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen text-gray-700">
       <div className="bg-white w-full max-w-4xl rounded-xl shadow-xl relative z-10 transform transition-transform">
-        <CardHeader className="flex justify-between p-6">
-          <CardTitle className="text-2xl font-semibold text-black-500">
-            Company Details
-          </CardTitle>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button className="p-2 text-black hover:text-gray-400 transition-all">
-                <MdInfoOutline className="text-2xl" />
-              </button>
-            </AlertDialogTrigger>
+        <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-2xl font-bold text-gray-900 font-syne uppercase">
+              Company Details
+            </CardTitle>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  type="button"
+                  className="p-1 text-[#1a1a1a] hover:text-[#FF4D00] transition-colors focus:outline-none"
+                  title="How to provide business details"
+                >
+                  <MdInfoOutline className="text-2xl" />
+                </button>
+              </AlertDialogTrigger>
 
-            <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
-              <AlertDialogTitle className="text-lg font-semibold mb-2">
-                How to Provide Business Details
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-gray-600">
-                <p className="mb-4">
-                  To help us train our models effectively, please provide
-                  detailed answers to the following:
-                </p>
-                <ul className="list-disc pl-5 mb-4">
-                  <li>
-                    Enter business-related questions in the "Question" field.
-                  </li>
-                  <li>Provide comprehensive answers in the "Answer" field.</li>
-                </ul>
-              </AlertDialogDescription>
-              <div className="mt-4 flex justify-end space-x-2">
-                <AlertDialogCancel className="btn-neo px-4 py-2 text-xs">
-                  Close
-                </AlertDialogCancel>
-              </div>
-            </AlertDialogContent>
-          </AlertDialog>
+              <AlertDialogContent className="bg-white text-gray-900 border rounded-xl p-6 shadow-2xl">
+                <AlertDialogTitle className="text-lg font-semibold mb-2">
+                  How to Provide Business Details
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600">
+                  <p className="mb-4">
+                    To help us train our models effectively, please provide
+                    detailed answers to the following:
+                  </p>
+                  <ul className="list-disc pl-5 mb-4 space-y-1">
+                    <li>
+                      Enter business-related questions in the "Company Related Question" field.
+                    </li>
+                    <li>Provide comprehensive answers in the "Answer" field.</li>
+                  </ul>
+                </AlertDialogDescription>
+                <div className="mt-4 flex justify-end space-x-2">
+                  <AlertDialogCancel className="btn-neo px-4 py-2 text-xs">
+                    Close
+                  </AlertDialogCancel>
+                </div>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-6">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Dynamic list of Questions and Answers */}
             <div className="space-y-6">
@@ -367,7 +393,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                       <button
                         type="button"
                         onClick={() => handleRemoveField(item.id)}
-                        className="text-red-500 hover:text-red-700 text-sm flex items-center gap-1 transition"
+                        className="text-red-500 hover:text-red-700 text-sm flex items-center gap-1 transition font-bold"
                         title="Remove Question"
                       >
                         <Trash2 className="w-4 h-4" /> Remove
@@ -378,7 +404,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   <div>
                     <label
                       htmlFor={`question-${item.id}`}
-                      className="block text-sm font-medium"
+                      className="block text-sm font-semibold text-gray-800"
                     >
                       Company Related Question
                     </label>
@@ -406,7 +432,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                   <div>
                     <label
                       htmlFor={`answer-${item.id}`}
-                      className="block text-sm font-medium"
+                      className="block text-sm font-semibold text-gray-800"
                     >
                       Answer
                     </label>
@@ -451,49 +477,64 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
             <Button
               type="button"
               onClick={handleGenerateAI}
-              className="w-full btn-neo-secondary py-3 text-base flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full btn-neo-secondary py-3 text-base flex items-center justify-center gap-2 font-extrabold"
             >
-              <AiFillThunderbolt className="text-xl" /> Generate with AI
+              <AiFillThunderbolt className="text-xl text-[#FF4D00]" />
+              {loading ? "Generating Questions..." : "Generate with AI"}
             </Button>
 
             {loading && (
               <div className="flex justify-center my-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-neon"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#FF4D00]"></div>
               </div>
             )}
 
             {/* Display AI-generated Questions */}
             {generatedQuestions.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">
-                  AI-Generated Questions
-                </h3>
-                <div className="space-y-2">
+              <div className="mt-6 p-4 border-2 border-[#1a1a1a] bg-[#FDF9F0] rounded-xl shadow-neo-sm">
+                <div className="flex items-center justify-between mb-4 border-b-2 border-[#1a1a1a] pb-3">
+                  <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] flex items-center gap-2">
+                    <AiFillThunderbolt className="text-[#FF4D00] text-xl" />
+                    AI-Generated Questions
+                  </h3>
+                  <Button
+                    type="button"
+                    onClick={handleGenerateAI}
+                    disabled={loading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold hover:bg-[#a6d000] transition-colors"
+                    title="Generate new questions"
+                  >
+                    <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                    <span>Refresh</span>
+                  </Button>
+                </div>
+                <div className="space-y-3">
                   {generatedQuestions.map((q, index) => (
                     <div
                       key={index}
-                      className="bg-white shadow-xl p-4 rounded-lg border"
+                      className="bg-white border-2 border-[#1a1a1a] p-4 rounded-lg shadow-neo-sm"
                     >
                       <div
-                        className="flex justify-between cursor-pointer"
+                        className="flex justify-between items-center cursor-pointer"
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <h4 className="font-semibold">{q.question}</h4>
-                        <span className="text-gray-400">
+                        <h4 className="font-extrabold text-sm text-[#1a1a1a]">{q.question}</h4>
+                        <span className="text-[#FF4D00] font-black text-sm">
                           {selectedQuestionIndex === index ? "▲" : "▼"}
                         </span>
                       </div>
                       {selectedQuestionIndex === index && (
-                        <div className="mt-2 text-gray-600">
+                        <div className="mt-3 pt-2 border-t border-gray-200 text-xs font-medium text-gray-700 leading-relaxed">
                           {q.answer}
                         </div>
                       )}
                       <Button
                         type="button"
                         onClick={() => handlePickQuestion(q)}
-                        className="mt-2 btn-neo-primary px-3 py-1 text-xs"
+                        className="mt-3 btn-neo-primary px-3 py-1 text-xs font-extrabold"
                       >
-                        Select
+                        Select Question
                       </Button>
                     </div>
                   ))}

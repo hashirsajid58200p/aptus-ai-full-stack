@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { generateNewToken, loadUser, clearState } from '@/slices/userSlice';
 import toast from 'react-hot-toast';
-import { Copy } from 'lucide-react';
+import { Copy, ShieldAlert } from 'lucide-react';
 
 const Token = () => {
   const dispatch = useDispatch();
@@ -63,9 +63,10 @@ const Token = () => {
           <Copy className="w-4 h-4" />
         </button>
       </div>
-      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-6">
-        ⚠️ Keep this token secret. Do not share it publicly.
-      </p>
+      <div className="flex items-center gap-2 p-3 bg-amber-50 border-2 border-[#1a1a1a] rounded-lg text-amber-900 text-xs font-extrabold uppercase tracking-wide mb-6 shadow-neo-sm">
+        <ShieldAlert className="w-5 h-5 text-[#FF4D00] shrink-0" />
+        <span>Keep this token secret. Do not share it publicly.</span>
+      </div>
       <button
         className="btn-neo-primary px-6 py-3 text-sm font-extrabold"
         onClick={handleGenerateNewToken}
