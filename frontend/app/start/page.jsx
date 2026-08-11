@@ -120,13 +120,13 @@ export default function AuthForm() {
 
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h2 className="font-syne text-xl sm:text-2xl font-extrabold text-[#FF4D00] uppercase tracking-wide mb-2">
+          <h2 className="font-syne text-[22px] font-black text-[#FF4D00] uppercase tracking-wide mb-1.5">
             {isSignUp ? "WELCOME TO" : "SIGN IN TO"}
           </h2>
           <img
             src="/aptus-logo.png"
             alt="Aptus Logo"
-            className="h-12 sm:h-14 w-auto mx-auto cursor-pointer object-contain mb-3"
+            className="h-[68px] w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
           <p className="text-sm font-semibold text-gray-700">
