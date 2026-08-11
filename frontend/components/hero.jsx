@@ -54,7 +54,7 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] uppercase leading-none tracking-tight"
+            className="font-syne text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight"
           >
             INSTALL PACKAGE.{" "}
             <motion.span
