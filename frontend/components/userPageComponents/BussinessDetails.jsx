@@ -9,6 +9,7 @@ import {
   Plus,
   Pencil,
   RotateCw,
+  Info,
 } from "lucide-react";
 import { generateJSONContent } from "@/lib/groq";
 
@@ -623,6 +624,14 @@ Strict Instructions:
                     <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                     <span>Refresh</span>
                   </Button>
+                </div>
+
+                {/* AI Questions Warning / Template Note Disclaimer */}
+                <div className="p-3 bg-amber-50 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-medium text-gray-800 leading-relaxed flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-[#FF4D00] shrink-0 mt-0.5" />
+                  <p>
+                    <strong>Note:</strong> These questions are AI-generated to help test your chatbot. They act as customizable templates — feel free to edit and adjust questions or answers according to your business details as needed.
+                  </p>
                 </div>
                 <div className="space-y-3">
                   {generatedQuestions.map((q, index) => (
