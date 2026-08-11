@@ -13,7 +13,7 @@ export default function About() {
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="flex-1 w-full max-w-[490px] mx-auto"
+          className="flex-1 w-full max-w-[550px] mx-auto"
         >
           <div className="bg-[#2D31FA] p-3 border-3 border-[#1a1a1a] shadow-neo-lg transform -rotate-1">
             <div className="bg-white border-2 border-[#1a1a1a] p-2">
@@ -43,10 +43,10 @@ export default function About() {
             <span className="text-[#1a1a1a]">➔</span>
             <span className="text-[#2D31FA]">INSTALL</span>
             <span className="text-[#1a1a1a]">➔</span>
-            <span className="text-[#16A34A]">EMBED</span>
+            <span className="text-[#BFF000] [text-shadow:_1.5px_1.5px_0_#1a1a1a]">EMBED</span>
           </h2>
 
-          <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[575px]">
+          <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[650px]">
             Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-ai-chatbot-widget</code> handles the chat UI — zero servers to configure or host.
           </p>
 
