@@ -14,7 +14,7 @@ export default function About() {
   };
 
   return (
-    <div className="bg-white border-b-3 border-[#1a1a1a] py-10 md:py-14">
+    <div className="bg-white border-b-3 border-[#1a1a1a] min-h-[calc(100vh-83px)] flex items-center py-6 md:py-8">
       <section className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
         {/* Left Side: Graphic Block */}
         <motion.div
