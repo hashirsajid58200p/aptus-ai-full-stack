@@ -346,6 +346,16 @@ const BusinessDetails = () => {
   const handleGenerateAI = async () => {
     setLoading(true);
     setGeneratedQuestions([]);
+
+    const topicPools = [
+      "1. Customer Onboarding & Setup, 2. Technical Support & SLAs, 3. Security & Data Privacy, 4. Multi-language & Widget Integration, 5. Refunds & Subscription Policies",
+      "1. Unique Product Benefits, 2. Mobile Compatibility, 3. Custom Branding & White-labeling, 4. Maintenance & Uptime, 5. Account Management",
+      "1. Pricing & Consultation, 2. Team Member Seats & Collaboration, 3. API & Webhooks, 4. Data Export & Backups, 5. Response Speed",
+      "1. Technical Requirements, 2. Analytics & Performance Metrics, 3. Custom Knowledge Training, 4. User Data Security (GDPR), 5. Common Troubleshooting",
+      "1. Enterprise Features, 2. High-volume Scalability, 3. Automated Workflows, 4. Migration Assistance, 5. Customer Service Channels"
+    ];
+
+    const chosenTopics = topicPools[Math.floor(Math.random() * topicPools.length)];
     const randomSeed = Math.floor(Math.random() * 1000000);
     const businessDetails = `
       Business Name: ${user?.bussinessName || "N/A"},
@@ -353,9 +363,13 @@ const BusinessDetails = () => {
       Business Description: ${user?.bussinessDescription || "N/A"}
     `;
 
-    const prompt = `Generate exactly 5 NEW, unique, and creative questions for the following business from customer perspective (Variation Seed: ${randomSeed}): ${businessDetails}.
-Make sure to generate fresh questions on diverse topics (e.g. pricing, support, features, policies, workflow).
-Please return an array of exactly 5 questions in JSON format. Each question should be an object with "question" and "answer" properties. Format: [{"question": "...", "answer": "..."}]`;
+    const prompt = `Generate exactly 5 UNIQUE, CREATIVE, and DIVERSE questions with answers for this business from a customer perspective.
+Target Topics for this batch (Batch Seed ${randomSeed}): ${chosenTopics}.
+Business Info: ${businessDetails}.
+Strict Instructions:
+- Formulate 5 questions corresponding to the 5 target topics provided above.
+- Make each question distinct, fresh, and relevant to the target topic.
+- Format: Return ONLY a valid JSON array of 5 objects: [{"question": "...", "answer": "..."}]`;
 
     try {
       const questions = await generateJSONContent(prompt);
@@ -786,25 +800,16 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {user?.bussinessDetails?.map((detail, index) => (
-                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm bg-white overflow-hidden flex flex-col justify-between">
-                  <div
-                    onClick={() => {
-                      const panel = document.getElementById(`panel-${index}`);
-                      if (panel) panel.classList.toggle("hidden");
-                    }}
-                    className="flex px-4 py-3 bg-white text-[#1a1a1a] hover:bg-[#FDF9F0] cursor-pointer items-center justify-between border-b-2 border-[#1a1a1a]"
-                  >
-                    <button className="w-full text-left font-bold text-xs sm:text-sm text-[#1a1a1a] line-clamp-1 pr-2">
+                <div key={detail._id || index} className="border-3 border-[#1a1a1a] shadow-neo-sm bg-white flex flex-col justify-between">
+                  <div className="flex px-4 py-3 bg-white text-[#1a1a1a] items-center justify-between border-b-2 border-[#1a1a1a]">
+                    <div className="font-bold text-xs sm:text-sm text-[#1a1a1a] pr-2">
                       {detail.question}
-                    </button>
-                    <span className="flex gap-1.5 items-center shrink-0">
+                    </div>
+                    <div className="flex gap-1.5 items-center shrink-0">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenEdit(detail);
-                        }}
-                        className="p-1 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                        onClick={() => handleOpenEdit(detail)}
+                        className="p-1 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                         title="Edit"
                       >
                         <Pencil className="w-3.5 h-3.5" />
@@ -814,8 +819,7 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                         <AlertDialogTrigger asChild>
                           <button
                             type="button"
-                            onClick={(e) => e.stopPropagation()}
-                            className="p-1 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all"
+                            className="p-1 bg-red-600 border-2 border-[#1a1a1a] text-white shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -841,13 +845,9 @@ Please return an array of exactly 5 questions in JSON format. Each question shou
                           </div>
                         </AlertDialogContent>
                       </AlertDialog>
-                      <ChevronDown className="w-4 h-4 text-[#1a1a1a] ml-0.5" />
-                    </span>
+                    </div>
                   </div>
-                  <div
-                    id={`panel-${index}`}
-                    className="px-4 py-3 bg-[#FDF9F0] text-gray-700 font-normal text-xs border-t-2 border-[#1a1a1a] leading-relaxed"
-                  >
+                  <div className="px-4 py-3 bg-[#FDF9F0] text-gray-700 font-normal text-xs leading-relaxed flex-1">
                     <p>{detail.answer}</p>
                   </div>
                 </div>
