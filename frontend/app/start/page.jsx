@@ -120,7 +120,7 @@ export default function AuthForm() {
 
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h2 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#FF4D00] uppercase tracking-wider mb-2">
+          <h2 className="font-syne text-lg sm:text-xl font-bold text-[#FF4D00] uppercase tracking-widest mb-1.5">
             {isSignUp ? "WELCOME TO" : "SIGN IN TO"}
           </h2>
           <img
