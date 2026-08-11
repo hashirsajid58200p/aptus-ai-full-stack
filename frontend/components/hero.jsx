@@ -27,7 +27,7 @@ export default function Hero() {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="bg-[#FDF9F0] border-b-3 border-[#1a1a1a] py-[64px] md:py-[88px] relative overflow-hidden"
+      className="bg-[#FDF9F0] border-b-3 border-[#1a1a1a] min-h-[calc(100vh-80px)] flex items-center py-12 md:py-16 relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 relative z-10">
         
