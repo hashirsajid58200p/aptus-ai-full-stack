@@ -54,7 +54,7 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-xl sm:text-3xl md:text-4xl lg:text-[36px] xl:text-[42px] font-extrabold text-[#1a1a1a] uppercase leading-snug tracking-tight"
+            className="font-syne text-lg sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold text-[#1a1a1a] uppercase leading-snug tracking-tight"
           >
             <span className="block whitespace-nowrap">INSTALL PACKAGE.</span>
             <motion.span
@@ -92,7 +92,7 @@ export default function Hero() {
 
         {/* Right Side with Hero Illustration */}
         <motion.div variants={fadeInUp} className="lg:w-1/2 flex justify-center relative">
-          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-xl">
+          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-lg">
             {/* Sticker Badge Decorative Accent */}
             <motion.div
               initial={{ rotate: -8, scale: 0.9 }}
