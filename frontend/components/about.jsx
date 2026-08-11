@@ -1,19 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Terminal, CheckCircle2, ArrowRight } from "lucide-react";
+import { Terminal, CheckCircle2 } from "lucide-react";
 
 export default function About() {
   return (
     <div id="how-it-works" className="py-16 bg-white border-b-3 border-[#1a1a1a]">
-      <section className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
+      <section className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
         {/* Left Side: Graphic Block */}
         <motion.div
           initial={{ x: -40, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="flex-1 w-full"
+          className="flex-1 w-full max-w-[490px] mx-auto"
         >
           <div className="bg-[#2D31FA] p-3 border-3 border-[#1a1a1a] shadow-neo-lg transform -rotate-1">
             <div className="bg-white border-2 border-[#1a1a1a] p-2">
@@ -32,18 +32,18 @@ export default function About() {
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="flex-1 space-y-6"
+          className="flex-1 space-y-4"
         >
-          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs px-3 py-1 uppercase tracking-widest inline-block">
+          <span className="inline-flex items-center gap-2 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm px-[14px] py-[6px] text-[13px] font-black uppercase tracking-wider">
             3-Step Integration
           </span>
 
-          <h2 className="font-syne text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-            TRAIN ON DASHBOARD. <br />
-            <span className="text-[#2D31FA]">PASTE ONE LINE.</span>
+          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight space-y-[4px]">
+            <span className="block whitespace-nowrap">TRAIN ON DASHBOARD.</span>
+            <span className="text-[#2D31FA] block whitespace-nowrap">PASTE ONE LINE.</span>
           </h2>
 
-          <p className="text-lg text-[#1a1a1a] font-medium leading-relaxed">
+          <p className="text-[17px] md:text-[19px] text-[#1a1a1a] font-medium leading-relaxed max-w-[575px]">
             Aptus AI lets any business train a custom AI assistant on their own business details and FAQs in seconds. The dashboard manages the AI intelligence while the lightweight <code className="bg-[#FDF9F0] border border-[#1a1a1a] px-2 py-0.5 font-mono text-sm font-bold">aptus-ai-chatbot-widget</code> handles the chat UI — zero servers to configure or host.
           </p>
 
@@ -75,16 +75,6 @@ export default function About() {
                 <p className="text-sm font-medium text-gray-700">Paste your API token into the component and your chatbot is instantly live!</p>
               </div>
             </div>
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={() => window.location.href = "/start"}
-              className="btn-neo-primary px-8 py-3 rounded-none text-base flex items-center gap-2"
-            >
-              CREATE YOUR CHATBOT NOW
-              <ArrowRight className="w-5 h-5" />
-            </button>
           </div>
         </motion.div>
       </section>
