@@ -29,7 +29,7 @@ export default function Hero() {
       animate="visible"
       className="bg-[#FDF9F0] border-b-3 border-[#1a1a1a] min-h-[calc(100vh-80px)] flex items-center py-12 md:py-16 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-20 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-28 xl:gap-32 relative z-10">
         
         {/* Left Side */}
         <motion.div variants={staggerContainer} className="lg:w-1/2 space-y-4">
@@ -92,7 +92,7 @@ export default function Hero() {
 
         {/* Right Side with Hero Illustration */}
         <motion.div variants={fadeInUp} className="lg:w-1/2 flex justify-center relative">
-          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-[520px]">
+          <div className="relative p-3 bg-white border-3 border-[#1a1a1a] shadow-neo-lg max-w-[480px]">
             {/* Sticker Badge Decorative Accent */}
             <motion.div
               initial={{ rotate: -8, scale: 0.9 }}
