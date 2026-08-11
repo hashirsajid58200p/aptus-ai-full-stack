@@ -32,7 +32,7 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 relative z-10">
         
         {/* Left Side */}
-        <motion.div variants={staggerContainer} className="lg:w-1/2 space-y-6">
+        <motion.div variants={staggerContainer} className="lg:w-1/2 space-y-4">
           <motion.div
             variants={fadeInUp}
             className="inline-flex items-center gap-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm px-[14px] py-[6px] text-[13px] font-black uppercase tracking-wider text-[#1a1a1a]"
@@ -54,7 +54,7 @@ export default function Hero() {
 
           <motion.h1
             variants={fadeInUp}
-            className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-normal tracking-tight space-y-[10px]"
+            className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight space-y-[4px]"
           >
             <span className="block whitespace-nowrap">INSTALL PACKAGE.</span>
             <motion.span
