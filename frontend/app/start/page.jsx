@@ -11,12 +11,12 @@ import {
   User,
   Lock,
   ChevronDown,
+  Mail,
 } from "lucide-react";
 import { signUp, login, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { MdEmail } from "react-icons/md";
 
 export default function AuthForm() {
   const dispatch = useDispatch();
@@ -25,6 +25,7 @@ export default function AuthForm() {
     (state) => state.user
   );
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -190,7 +191,7 @@ export default function AuthForm() {
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MdEmail className="h-5 w-5 text-gray-500" />
+                    <Mail className="h-5 w-5 text-gray-500" />
                   </div>
                 </div>
               </div>
