@@ -251,17 +251,17 @@ export default function AdminDashboardPage() {
       >
         <div>
           {/* Logo & Admin Branding */}
-          <div className="flex items-center justify-between py-3 border-b-3 border-[#1a1a1a] mb-6">
+          <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
+            <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
+              ADMIN
+            </span>
             <Link href="/" className="flex items-center">
               <img
                 src="/aptus-logo.png"
                 alt="Aptus AI"
-                className="h-9 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </Link>
-            <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-black uppercase px-2 py-0.5 shadow-neo-sm font-syne shrink-0">
-              ADMIN
-            </span>
           </div>
 
           {/* Navigation Tabs */}
@@ -290,17 +290,17 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Sidebar Footer - Bottom Left Logout */}
-        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a]">
+        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a] flex justify-start">
           <button
             onClick={() => {
               if (window.confirm("Are you sure you want to log out of the admin panel?")) {
                 handleLogout();
               }
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer font-space"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+            <LogOut className="h-4 w-4" />
+            <span>LOGOUT</span>
           </button>
         </div>
       </aside>
