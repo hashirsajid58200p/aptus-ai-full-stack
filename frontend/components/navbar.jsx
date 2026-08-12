@@ -61,7 +61,7 @@ export default function Navbar() {
 
           {/* Desktop Buttons */}
           <div className="hidden sm:flex sm:items-center gap-3">
-            {loading ? (
+            {loading && !user ? (
               <div className="w-28 h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
             ) : user ? (
               <Button
@@ -120,7 +120,7 @@ export default function Navbar() {
             </a>
 
             <div className="pt-2">
-              {loading ? (
+              {loading && !user ? (
                 <div className="w-full h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
               ) : user ? (
                 <Button

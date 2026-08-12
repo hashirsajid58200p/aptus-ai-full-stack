@@ -2,12 +2,24 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import baseurl from "../store/baseurl";
 
+const getInitialUser = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const storedUser = localStorage.getItem("aptus_user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+};
+
 const initialState = {
   error: "",
   loading: false,
   isUserRegistered: false,
   isUserLogged: false,
-  user: null,
+  user: getInitialUser(),
   isTokenGenerated: false,
   isBusinessDetailsAdded: false,
   isBusinessDetailsUpdated: false,
@@ -192,10 +204,17 @@ const userReducer = createSlice({
       state.loading = false;
       state.user = action.payload;
       state.isInitialized = true;
+      if (typeof window !== "undefined" && action.payload) {
+        localStorage.setItem("aptus_user", JSON.stringify(action.payload));
+      }
     });
     builder.addCase(loadUser.rejected, (state) => {
       state.loading = false;
       state.isInitialized = true;
+      state.user = null;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("aptus_user");
+      }
     });
 
     // generate new token
@@ -260,7 +279,11 @@ const userReducer = createSlice({
     });
     builder.addCase(logout.fulfilled, (state) => {
       state.loading = false;
+      state.user = null;
       state.isLoggedOut = true;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("aptus_user");
+      }
     });
     builder.addCase(logout.rejected, (state) => {
       state.loading = false;

@@ -50,21 +50,21 @@ export default function AdminLoginPage() {
       {/* Top Navbar Back Button */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2.5 bg-white text-[#1a1a1a] font-extrabold border-3 border-[#1a1a1a] rounded-xl shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+        className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2.5 bg-white text-[#1a1a1a] font-extrabold border-3 border-[#1a1a1a] rounded-none shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
       >
         <ArrowLeft className="w-5 h-5" />
         <span className="uppercase text-xs tracking-wider font-syne">Back to Home</span>
       </button>
 
       {/* Main Neo-Brutalist Card */}
-      <div className="max-w-md w-full bg-white border-3 border-[#1a1a1a] rounded-2xl p-8 shadow-neo-lg relative overflow-hidden">
+      <div className="max-w-md w-full bg-white border-3 border-[#1a1a1a] rounded-none p-8 shadow-neo-lg relative overflow-hidden">
         {/* Top Orange Header Banner */}
         <div className="bg-[#FF4D00] border-b-3 border-[#1a1a1a] -mx-8 -mt-8 p-6 text-center text-white mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-2xl shadow-neo mb-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] rounded-none shadow-neo mb-3">
             <ShieldCheck className="w-8 h-8 text-[#FF4D00]" />
           </div>
           <h1 className="text-2xl font-extrabold font-syne uppercase tracking-tight text-white">
-            APTUS ADMIN <span className="font-playfair italic text-[#FF4D00] bg-white px-2.5 py-0.5 border-2 border-[#1a1a1a] rounded-lg ml-1 normal-case font-bold">Portal</span>
+            APTUS ADMIN <span className="font-playfair italic text-[#FF4D00] bg-white px-2.5 py-0.5 border-2 border-[#1a1a1a] rounded-none ml-1 normal-case font-bold">Portal</span>
           </h1>
           <p className="text-xs font-extrabold text-white/90 uppercase tracking-wider mt-1.5 font-space">
             Platform Owner Control & Analytics
@@ -84,7 +84,7 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@aptus.com"
                 required
-                className="w-full bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo transition-all"
+                className="w-full bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-none py-3 pl-11 pr-4 text-sm font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo transition-all"
               />
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 required
-                className="w-full bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo transition-all"
+                className="w-full bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-none py-3 pl-11 pr-4 text-sm font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo transition-all"
               />
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-6 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne uppercase tracking-wider text-sm rounded-xl border-3 border-[#1a1a1a] shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-4 cursor-pointer"
+            className="w-full py-3.5 px-6 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne uppercase tracking-wider text-sm rounded-none border-3 border-[#1a1a1a] shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-4 cursor-pointer"
           >
             {loading ? "AUTHENTICATING..." : "LOG IN TO ADMIN PANEL"}
           </button>

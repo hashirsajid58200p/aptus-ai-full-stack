@@ -206,7 +206,7 @@ export default function AdminDashboardPage() {
       {/* Mobile Header Bar */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b-3 border-[#1a1a1a]">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-lg flex items-center justify-center shadow-neo-sm">
+          <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none flex items-center justify-center shadow-neo-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <span className="font-syne font-extrabold uppercase text-sm tracking-tight">
@@ -216,7 +216,7 @@ export default function AdminDashboardPage() {
 
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 bg-white border-2 border-[#1a1a1a] rounded-lg shadow-neo-sm"
+          className="p-2 bg-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -231,7 +231,7 @@ export default function AdminDashboardPage() {
         <div>
           {/* Logo & Admin Branding */}
           <div className="flex items-center gap-3 py-3 border-b-3 border-[#1a1a1a] mb-6">
-            <div className="w-11 h-11 bg-[#FF4D00] text-white border-3 border-[#1a1a1a] rounded-xl shadow-neo flex items-center justify-center">
+            <div className="w-11 h-11 bg-[#FF4D00] text-white border-3 border-[#1a1a1a] rounded-none shadow-neo flex items-center justify-center">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
@@ -255,7 +255,7 @@ export default function AdminDashboardPage() {
                     setActiveTab(tab.id);
                     setIsSidebarOpen(false);
                   }}
-                  className={`flex items-center w-full text-left py-3 px-4 uppercase text-xs font-extrabold border-2 border-[#1a1a1a] rounded-xl transition-all duration-150 font-space ${
+                  className={`flex items-center w-full text-left py-3 px-4 uppercase text-xs font-extrabold border-2 border-[#1a1a1a] rounded-none transition-all duration-150 font-space ${
                     isActive
                       ? "bg-[#FF4D00] text-white shadow-neo-sm translate-x-[1px]"
                       : "bg-white hover:bg-[#BFF000] text-[#1a1a1a]"
@@ -271,8 +271,8 @@ export default function AdminDashboardPage() {
 
         {/* Sidebar Footer */}
         <div className="pt-6 border-t-3 border-[#1a1a1a] space-y-3 mt-6">
-          <div className="bg-[#fdf9f0] p-3 rounded-xl border-2 border-[#1a1a1a] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#2D31FA] text-white font-extrabold flex items-center justify-center text-xs border-2 border-[#1a1a1a]">
+          <div className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-none bg-[#2D31FA] text-white font-extrabold flex items-center justify-center text-xs border-2 border-[#1a1a1a]">
               A
             </div>
             <div className="overflow-hidden text-xs">
@@ -284,7 +284,7 @@ export default function AdminDashboardPage() {
           <div className="flex gap-2">
             <Link
               href="/"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-white text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#BFF000] transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-white text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#BFF000] transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Site</span>
@@ -296,7 +296,7 @@ export default function AdminDashboardPage() {
                   handleLogout();
                 }
               }}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF4D00] text-white font-extrabold border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#e04400] transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF4D00] text-white font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#e04400] transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -326,7 +326,7 @@ export default function AdminDashboardPage() {
                   fetchBusinesses(page);
                   toast.success("Metrics updated!");
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer font-space"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer font-space"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Refresh Data</span>
@@ -342,12 +342,12 @@ export default function AdminDashboardPage() {
             <div className="space-y-8">
               {/* Stat Cards Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-5 shadow-neo">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-5 shadow-neo">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold text-[#1a1a1a] uppercase tracking-wider font-space">
                       Total Businesses
                     </span>
-                    <div className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm">
+                    <div className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm">
                       <Building2 className="w-5 h-5" />
                     </div>
                   </div>
@@ -359,12 +359,12 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
 
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-5 shadow-neo">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-5 shadow-neo">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold text-[#1a1a1a] uppercase tracking-wider font-space">
                       Chat Sessions
                     </span>
-                    <div className="p-2.5 bg-[#2D31FA] text-white border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm">
+                    <div className="p-2.5 bg-[#2D31FA] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm">
                       <Users className="w-5 h-5" />
                     </div>
                   </div>
@@ -376,12 +376,12 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
 
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-5 shadow-neo">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-5 shadow-neo">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold text-[#1a1a1a] uppercase tracking-wider font-space">
                       Total AI Messages
                     </span>
-                    <div className="p-2.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm">
+                    <div className="p-2.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none shadow-neo-sm">
                       <MessageSquare className="w-5 h-5" />
                     </div>
                   </div>
@@ -393,12 +393,12 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
 
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-5 shadow-neo">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-5 shadow-neo">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold text-[#1a1a1a] uppercase tracking-wider font-space">
                       New Signups (7d)
                     </span>
-                    <div className="p-2.5 bg-[#1a1a1a] text-white border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm">
+                    <div className="p-2.5 bg-[#1a1a1a] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm">
                       <TrendingUp className="w-5 h-5" />
                     </div>
                   </div>
@@ -414,7 +414,7 @@ export default function AdminDashboardPage() {
               {/* Visual Graph & Activity Summary */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Acquisition Growth Chart SVG */}
-                <div className="lg:col-span-2 bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-4">
+                <div className="lg:col-span-2 bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-4">
                   <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
                     <div>
                       <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
@@ -424,7 +424,7 @@ export default function AdminDashboardPage() {
                         Monthly registration volume visualizer
                       </p>
                     </div>
-                    <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-lg text-[10px] font-extrabold uppercase">
+                    <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold uppercase">
                       Active
                     </span>
                   </div>
@@ -445,7 +445,7 @@ export default function AdminDashboardPage() {
                         <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
                           <div
                             style={{ height: `${item.val}%` }}
-                            className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-t-lg transition-all duration-300 ${
+                            className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
                               idx === 7 ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
                             } shadow-neo-sm group-hover:scale-105`}
                           />
@@ -463,7 +463,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Platform Health Quick Card */}
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-5 flex flex-col justify-between">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-5 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                       SYSTEM <span className="font-playfair italic text-[#2D31FA] normal-case">Status</span>
@@ -474,29 +474,29 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-xl text-xs font-bold">
+                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
                       <span className="flex items-center gap-2 font-space">
                         <Server className="w-4 h-4 text-[#FF4D00]" /> Express API Gateway
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-md text-[10px] font-extrabold">
+                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         ONLINE
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-xl text-xs font-bold">
+                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
                       <span className="flex items-center gap-2 font-space">
                         <Globe className="w-4 h-4 text-[#2D31FA]" /> MongoDB Cluster
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-md text-[10px] font-extrabold">
+                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         HEALTHY
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-xl text-xs font-bold">
+                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
                       <span className="flex items-center gap-2 font-space">
                         <Zap className="w-4 h-4 text-[#BFF000]" /> Groq AI Engine
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-md text-[10px] font-extrabold">
+                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         READY
                       </span>
                     </div>
@@ -504,7 +504,7 @@ export default function AdminDashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("businesses")}
-                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-syne uppercase text-xs rounded-xl border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all"
+                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-syne uppercase text-xs rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all"
                   >
                     View All Clients →
                   </button>
@@ -512,7 +512,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Recent Clients Quick Table Preview */}
-              <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-4">
+              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                     RECENTLY REGISTERED <span className="font-playfair italic text-[#FF4D00] normal-case">Businesses</span>
@@ -525,7 +525,7 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto border-2 border-[#1a1a1a] rounded-xl bg-white">
+                <div className="overflow-x-auto border-2 border-[#1a1a1a] rounded-none bg-white">
                   <table className="w-full text-left text-xs border-collapse font-space">
                     <thead>
                       <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] font-syne font-extrabold uppercase">
@@ -542,7 +542,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-4 font-syne font-extrabold text-sm">{b.bussinessName}</td>
                           <td className="py-3 px-4 font-bold text-gray-700">{b.email}</td>
                           <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-md text-[10px] font-extrabold">
+                            <span className="px-2 py-0.5 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                               {b.bussinessCategory || "General"}
                             </span>
                           </td>
@@ -550,7 +550,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold text-[10px] uppercase border-2 border-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px]"
+                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold text-[10px] uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px]"
                             >
                               View
                             </button>
@@ -566,7 +566,7 @@ export default function AdminDashboardPage() {
 
           {/* TAB 2: BUSINESSES */}
           {activeTab === "businesses" && (
-            <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-6">
+            <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
@@ -583,7 +583,7 @@ export default function AdminDashboardPage() {
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-xl py-2 px-3 text-xs font-extrabold font-space text-[#1a1a1a] focus:outline-none cursor-pointer"
+                    className="bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none py-2 px-3 text-xs font-extrabold font-space text-[#1a1a1a] focus:outline-none cursor-pointer"
                   >
                     {categoriesList.map((cat, idx) => (
                       <option key={idx} value={cat}>
@@ -600,14 +600,14 @@ export default function AdminDashboardPage() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search name, email, token..."
-                      className="w-full bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-xl py-2 pl-9 pr-3 text-xs font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo-sm font-space"
+                      className="w-full bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none py-2 pl-9 pr-3 text-xs font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo-sm font-space"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Business Table */}
-              <div className="overflow-x-auto border-3 border-[#1a1a1a] rounded-xl bg-white">
+              <div className="overflow-x-auto border-3 border-[#1a1a1a] rounded-none bg-white">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#fdf9f0] border-b-3 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
@@ -643,7 +643,7 @@ export default function AdminDashboardPage() {
                             {b.email || b.name}
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-[#fdf9f0] text-[#1a1a1a] border-2 border-[#1a1a1a]">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-none text-[10px] font-extrabold bg-[#fdf9f0] text-[#1a1a1a] border-2 border-[#1a1a1a]">
                               {b.bussinessCategory || "General"}
                             </span>
                           </td>
@@ -667,7 +667,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne border-2 border-[#1a1a1a] rounded-lg shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] uppercase tracking-wider transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] uppercase tracking-wider transition-all cursor-pointer"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>View Profile</span>
@@ -691,7 +691,7 @@ export default function AdminDashboardPage() {
                   <button
                     onClick={() => handlePageChange(page - 1)}
                     disabled={page <= 1}
-                    className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-lg text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
+                    className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-none text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Prev</span>
@@ -700,7 +700,7 @@ export default function AdminDashboardPage() {
                   <button
                     onClick={() => handlePageChange(page + 1)}
                     disabled={page >= totalPages}
-                    className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-lg text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
+                    className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-none text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
                   >
                     <span>Next</span>
                     <ChevronRight className="w-4 h-4" />
@@ -713,14 +713,14 @@ export default function AdminDashboardPage() {
           {/* TAB 3: ANALYTICS & CHARTS */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
-              <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-6">
+              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
                 <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
                   INTERACTIVE ANALYTICS <span className="font-playfair italic text-[#2D31FA] normal-case">& Charts</span>
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Chart 1: Messages Ratio */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-xl space-y-4">
+                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
                     <h3 className="text-sm font-extrabold font-syne uppercase">Message Breakdown</h3>
                     <div className="space-y-3">
                       <div>
@@ -728,7 +728,7 @@ export default function AdminDashboardPage() {
                           <span>User Inquiries</span>
                           <span className="text-[#2D31FA]">52%</span>
                         </div>
-                        <div className="w-full bg-gray-200 h-4 rounded-full border-2 border-[#1a1a1a] overflow-hidden">
+                        <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                           <div className="bg-[#2D31FA] h-full w-[52%]" />
                         </div>
                       </div>
@@ -738,7 +738,7 @@ export default function AdminDashboardPage() {
                           <span>AI Bot Responses</span>
                           <span className="text-[#FF4D00]">48%</span>
                         </div>
-                        <div className="w-full bg-gray-200 h-4 rounded-full border-2 border-[#1a1a1a] overflow-hidden">
+                        <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                           <div className="bg-[#FF4D00] h-full w-[48%]" />
                         </div>
                       </div>
@@ -746,20 +746,20 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Chart 2: Category Distribution */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-xl space-y-4">
+                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
                     <h3 className="text-sm font-extrabold font-syne uppercase">Industry Categories</h3>
                     <div className="space-y-2 font-space text-xs font-bold">
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-lg">
+                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
                         <span>Software & Technology</span>
-                        <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded text-[10px]">42%</span>
+                        <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px]">42%</span>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-lg">
+                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
                         <span>Health & Fitness</span>
-                        <span className="px-2 py-0.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded text-[10px]">28%</span>
+                        <span className="px-2 py-0.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none text-[10px]">28%</span>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-lg">
+                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
                         <span>E-Commerce & Retail</span>
-                        <span className="px-2 py-0.5 bg-[#2D31FA] text-white border-2 border-[#1a1a1a] rounded text-[10px]">30%</span>
+                        <span className="px-2 py-0.5 bg-[#2D31FA] text-white border-2 border-[#1a1a1a] rounded-none text-[10px]">30%</span>
                       </div>
                     </div>
                   </div>
@@ -771,12 +771,12 @@ export default function AdminDashboardPage() {
           {/* TAB 4: SYSTEM & HEALTH */}
           {activeTab === "system" && (
             <div className="space-y-6">
-              <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl p-6 shadow-neo-lg space-y-6">
+              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
                 <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
                   LIVE INTEGRATION <span className="font-playfair italic text-[#FF4D00] normal-case">& Token Validator</span>
                 </h2>
 
-                <div className="bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-xl p-5 space-y-4">
+                <div className="bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-none p-5 space-y-4">
                   <label className="block text-xs font-extrabold font-syne uppercase text-[#1a1a1a]">
                     Test / Validate Widget Token
                   </label>
@@ -786,19 +786,19 @@ export default function AdminDashboardPage() {
                       value={testToken}
                       onChange={(e) => setTestToken(e.target.value)}
                       placeholder="Paste Token (e.g. A1ED-7127544F-1EBAF3E7)"
-                      className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#1a1a1a]"
+                      className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-none px-3 py-2 text-xs font-mono font-bold text-[#1a1a1a]"
                     />
                     <button
                       onClick={handleTestToken}
                       disabled={testingToken}
-                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-syne text-xs uppercase border-2 border-[#1a1a1a] rounded-xl shadow-neo-sm hover:translate-x-[-1px]"
+                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-syne text-xs uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px]"
                     >
                       {testingToken ? "Validating..." : "Validate Token"}
                     </button>
                   </div>
 
                   {tokenStatus && (
-                    <div className={`p-4 border-2 border-[#1a1a1a] rounded-xl text-xs font-space font-bold ${
+                    <div className={`p-4 border-2 border-[#1a1a1a] rounded-none text-xs font-space font-bold ${
                       tokenStatus.valid ? "bg-[#BFF000]/30" : "bg-red-100 text-red-800"
                     }`}>
                       {tokenStatus.valid ? (
@@ -824,7 +824,7 @@ export default function AdminDashboardPage() {
       {/* Business Profile Detail Modal */}
       {selectedBusiness && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-3 border-[#1a1a1a] rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border-3 border-[#1a1a1a] rounded-none max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
               <div>
@@ -838,7 +838,7 @@ export default function AdminDashboardPage() {
 
               <button
                 onClick={() => setSelectedBusiness(null)}
-                className="p-2 bg-[#fdf9f0] hover:bg-gray-200 border-2 border-[#1a1a1a] rounded-xl text-[#1a1a1a] transition-colors cursor-pointer"
+                className="p-2 bg-[#fdf9f0] hover:bg-gray-200 border-2 border-[#1a1a1a] rounded-none text-[#1a1a1a] transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -846,7 +846,7 @@ export default function AdminDashboardPage() {
 
             {/* Profile Fields Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-space">
-              <div className="bg-[#fdf9f0] p-3.5 rounded-xl border-2 border-[#1a1a1a]">
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
                 <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                   Owner Email
                 </span>
@@ -855,7 +855,7 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
 
-              <div className="bg-[#fdf9f0] p-3.5 rounded-xl border-2 border-[#1a1a1a]">
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
                 <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                   Category
                 </span>
@@ -864,24 +864,24 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
 
-              <div className="bg-[#fdf9f0] p-3.5 rounded-xl border-2 border-[#1a1a1a] sm:col-span-2">
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] sm:col-span-2">
                 <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                   Chatbot Integration Token
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="flex-1 text-xs font-mono font-bold text-[#FF4D00] bg-white p-2.5 rounded-lg border-2 border-[#1a1a1a] break-all select-all">
+                  <p className="flex-1 text-xs font-mono font-bold text-[#FF4D00] bg-white p-2.5 rounded-none border-2 border-[#1a1a1a] break-all select-all">
                     {selectedBusiness.chatbot_token}
                   </p>
                   <button
                     onClick={() => copyToClipboard(selectedBusiness.chatbot_token)}
-                    className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-lg shadow-neo-sm"
+                    className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="bg-[#fdf9f0] p-3.5 rounded-xl border-2 border-[#1a1a1a] sm:col-span-2">
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] sm:col-span-2">
                 <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                   Business Description
                 </span>
@@ -903,7 +903,7 @@ export default function AdminDashboardPage() {
                   selectedBusiness.bussinessDetails.map((faq, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#fdf9f0] p-3 rounded-xl border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
+                      className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
                     >
                       <p className="font-extrabold text-[#1a1a1a]">Q: {faq.question}</p>
                       <p className="font-bold text-gray-800">A: {faq.answer}</p>
@@ -921,7 +921,7 @@ export default function AdminDashboardPage() {
             <div className="border-t-3 border-[#1a1a1a] pt-4 text-right">
               <button
                 onClick={() => setSelectedBusiness(null)}
-                className="px-5 py-2 bg-[#1a1a1a] hover:bg-black text-white text-xs font-extrabold font-syne uppercase tracking-wider rounded-xl border-2 border-[#1a1a1a] transition-colors cursor-pointer"
+                className="px-5 py-2 bg-[#1a1a1a] hover:bg-black text-white text-xs font-extrabold font-syne uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] transition-colors cursor-pointer"
               >
                 Close Profile
               </button>
