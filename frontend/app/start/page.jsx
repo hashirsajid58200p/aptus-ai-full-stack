@@ -184,7 +184,7 @@ export default function AuthForm() {
                       name="name"
                       type="text"
                       required
-                      className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                      className="w-full border-2 border-[#1a1a1a] py-2.5 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                       placeholder="John Doe"
                       value={formData.name}
                       onChange={handleChange}
@@ -206,7 +206,7 @@ export default function AuthForm() {
                     name="email"
                     type="email"
                     required
-                    className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                    className="w-full border-2 border-[#1a1a1a] py-2.5 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="john@example.com"
                     value={isSignUp ? formData.email : loginData.email}
                     onChange={isSignUp ? handleChange : handleLoginChange}
@@ -227,7 +227,7 @@ export default function AuthForm() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                    className="w-full border-2 border-[#1a1a1a] py-2.5 pl-10 pr-10 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                     placeholder="••••••••"
                     value={isSignUp ? formData.password : loginData.password}
                     onChange={isSignUp ? handleChange : handleLoginChange}
@@ -265,7 +265,7 @@ export default function AuthForm() {
                         name="bussinessName"
                         type="text"
                         required
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                        className="w-full border-2 border-[#1a1a1a] py-2.5 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                         placeholder="Acme Inc."
                         value={formData.bussinessName}
                         onChange={handleChange}
@@ -284,9 +284,9 @@ export default function AuthForm() {
                       <button
                         type="button"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="w-full text-left pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm cursor-pointer flex items-center justify-between"
+                        className="w-full text-left border-2 border-[#1a1a1a] py-2.5 pl-10 pr-10 text-sm font-medium bg-white focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm cursor-pointer flex items-center justify-between"
                       >
-                        <span className={formData.bussinessCategory ? "text-[#1a1a1a] font-bold" : "text-gray-400"}>
+                        <span className={formData.bussinessCategory ? "text-[#1a1a1a] font-medium" : "text-gray-400"}>
                           {formData.bussinessCategory || "Select Business Category"}
                         </span>
                       </button>

@@ -144,3 +144,30 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #FDF9F0 inset;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* Custom Neo-Brutalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FDF9F0;
+  border-left: 2px solid #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF4D00;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1a1a1a #FDF9F0;
+}
