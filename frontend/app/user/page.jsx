@@ -93,7 +93,10 @@ export default function UserDashboard() {
           isSidebarOpen ? "block" : "hidden"
         } md:block w-64 bg-white p-5 h-screen fixed top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 md:z-0 md:relative`}
       >
-        <div className="flex items-center gap-3 py-3 border-b-3 border-[#1a1a1a] mb-6">
+        <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
+          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
+            BUSINESS
+          </span>
           <Link href={"/"} className="flex items-center">
             <img
               src="/aptus-logo.png"

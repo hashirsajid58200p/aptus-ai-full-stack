@@ -247,7 +247,7 @@ export default function AdminDashboardPage() {
       <aside
         className={`${
           isSidebarOpen ? "block" : "hidden"
-        } md:block w-72 bg-white p-5 min-h-screen fixed md:sticky top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 flex flex-col justify-between`}
+        } md:block w-72 bg-white p-5 h-screen fixed md:sticky top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 flex flex-col justify-between`}
       >
         <div>
           {/* Logo & Admin Branding */}
