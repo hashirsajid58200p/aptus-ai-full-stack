@@ -873,10 +873,16 @@ export default function AdminDashboardPage() {
 
       {/* Business Profile Detail Modal */}
       {selectedBusiness && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-3 border-[#1a1a1a] rounded-none max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setSelectedBusiness(null)}
+        >
+          <div
+            className="bg-white border-3 border-[#1a1a1a] rounded-none max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
+            <div className="border-b-3 border-[#1a1a1a] pb-4">
               <div>
                 <h3 className="text-xl font-extrabold font-syne text-[#1a1a1a] uppercase tracking-tight">
                   {selectedBusiness.bussinessName}
@@ -885,13 +891,6 @@ export default function AdminDashboardPage() {
                   CLIENT ID: {selectedBusiness._id}
                 </p>
               </div>
-
-              <button
-                onClick={() => setSelectedBusiness(null)}
-                className="p-2 bg-[#fdf9f0] hover:bg-gray-200 border-2 border-[#1a1a1a] rounded-none text-[#1a1a1a] transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
 
             {/* Profile Fields Grid */}
@@ -947,12 +946,12 @@ export default function AdminDashboardPage() {
                 Configured Knowledge Base FAQs ({selectedBusiness.bussinessDetails?.length || 0})
               </h4>
 
-              <div className="space-y-3 max-h-60 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="space-y-3 max-h-60 overflow-y-auto border-2 border-[#1a1a1a] p-3 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {selectedBusiness.bussinessDetails?.length > 0 ? (
                   selectedBusiness.bussinessDetails.map((faq, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space shadow-neo-sm"
+                      className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
                     >
                       <p className="font-extrabold text-[#1a1a1a]">Q: {faq.question}</p>
                       <p className="font-bold text-gray-800">A: {faq.answer}</p>
@@ -967,7 +966,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Footer Close */}
-            <div className="border-t-3 border-[#1a1a1a] pt-4 text-right">
+            <div className="pt-2 text-right">
               <button
                 onClick={() => setSelectedBusiness(null)}
                 className="px-5 py-2.5 bg-[#1a1a1a] hover:bg-black text-white text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
