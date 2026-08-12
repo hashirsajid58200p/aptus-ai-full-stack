@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   Briefcase,
@@ -26,6 +26,8 @@ export default function AuthForm() {
   );
   const [isSignUp, setIsSignUp] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -60,6 +62,18 @@ export default function AuthForm() {
     "Logistics & Supply Chain",
     "Services & Other",
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleAuthMode = () => setIsSignUp(!isSignUp);
   const togglePasswordVisibility = () => {
@@ -280,7 +294,7 @@ export default function AuthForm() {
                     <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Category
                     </label>
-                    <div className="relative">
+                    <div className="relative" ref={dropdownRef}>
                       <button
                         type="button"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}

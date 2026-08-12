@@ -72,45 +72,50 @@ const getAnalytics = async (req, res, next) => {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const [
-      totalBusinesses,
-      totalSessions,
-      totalMessages,
-      recentBusinesses7d,
-      recentSessions7d,
-      userMessagesCount,
-      botMessagesCount,
-      categoryAggregation,
-      monthlyAggregation,
-    ] = await Promise.all([
-      User.countDocuments(),
-      Session.countDocuments(),
-      Message.countDocuments(),
-      User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
-      Session.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
-      Message.countDocuments({ role: "user" }),
-      Message.countDocuments({ role: { $ne: "user" } }),
-      User.aggregate([
+    const totalBusinesses = await User.countDocuments().catch(() => 0);
+    const totalSessions = await Session.countDocuments().catch(() => 0);
+    const totalMessages = await Message.countDocuments().catch(() => 0);
+    const recentBusinesses7d = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
+    const recentSessions7d = await Session.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
+    const userMessagesCount = await Message.countDocuments({ role: "user" }).catch(() => 0);
+    const botMessagesCount = await Message.countDocuments({ role: { $ne: "user" } }).catch(() => 0);
+
+    let categoryAggregation = [];
+    try {
+      categoryAggregation = await User.aggregate([
         {
           $group: {
             _id: { $ifNull: ["$bussinessCategory", "General"] },
             count: { $sum: 1 },
           },
         },
-      ]),
-      User.aggregate([
+      ]);
+    } catch (e) {
+      categoryAggregation = [];
+    }
+
+    let monthlyAggregation = [];
+    try {
+      monthlyAggregation = await User.aggregate([
+        {
+          $project: {
+            createdDate: { $ifNull: ["$createdAt", new Date()] },
+          },
+        },
         {
           $group: {
             _id: {
-              year: { $year: "$createdAt" },
-              month: { $month: "$createdAt" },
+              year: { $year: "$createdDate" },
+              month: { $month: "$createdDate" },
             },
             count: { $sum: 1 },
           },
         },
         { $sort: { "_id.year": 1, "_id.month": 1 } },
-      ]),
-    ]);
+      ]);
+    } catch (e) {
+      monthlyAggregation = [];
+    }
 
     return res.status(200).json({
       success: true,
