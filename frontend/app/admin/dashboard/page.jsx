@@ -230,18 +230,17 @@ export default function AdminDashboardPage() {
       >
         <div>
           {/* Logo & Admin Branding */}
-          <div className="flex items-center gap-3 py-3 border-b-3 border-[#1a1a1a] mb-6">
-            <div className="w-11 h-11 bg-[#FF4D00] text-white border-3 border-[#1a1a1a] rounded-none shadow-neo flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-lg font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
-                APTUS <span className="text-[#FF4D00]">ADMIN</span>
-              </h1>
-              <p className="text-[10px] font-extrabold text-[#1a1a1a]/70 tracking-wider uppercase font-space">
-                Control & Analytics
-              </p>
-            </div>
+          <div className="flex items-center justify-between py-3 border-b-3 border-[#1a1a1a] mb-6">
+            <Link href="/" className="flex items-center">
+              <img
+                src="/aptus-logo.png"
+                alt="Aptus AI"
+                className="h-9 w-auto object-contain"
+              />
+            </Link>
+            <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-black uppercase px-2 py-0.5 shadow-neo-sm font-syne shrink-0">
+              ADMIN
+            </span>
           </div>
 
           {/* Navigation Tabs */}
@@ -271,13 +270,13 @@ export default function AdminDashboardPage() {
 
         {/* Sidebar Footer */}
         <div className="pt-6 border-t-3 border-[#1a1a1a] space-y-3 mt-6">
-          <div className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-none bg-[#2D31FA] text-white font-extrabold flex items-center justify-center text-xs border-2 border-[#1a1a1a]">
+          <div className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-none bg-[#2D31FA] text-white font-extrabold flex items-center justify-center text-xs border-2 border-[#1a1a1a] shrink-0 font-syne">
               A
             </div>
-            <div className="overflow-hidden text-xs">
-              <p className="font-extrabold truncate font-syne">admin@aptus.com</p>
-              <p className="text-[10px] text-gray-500 font-bold font-space">Super Admin</p>
+            <div className="min-w-0 flex-1">
+              <p className="font-extrabold text-xs text-[#1a1a1a] truncate font-syne">Admin Control</p>
+              <p className="text-[10px] text-gray-600 font-bold font-space">Super Admin</p>
             </div>
           </div>
 
