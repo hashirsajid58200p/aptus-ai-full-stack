@@ -1041,7 +1041,7 @@ export default function AdminDashboardPage() {
                       type="text"
                       value={testToken}
                       onChange={(e) => setTestToken(e.target.value)}
-                      placeholder="e.g. A1ED-****-*******"
+                      placeholder="e.g. A1ED-••••••••-••••••••"
                       className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-none px-3 py-2 text-xs font-mono font-bold text-[#1a1a1a] placeholder:text-gray-400 placeholder:font-mono"
                     />
                     <button
