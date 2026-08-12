@@ -79,35 +79,35 @@ export default function AdminLoginPage() {
         <div className="bg-white border-3 border-[#1a1a1a] p-8 shadow-neo-lg space-y-6">
           <form onSubmit={handleAdminLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] mb-2 font-syne">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                 Admin Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter admin email"
+                  placeholder="you@example.com"
                   required
-                  className="w-full border-2 border-[#1a1a1a] p-3 pl-10 text-sm font-medium text-[#1a1a1a] bg-[#FDF9F0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF4D00]"
+                  className="w-full border-2 border-[#1a1a1a] py-2 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] mb-2 font-syne">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                 Admin Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter admin password"
+                  placeholder="••••••••"
                   required
-                  className="w-full border-2 border-[#1a1a1a] p-3 pl-10 text-sm font-medium text-[#1a1a1a] bg-[#FDF9F0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF4D00]"
+                  className="w-full border-2 border-[#1a1a1a] py-2 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                 />
               </div>
             </div>

@@ -10,6 +10,7 @@ import {
   EyeOff,
   User,
   Lock,
+  ChevronDown,
 } from "lucide-react";
 import { signUp, login, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,8 +30,8 @@ export default function AuthForm() {
     email: "",
     password: "",
     bussinessName: "",
-    bussinessDescription: "",
     bussinessCategory: "",
+    bussinessDescription: "",
   });
   const [loginData, setLoginData] = useState({
     email: "",
@@ -94,6 +95,10 @@ export default function AuthForm() {
 
   const handleSignUp = (e) => {
     e.preventDefault();
+    if (!formData.bussinessCategory) {
+      toast.error("Please select a business category");
+      return;
+    }
     dispatch(signUp(formData));
   };
 
@@ -142,11 +147,11 @@ export default function AuthForm() {
           transition={{ duration: 0.5 }}
           className="bg-white p-8 border-3 border-[#1a1a1a] shadow-neo-lg"
         >
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={isSignUp ? handleSignUp : handleLogin}>
             <div className="space-y-4">
               {isSignUp && (
                 <div>
-                  <label htmlFor="name" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                  <label htmlFor="name" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                     Full Name
                   </label>
                   <div className="relative">
@@ -156,7 +161,7 @@ export default function AuthForm() {
                       type="text"
                       required
                       className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                      placeholder="Your Full Name"
+                      placeholder="Alex Morgan"
                       value={formData.name}
                       onChange={handleChange}
                     />
@@ -168,7 +173,7 @@ export default function AuthForm() {
               )}
 
               <div>
-                <label htmlFor="email-address" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                <label htmlFor="email-address" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                   Email Address
                 </label>
                 <div className="relative">
@@ -178,7 +183,7 @@ export default function AuthForm() {
                     type="email"
                     required
                     className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                    placeholder="Email address"
+                    placeholder="you@example.com"
                     value={isSignUp ? formData.email : loginData.email}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
@@ -189,7 +194,7 @@ export default function AuthForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                <label htmlFor="password" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                   Password
                 </label>
                 <div className="relative">
@@ -199,7 +204,7 @@ export default function AuthForm() {
                     type={showPassword ? "text" : "password"}
                     required
                     className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                    placeholder="Password"
+                    placeholder="••••••••"
                     value={isSignUp ? formData.password : loginData.password}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
@@ -225,7 +230,7 @@ export default function AuthForm() {
               {isSignUp && (
                 <>
                   <div>
-                    <label htmlFor="businessName" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                    <label htmlFor="businessName" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                       Business Name
                     </label>
                     <div className="relative">
@@ -235,7 +240,7 @@ export default function AuthForm() {
                         type="text"
                         required
                         className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                        placeholder="Business Name"
+                        placeholder="Acme Corporation"
                         value={formData.bussinessName}
                         onChange={handleChange}
                       />
@@ -246,28 +251,40 @@ export default function AuthForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                    <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                       Business Category
                     </label>
                     <div className="relative">
-                      <input
+                      <select
                         id="businessCategory"
                         name="bussinessCategory"
-                        type="text"
                         required
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                        placeholder="Business Category"
+                        className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-bold text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm appearance-none cursor-pointer"
                         value={formData.bussinessCategory}
                         onChange={handleChange}
-                      />
+                      >
+                        <option value="" disabled>Select Business Category</option>
+                        <option value="Software & Technology">Software & Technology</option>
+                        <option value="E-Commerce & Retail">E-Commerce & Retail</option>
+                        <option value="Health & Fitness">Health & Fitness</option>
+                        <option value="Education & E-Learning">Education & E-Learning</option>
+                        <option value="Finance & Banking">Finance & Banking</option>
+                        <option value="Real Estate & Construction">Real Estate & Construction</option>
+                        <option value="Marketing & Agency">Marketing & Agency</option>
+                        <option value="Healthcare & Medical">Healthcare & Medical</option>
+                        <option value="Services & Other">Services & Other</option>
+                      </select>
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Briefcase className="h-5 w-5 text-gray-500" />
+                      </div>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <ChevronDown className="h-5 w-5 text-gray-500" />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
                       Business Description
                     </label>
                     <div className="relative">
@@ -277,7 +294,7 @@ export default function AuthForm() {
                         required
                         rows={3}
                         className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
-                        placeholder="Business Description"
+                        placeholder="Describe your business services or products..."
                         value={formData.bussinessDescription}
                         onChange={handleChange}
                       />
