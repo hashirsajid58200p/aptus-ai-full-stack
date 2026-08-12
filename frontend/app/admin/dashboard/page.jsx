@@ -33,6 +33,8 @@ import {
   Globe,
   Layers,
   ChevronDown,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -77,6 +79,9 @@ export default function AdminDashboardPage() {
   const [testToken, setTestToken] = useState("");
   const [tokenStatus, setTokenStatus] = useState(null);
   const [testingToken, setTestingToken] = useState(false);
+
+  // Confirmation modal state: { type: 'delete'|'logout', business?: {id, name} }
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const getAuthOptions = () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
@@ -160,6 +165,22 @@ export default function AdminDashboardPage() {
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
+  };
+
+  // Delete a business and all its related data
+  const handleDeleteBusiness = async (id, name) => {
+    try {
+      await axios.delete(`${API_URL}/admin/businesses/${id}`, getAuthOptions());
+      toast.success(`"${name}" and all related data deleted.`);
+      setBusinesses((prev) => prev.filter((b) => b._id !== id));
+      setTotalCount((prev) => Math.max(prev - 1, 0));
+      if (selectedBusiness?._id === id) setSelectedBusiness(null);
+      fetchAnalyticsAndAuth();
+    } catch (err) {
+      toast.error("Failed to delete business. Please try again.");
+    } finally {
+      setConfirmAction(null);
+    }
   };
 
   const handleTestToken = async () => {
@@ -292,11 +313,7 @@ export default function AdminDashboardPage() {
         {/* Sidebar Footer - Bottom Left Logout */}
         <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a] flex justify-start">
           <button
-            onClick={() => {
-              if (window.confirm("Are you sure you want to log out of the admin panel?")) {
-                handleLogout();
-              }
-            }}
+            onClick={() => setConfirmAction({ type: "logout" })}
             className="flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer font-space"
           >
             <LogOut className="h-4 w-4" />
@@ -581,13 +598,22 @@ export default function AdminDashboardPage() {
                             {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "N/A"}
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <button
-                              onClick={() => handleViewBusiness(b._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              <span>View Profile</span>
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleViewBusiness(b._id)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View Profile</span>
+                              </button>
+                              <button
+                                onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 font-extrabold font-space uppercase tracking-wider border-2 border-red-600 rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -716,13 +742,22 @@ export default function AdminDashboardPage() {
                             {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "N/A"}
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <button
-                              onClick={() => handleViewBusiness(b._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              <span>View Profile</span>
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleViewBusiness(b._id)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View Profile</span>
+                              </button>
+                              <button
+                                onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 font-extrabold font-space uppercase tracking-wider border-2 border-red-600 rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -1076,6 +1111,59 @@ export default function AdminDashboardPage() {
           )}
         </main>
       </div>
+
+      {/* ── Confirmation Modal (Delete / Logout) ── */}
+      {confirmAction && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setConfirmAction(null)}
+        >
+          <div
+            className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo-lg w-full max-w-md p-6 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div className={`p-2 border-2 border-[#1a1a1a] rounded-none shrink-0 ${confirmAction.type === "delete" ? "bg-red-600 text-white" : "bg-[#FF4D00] text-white"}`}>
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
+                  {confirmAction.type === "delete" ? "Delete Business?" : "Logout?"}
+                </h3>
+                <p className="text-xs font-bold font-space text-[#1a1a1a]/70 mt-1">
+                  {confirmAction.type === "delete"
+                    ? <>Are you sure you want to permanently delete <span className="text-red-600 font-extrabold">"{confirmAction.business.name}"</span>? This will also remove all related sessions and chat messages. This action cannot be undone.</>
+                    : "Are you sure you want to log out of the admin panel?"}
+                </p>
+              </div>
+            </div>
+            <div className="border-t-2 border-[#1a1a1a]" />
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="px-5 py-2.5 bg-white text-[#1a1a1a] font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:bg-[#fdf9f0] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (confirmAction.type === "delete") {
+                    handleDeleteBusiness(confirmAction.business.id, confirmAction.business.name);
+                  } else {
+                    handleLogout();
+                    setConfirmAction(null);
+                  }
+                }}
+                className={`px-5 py-2.5 font-extrabold font-space text-xs uppercase tracking-wider text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer ${
+                  confirmAction.type === "delete" ? "bg-red-600 hover:bg-red-700" : "bg-[#FF4D00] hover:bg-[#e04400]"
+                }`}
+              >
+                {confirmAction.type === "delete" ? "Yes, Delete" : "Yes, Logout"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Business Profile Detail Modal */}
       {selectedBusiness && (

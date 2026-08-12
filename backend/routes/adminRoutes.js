@@ -6,6 +6,7 @@ const {
   getAnalytics,
   getAllBusinesses,
   getBusinessById,
+  deleteBusiness,
 } = require("../controllers/adminController");
 const { isAdminAuthenticated } = require("../middleware/adminAuth");
 
@@ -28,5 +29,6 @@ router.get("/analytics", isAdminAuthenticated, getAnalytics);
 router.get("/businesses", isAdminAuthenticated, getAllBusinesses);
 router.get("/businesses/:id", isAdminAuthenticated, getBusinessById);
 router.get("/business/:id", isAdminAuthenticated, getBusinessById);
+router.delete("/businesses/:id", isAdminAuthenticated, deleteBusiness);
 
 module.exports = router;

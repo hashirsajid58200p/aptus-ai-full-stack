@@ -187,10 +187,43 @@ const getBusinessById = async (req, res, next) => {
   }
 };
 
+
+// Delete a business and all its related data (sessions + messages)
+const deleteBusiness = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const business = await User.findById(id);
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: "Business not found",
+      });
+    }
+
+    // 1. Delete all messages linked to this business
+    await Message.deleteMany({ chatbotId: id });
+
+    // 2. Delete all sessions linked to this business
+    await Session.deleteMany({ chatbotId: id });
+
+    // 3. Delete the business (user) account itself
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: `Business "${business.bussinessName}" and all related data deleted successfully`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   loginAdmin,
   logoutAdmin,
   getAnalytics,
   getAllBusinesses,
   getBusinessById,
+  deleteBusiness,
 };
