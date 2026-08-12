@@ -770,22 +770,30 @@ export default function AdminDashboardPage() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Chart 1: Messages Ratio */}
+                  {/* Chart 1: Messages Ratio (100% Real Live Data) */}
                   {(() => {
-                    const totalMsgs = analytics.totalMessages || 0;
                     const userMsgs = analytics.userMessagesCount || 0;
                     const botMsgs = analytics.botMessagesCount || 0;
-                    const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 50;
-                    const botPct = totalMsgs > 0 ? (100 - userPct) : 50;
+                    const totalMsgs = userMsgs + botMsgs || analytics.totalMessages || 0;
+                    const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 0;
+                    const botPct = totalMsgs > 0 ? (100 - userPct) : 0;
 
                     return (
                       <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                        <h3 className="text-sm font-extrabold font-syne uppercase">Message Breakdown</h3>
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
+                            Message Breakdown
+                          </h3>
+                          <span className="text-[10px] font-extrabold font-space text-gray-600">
+                            {totalMsgs} Total Messages Exchanged
+                          </span>
+                        </div>
+
                         <div className="space-y-3">
                           <div>
                             <div className="flex justify-between text-xs font-bold font-space mb-1">
                               <span>User Inquiries ({userMsgs})</span>
-                              <span className="text-[#2D31FA]">{userPct}%</span>
+                              <span className="text-[#2D31FA] font-extrabold">{userPct}%</span>
                             </div>
                             <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                               <div className="bg-[#2D31FA] h-full transition-all duration-500" style={{ width: `${userPct}%` }} />
@@ -795,7 +803,7 @@ export default function AdminDashboardPage() {
                           <div>
                             <div className="flex justify-between text-xs font-bold font-space mb-1">
                               <span>AI Bot Responses ({botMsgs})</span>
-                              <span className="text-[#FF4D00]">{botPct}%</span>
+                              <span className="text-[#FF4D00] font-extrabold">{botPct}%</span>
                             </div>
                             <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                               <div className="bg-[#FF4D00] h-full transition-all duration-500" style={{ width: `${botPct}%` }} />
@@ -806,34 +814,49 @@ export default function AdminDashboardPage() {
                     );
                   })()}
 
-                  {/* Chart 2: Category Distribution */}
+                  {/* Chart 2: Category Distribution (100% Real Live Data) */}
                   <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                    <h3 className="text-sm font-extrabold font-syne uppercase">Industry Categories</h3>
-                    <div className="space-y-2 font-space text-xs font-bold">
-                      {(() => {
-                        const catList = analytics.categoryAggregation && analytics.categoryAggregation.length > 0
-                          ? analytics.categoryAggregation
-                          : businesses.reduce((acc, b) => {
-                              const cat = b.bussinessCategory || "General";
-                              const existing = acc.find(item => item._id === cat);
-                              if (existing) existing.count += 1;
-                              else acc.push({ _id: cat, count: 1 });
-                              return acc;
-                            }, []);
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
+                        Industry Categories
+                      </h3>
+                      <span className="text-[10px] font-extrabold font-space text-gray-600">
+                        {businesses.length} Registered Businesses
+                      </span>
+                    </div>
 
-                        const totalCountSum = catList.reduce((sum, c) => sum + c.count, 0) || 1;
-                        const colors = ["bg-[#BFF000]", "bg-[#FF4D00] text-white", "bg-[#2D31FA] text-white", "bg-[#1a1a1a] text-white"];
+                    <div className="space-y-2.5 font-space text-xs font-bold">
+                      {(() => {
+                        const catMap = {};
+                        businesses.forEach((b) => {
+                          const cat = b.bussinessCategory || "General";
+                          catMap[cat] = (catMap[cat] || 0) + 1;
+                        });
+
+                        const catList = Object.entries(catMap)
+                          .map(([cat, count]) => ({ name: cat, count }))
+                          .sort((a, b) => b.count - a.count);
+
+                        const totalSum = businesses.length || 1;
+                        const colors = [
+                          "bg-[#BFF000] text-[#1a1a1a]",
+                          "bg-[#FF4D00] text-white",
+                          "bg-[#2D31FA] text-white",
+                          "bg-[#1a1a1a] text-white",
+                        ];
 
                         return catList.length === 0 ? (
-                          <p className="text-xs text-gray-500 font-bold italic py-2">No category data yet.</p>
+                          <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
+                            No registered business category data yet.
+                          </p>
                         ) : (
-                          catList.slice(0, 4).map((c, idx) => {
-                            const pct = Math.round((c.count / totalCountSum) * 100);
+                          catList.map((c, idx) => {
+                            const pct = Math.round((c.count / totalSum) * 100);
                             const badgeColor = colors[idx % colors.length];
                             return (
-                              <div key={idx} className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
-                                <span>{c._id || "General"}</span>
-                                <span className={`px-2 py-0.5 border-2 border-[#1a1a1a] rounded-none text-[10px] ${badgeColor}`}>
+                              <div key={idx} className="flex items-center justify-between p-2.5 bg-white border-2 border-[#1a1a1a] rounded-none">
+                                <span className="font-bold text-[#1a1a1a]">{c.name}</span>
+                                <span className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold ${badgeColor}`}>
                                   {pct}% ({c.count})
                                 </span>
                               </div>
