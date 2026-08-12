@@ -145,25 +145,38 @@ select:-webkit-autofill:focus {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Custom Neo-Brutalist Scrollbar */
+/* Custom Neo-Brutalist Sharp Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
 ::-webkit-scrollbar-track {
   background: #FDF9F0;
-  border-left: 2px solid #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 0px !important;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #1a1a1a;
   border: 1px solid #1a1a1a;
-  border-radius: 0px;
+  border-radius: 0px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FF4D00;
+}
+
+::-webkit-scrollbar-corner {
+  background: #FDF9F0;
+  border: 1px solid #1a1a1a;
+  border-radius: 0px !important;
 }
 
 /* Firefox scrollbar */

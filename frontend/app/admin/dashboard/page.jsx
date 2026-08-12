@@ -531,7 +531,7 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto border-2 border-[#1a1a1a] rounded-none bg-white">
+                <div className="overflow-x-auto overflow-y-hidden border-2 border-[#1a1a1a] rounded-none bg-white">
                   <table className="w-full text-left text-xs border-collapse font-space">
                     <thead>
                       <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] font-syne font-extrabold uppercase">
@@ -631,7 +631,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Business Table */}
-              <div className="overflow-x-auto border-3 border-[#1a1a1a] rounded-none bg-white">
+              <div className="overflow-x-auto overflow-y-hidden border-3 border-[#1a1a1a] rounded-none bg-white">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#fdf9f0] border-b-3 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
