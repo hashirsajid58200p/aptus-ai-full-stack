@@ -4,8 +4,8 @@ import { ReduxProvider } from "./redux-provider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Aptus AI — Drop-in AI Chatbot Widget",
-  description: "Drop-in AI chatbot component for React & Next.js — install via npm and go live in seconds.",
+  title: "Aptus AI — NPM Chatbot Widget",
+  description: "NPM AI chatbot component for React & Next.js — install via npm and go live in seconds.",
 };
 
 export default function RootLayout({ children }) {

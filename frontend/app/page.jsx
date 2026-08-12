@@ -64,7 +64,7 @@ export default function Home() {
             />
           </div>
           <p className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a]">
-            © {currentYear} APTUS AI — DROP-IN NPM CHATBOT WIDGET. ALL RIGHTS RESERVED.
+            © {currentYear} APTUS AI — NPM CHATBOT WIDGET. ALL RIGHTS RESERVED.
           </p>
         </div>
       </footer>

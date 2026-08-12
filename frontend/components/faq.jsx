@@ -5,29 +5,29 @@ import { motion } from "framer-motion";
 export default function Faq() {
   const faqData = [
     {
-      question: "Do I need to set up my own backend or server?",
+      question: "Do I need to set up or host my own backend?",
       answer:
-        "No. Aptus AI handles the AI models and data hosting — you just install the npm widget and connect it with your token.",
+        "No. Aptus AI handles all AI server infrastructure, database storage, and Groq Llama 3.3 model inference. You only install the aptus-ai-chatbot-widget npm package and pass your API token.",
     },
     {
-      question: "Which frameworks does the widget support?",
+      question: "Which frameworks are supported by the widget?",
       answer:
-        "React and Next.js today, with more framework support (Vue, Svelte, HTML vanilla) planned.",
-    },
-    {
-      question: "How do I integrate Aptus AI into my website?",
-      answer:
-        "Run `npm install aptus-ai-chatbot-widget`, copy your API token from your Aptus AI owner dashboard, and import `<ChatBot token=\"YOUR_TOKEN\" />` into your app.",
+        "The aptus-ai-chatbot-widget package natively supports React 17+ and Next.js (both App Router and Pages Router).",
     },
     {
       question: "How do I train the chatbot on my business data?",
       answer:
-        "Sign up, add your business Q&As or FAQs in your dashboard, and Aptus AI automatically updates the chatbot's knowledge base in real time.",
+        "Simply create an account, navigate to your dashboard, and add your business description and custom Q&As. Your chatbot automatically learns from your inputs in real time without requiring any code redeployments.",
     },
     {
-      question: "Can I customize the look of the chat widget?",
+      question: "Is the chatbot widget customizable to match my website design?",
       answer:
-        "Yes! You can choose built-in theme presets or pass custom styling options to seamlessly match your website's branding.",
+        "Yes! You can choose built-in theme presets like 'aptus', enable or disable quick-reply question suggestions, and configure widget positioning to seamlessly fit your brand aesthetics.",
+    },
+    {
+      question: "How does token authorization and usage tracking work?",
+      answer:
+        "Each registered account generates a unique business token (e.g. A1ED-BACD7C30...). The widget passes this token to fetch your specific business intelligence while your owner dashboard tracks session analytics in real time.",
     },
   ];
 
@@ -45,7 +45,7 @@ export default function Faq() {
           <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs px-3 py-1 uppercase tracking-widest inline-block mb-3">
             Developer FAQs
           </span>
-          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] uppercase mb-3">
+          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold text-[#1a1a1a] uppercase mb-3 leading-tight tracking-tight">
             FREQUENTLY ASKED QUESTIONS
           </h2>
           <p className="text-gray-800 text-lg font-medium">
