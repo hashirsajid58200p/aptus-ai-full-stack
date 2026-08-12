@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   // Token tester/generator state
-  const [testToken, setTestToken] = useState("A1ED-7127544F-1EBAF3E7");
+  const [testToken, setTestToken] = useState("");
   const [tokenStatus, setTokenStatus] = useState(null);
   const [testingToken, setTestingToken] = useState(false);
 
@@ -1041,8 +1041,8 @@ export default function AdminDashboardPage() {
                       type="text"
                       value={testToken}
                       onChange={(e) => setTestToken(e.target.value)}
-                      placeholder="Paste Token (e.g. A1ED-7127544F-1EBAF3E7)"
-                      className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-none px-3 py-2 text-xs font-mono font-bold text-[#1a1a1a]"
+                      placeholder="e.g. A1ED-****-*******"
+                      className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-none px-3 py-2 text-xs font-mono font-bold text-[#1a1a1a] placeholder:text-gray-400 placeholder:font-mono"
                     />
                     <button
                       onClick={handleTestToken}
@@ -1062,8 +1062,8 @@ export default function AdminDashboardPage() {
                           <p className="flex items-center gap-1 text-green-800 font-extrabold">
                             <CheckCircle2 className="w-4 h-4" /> TOKEN VALID & ACTIVE!
                           </p>
-                          <p>Business: <span className="font-extrabold">{tokenStatus.data?.bussinessName}</span></p>
-                          <p>Category: <span className="font-extrabold">{tokenStatus.data?.bussinessCategory}</span></p>
+                          <p>Business: <span className="font-extrabold">{tokenStatus.data?.businessName || "—"}</span></p>
+                          <p>Category: <span className="font-extrabold">{tokenStatus.data?.category || "—"}</span></p>
                         </div>
                       ) : (
                         <p>{tokenStatus.message}</p>
