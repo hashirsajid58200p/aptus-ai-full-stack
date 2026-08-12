@@ -535,11 +535,11 @@ export default function AdminDashboardPage() {
                   <table className="w-full text-left text-xs border-collapse font-space">
                     <thead>
                       <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] font-syne font-extrabold uppercase">
-                        <th className="py-3 px-4">Business Name</th>
-                        <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4">Category</th>
-                        <th className="py-3 px-4">Widget Token</th>
-                        <th className="py-3 px-4 text-right">Action</th>
+                        <th className="py-3 px-4 whitespace-nowrap">Business Name</th>
+                        <th className="py-3 px-4 whitespace-nowrap">Email</th>
+                        <th className="py-3 px-4 whitespace-nowrap">Category</th>
+                        <th className="py-3 px-4 whitespace-nowrap">Widget Token</th>
+                        <th className="py-3 px-4 text-right whitespace-nowrap">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y-2 divide-[#1a1a1a]">
@@ -600,7 +600,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-                      className="w-full text-left border-2 border-[#1a1a1a] py-2 pl-3 pr-8 text-xs font-extrabold font-space bg-[#fdf9f0] text-[#1a1a1a] focus:outline-none focus:bg-white focus:shadow-neo-sm cursor-pointer flex items-center justify-between"
+                      className="w-full text-left border-2 border-[#1a1a1a] py-2 px-3 text-xs font-extrabold font-space bg-[#fdf9f0] text-[#1a1a1a] focus:outline-none focus:bg-white focus:shadow-neo-sm cursor-pointer flex items-center justify-between gap-2"
                     >
                       <span className="truncate">
                         Filter: {selectedCategory}
@@ -635,12 +635,12 @@ export default function AdminDashboardPage() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#fdf9f0] border-b-3 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
-                      <th className="py-3.5 px-4">Business Name</th>
-                      <th className="py-3.5 px-4">Owner Email</th>
-                      <th className="py-3.5 px-4">Category</th>
-                      <th className="py-3.5 px-4">Widget Token</th>
-                      <th className="py-3.5 px-4">Registered Date</th>
-                      <th className="py-3.5 px-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Business Name</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Owner Email</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Category</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Widget Token</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Registered Date</th>
+                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
 
@@ -673,11 +673,10 @@ export default function AdminDashboardPage() {
                             {b.chatbot_token ? (
                               <button
                                 onClick={() => copyToClipboard(b.chatbot_token)}
-                                className="inline-flex items-center gap-1 text-[#FF4D00] font-extrabold hover:underline whitespace-nowrap"
+                                className="text-[#FF4D00] font-extrabold hover:underline whitespace-nowrap cursor-pointer"
+                                title="Click to copy token"
                               >
-                                <Key className="w-3.5 h-3.5 shrink-0" />
-                                <span className="whitespace-nowrap">{b.chatbot_token}</span>
-                                <Copy className="w-3 h-3 text-gray-400 ml-1 shrink-0" />
+                                {b.chatbot_token}
                               </button>
                             ) : (
                               <span className="text-gray-400">None</span>
