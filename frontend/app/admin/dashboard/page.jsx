@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -31,7 +31,8 @@ import {
   Copy,
   Zap,
   Globe,
-  Layers
+  Layers,
+  ChevronDown,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -58,6 +59,21 @@ export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const filterDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutsideFilter = (event) => {
+      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
+        setIsFilterDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutsideFilter);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideFilter);
+    };
+  }, []);
 
   // Token tester/generator state
   const [testToken, setTestToken] = useState("A1ED-7127544F-1EBAF3E7");
@@ -531,12 +547,10 @@ export default function AdminDashboardPage() {
                         <tr key={b._id} className="hover:bg-[#fdf9f0]">
                           <td className="py-3 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">{b.bussinessName}</td>
                           <td className="py-3 px-4 font-bold text-gray-700">{b.email}</td>
-                          <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
-                              {b.bussinessCategory || "General"}
-                            </span>
+                          <td className="py-3 px-4 font-bold text-[#1a1a1a] text-xs whitespace-nowrap">
+                            {b.bussinessCategory || "General"}
                           </td>
-                          <td className="py-3 px-4 font-mono text-xs font-bold text-[#FF4D00]">{b.chatbot_token}</td>
+                          <td className="py-3 px-4 font-mono text-xs font-bold text-[#FF4D00] whitespace-nowrap">{b.chatbot_token}</td>
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
@@ -567,22 +581,9 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
 
-                {/* Filters Row */}
-                <div className="flex flex-wrap items-center gap-3">
-                  {/* Category Dropdown */}
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none py-2 px-3 text-xs font-extrabold font-space text-[#1a1a1a] focus:outline-none cursor-pointer"
-                  >
-                    {categoriesList.map((cat, idx) => (
-                      <option key={idx} value={cat}>
-                        Filter: {cat}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* Search Bar */}
+                {/* Filters Row: Search Bar First, then Custom Category Dropdown */}
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                  {/* Search Bar First */}
                   <div className="relative w-full sm:w-64">
                     <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#1a1a1a]" />
                     <input
@@ -592,6 +593,39 @@ export default function AdminDashboardPage() {
                       placeholder="Search name, email, token..."
                       className="w-full bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none py-2 pl-9 pr-3 text-xs font-bold text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-neo-sm font-space"
                     />
+                  </div>
+
+                  {/* Custom Neo-Brutalist Category Dropdown Second */}
+                  <div className="relative w-full sm:w-56" ref={filterDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                      className="w-full text-left border-2 border-[#1a1a1a] py-2 pl-3 pr-8 text-xs font-extrabold font-space bg-[#fdf9f0] text-[#1a1a1a] focus:outline-none focus:bg-white focus:shadow-neo-sm cursor-pointer flex items-center justify-between"
+                    >
+                      <span className="truncate">
+                        Filter: {selectedCategory}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-[#1a1a1a] shrink-0 transition-transform ${isFilterDropdownOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {isFilterDropdownOpen && (
+                      <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-white border-2 border-[#1a1a1a] shadow-neo-md max-h-48 overflow-y-auto">
+                        {categoriesList.map((cat, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              setSelectedCategory(cat);
+                              setIsFilterDropdownOpen(false);
+                            }}
+                            className={`px-3 py-2 text-xs font-bold uppercase cursor-pointer hover:bg-[#BFF000] border-b border-gray-100 last:border-none ${
+                              selectedCategory === cat ? "bg-[#FF4D00] text-white hover:bg-[#FF4D00]" : "text-[#1a1a1a]"
+                            }`}
+                          >
+                            {cat}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -632,20 +666,18 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-[#1a1a1a] font-bold">
                             {b.email || b.name}
                           </td>
-                          <td className="py-3.5 px-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-none text-[10px] font-extrabold bg-[#fdf9f0] text-[#1a1a1a] border-2 border-[#1a1a1a]">
-                              {b.bussinessCategory || "General"}
-                            </span>
+                          <td className="py-3.5 px-4 text-[#1a1a1a] font-bold text-xs whitespace-nowrap">
+                            {b.bussinessCategory || "General"}
                           </td>
-                          <td className="py-3.5 px-4 font-mono text-[11px]">
+                          <td className="py-3.5 px-4 font-mono text-[11px] whitespace-nowrap">
                             {b.chatbot_token ? (
                               <button
                                 onClick={() => copyToClipboard(b.chatbot_token)}
-                                className="inline-flex items-center gap-1 text-[#FF4D00] font-extrabold hover:underline"
+                                className="inline-flex items-center gap-1 text-[#FF4D00] font-extrabold hover:underline whitespace-nowrap"
                               >
-                                <Key className="w-3.5 h-3.5" />
-                                <span>{b.chatbot_token}</span>
-                                <Copy className="w-3 h-3 text-gray-400 ml-1" />
+                                <Key className="w-3.5 h-3.5 shrink-0" />
+                                <span className="whitespace-nowrap">{b.chatbot_token}</span>
+                                <Copy className="w-3 h-3 text-gray-400 ml-1 shrink-0" />
                               </button>
                             ) : (
                               <span className="text-gray-400">None</span>
