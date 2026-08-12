@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import baseurl from "@/store/baseurl";
-import { ShieldCheck, Lock, Mail, ArrowLeft } from "lucide-react";
+import { ShieldCheck, Lock, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const API_URL = baseurl;
@@ -79,7 +80,7 @@ export default function AdminLoginPage() {
         <div className="bg-white border-3 border-[#1a1a1a] p-8 shadow-neo-lg space-y-6">
           <form onSubmit={handleAdminLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Admin Email
               </label>
               <div className="relative">
@@ -96,19 +97,36 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Admin Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full border-2 border-[#1a1a1a] py-2 pl-10 pr-3 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
+                  className="w-full border-2 border-[#1a1a1a] py-2 pl-10 pr-10 text-sm font-medium text-[#1a1a1a] bg-white placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
                 />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-500" />
+                </div>
+                {password && password.length > 0 && (
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                    {showPassword ? (
+                      <EyeOff
+                        onClick={() => setShowPassword(false)}
+                        className="h-5 w-5 text-gray-500 hover:text-[#1a1a1a]"
+                      />
+                    ) : (
+                      <Eye
+                        onClick={() => setShowPassword(true)}
+                        className="h-5 w-5 text-gray-500 hover:text-[#1a1a1a]"
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

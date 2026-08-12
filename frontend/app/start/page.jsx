@@ -111,6 +111,8 @@ export default function AuthForm() {
     router.push("/user");
   }, [user, router]);
 
+  const currentPassword = isSignUp ? formData.password : loginData.password;
+
   return (
     <div className="text-[#1a1a1a] min-h-screen flex items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="absolute top-5 left-5">
@@ -151,7 +153,7 @@ export default function AuthForm() {
             <div className="space-y-4">
               {isSignUp && (
                 <div>
-                  <label htmlFor="name" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                  <label htmlFor="name" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                     Full Name
                   </label>
                   <div className="relative">
@@ -173,7 +175,7 @@ export default function AuthForm() {
               )}
 
               <div>
-                <label htmlFor="email-address" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                <label htmlFor="email-address" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                   Email Address
                 </label>
                 <div className="relative">
@@ -194,7 +196,7 @@ export default function AuthForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                <label htmlFor="password" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -211,26 +213,28 @@ export default function AuthForm() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-500" />
                   </div>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                    {showPassword ? (
-                      <EyeOff
-                        onClick={togglePasswordVisibility}
-                        className="h-5 w-5 text-gray-500"
-                      />
-                    ) : (
-                      <Eye
-                        onClick={togglePasswordVisibility}
-                        className="h-5 w-5 text-gray-500"
-                      />
-                    )}
-                  </div>
+                  {currentPassword && currentPassword.length > 0 && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                      {showPassword ? (
+                        <EyeOff
+                          onClick={togglePasswordVisibility}
+                          className="h-5 w-5 text-gray-500 hover:text-[#1a1a1a]"
+                        />
+                      ) : (
+                        <Eye
+                          onClick={togglePasswordVisibility}
+                          className="h-5 w-5 text-gray-500 hover:text-[#1a1a1a]"
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
               {isSignUp && (
                 <>
                   <div>
-                    <label htmlFor="businessName" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                    <label htmlFor="businessName" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Name
                     </label>
                     <div className="relative">
@@ -251,49 +255,49 @@ export default function AuthForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                    <label htmlFor="businessCategory" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Category
                     </label>
                     <div className="relative">
-                      <select
-                        id="businessCategory"
-                        name="bussinessCategory"
-                        required
-                        className="w-full pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-bold text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm appearance-none cursor-pointer"
-                        value={formData.bussinessCategory}
-                        onChange={handleChange}
+                      <button
+                        type="button"
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="w-full text-left pl-10 pr-10 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm cursor-pointer flex items-center justify-between"
                       >
-                        <option value="" disabled>Select Business Category</option>
-                        <option value="Software & Technology">Software & Technology</option>
-                        <option value="E-Commerce & Retail">E-Commerce & Retail</option>
-                        <option value="Health & Fitness">Health & Fitness</option>
-                        <option value="Education & E-Learning">Education & E-Learning</option>
-                        <option value="Finance & Banking">Finance & Banking</option>
-                        <option value="Real Estate & Construction">Real Estate & Construction</option>
-                        <option value="Marketing & Advertising">Marketing & Advertising</option>
-                        <option value="Healthcare & Medical">Healthcare & Medical</option>
-                        <option value="AI & Automation">AI & Automation</option>
-                        <option value="Hospitality & Tourism">Hospitality & Tourism</option>
-                        <option value="Automotive & Transport">Automotive & Transport</option>
-                        <option value="Legal & Professional Services">Legal & Professional Services</option>
-                        <option value="Entertainment & Media">Entertainment & Media</option>
-                        <option value="Non-Profit & NGO">Non-Profit & NGO</option>
-                        <option value="Fashion & Beauty">Fashion & Beauty</option>
-                        <option value="Food & Restaurant">Food & Restaurant</option>
-                        <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
-                        <option value="Services & Other">Services & Other</option>
-                      </select>
+                        <span className={formData.bussinessCategory ? "text-[#1a1a1a] font-bold" : "text-gray-400"}>
+                          {formData.bussinessCategory || "Select Business Category"}
+                        </span>
+                      </button>
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Briefcase className="h-5 w-5 text-gray-500" />
                       </div>
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <ChevronDown className="h-5 w-5 text-gray-500" />
+                        <ChevronDown className={`h-5 w-5 text-gray-500 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
                       </div>
+
+                      {isDropdownOpen && (
+                        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-white border-2 border-[#1a1a1a] shadow-neo-md max-h-48 overflow-y-auto">
+                          {categoryOptions.map((cat) => (
+                            <div
+                              key={cat}
+                              onClick={() => {
+                                setFormData({ ...formData, bussinessCategory: cat });
+                                setIsDropdownOpen(false);
+                              }}
+                              className={`px-4 py-2.5 text-xs font-bold uppercase cursor-pointer hover:bg-[#BFF000] border-b border-gray-100 last:border-none ${
+                                formData.bussinessCategory === cat ? "bg-[#FF4D00] text-white hover:bg-[#FF4D00]" : "text-[#1a1a1a]"
+                              }`}
+                            >
+                              {cat}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1 font-syne">
+                    <label htmlFor="businessDescription" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                       Business Description
                     </label>
                     <div className="relative">
