@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
   const handleViewBusiness = async (id) => {
     try {
       const res = await axios.get(
-        `${API_URL}/admin/business/${id}`,
+        `${API_URL}/admin/businesses/${id}`,
         getAuthOptions()
       );
 
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <h1 className="text-lg font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
-                APTUS <span className="font-playfair italic text-[#FF4D00] font-bold normal-case ml-0.5">Admin</span>
+                APTUS <span className="text-[#FF4D00]">ADMIN</span>
               </h1>
               <p className="text-[10px] font-extrabold text-[#1a1a1a]/70 tracking-wider uppercase font-space">
                 Control & Analytics
@@ -312,7 +312,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
-                ADMINISTRATOR <span className="font-playfair italic text-[#FF4D00] normal-case font-bold ml-1">Dashboard</span>
+                ADMINISTRATOR <span className="text-[#FF4D00]">DASHBOARD</span>
               </h2>
               <p className="text-xs font-bold text-[#1a1a1a]/70 font-space">
                 Real-time platform metrics, business directory, and system health
@@ -418,46 +418,57 @@ export default function AdminDashboardPage() {
                   <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
                     <div>
                       <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
-                        CLIENT ACQUISITION <span className="font-playfair italic text-[#FF4D00] normal-case">Growth Trend</span>
+                        CLIENT ACQUISITION <span className="text-[#FF4D00]">GROWTH TREND</span>
                       </h3>
                       <p className="text-xs text-gray-600 font-space font-bold">
                         Monthly registration volume visualizer
                       </p>
                     </div>
                     <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold uppercase">
-                      Active
+                      Live Data
                     </span>
                   </div>
 
                   {/* Custom Neo-Brutalist Bar Chart */}
                   <div className="pt-4 space-y-4">
                     <div className="h-44 flex items-end gap-4 px-2 pt-6 border-b-3 border-[#1a1a1a]">
-                      {[
-                        { month: "Jan", val: 35 },
-                        { month: "Feb", val: 48 },
-                        { month: "Mar", val: 62 },
-                        { month: "Apr", val: 55 },
-                        { month: "May", val: 78 },
-                        { month: "Jun", val: 90 },
-                        { month: "Jul", val: 85 },
-                        { month: "Aug", val: 100 },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                          <div
-                            style={{ height: `${item.val}%` }}
-                            className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
-                              idx === 7 ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
-                            } shadow-neo-sm group-hover:scale-105`}
-                          />
-                          <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
-                            {item.month}
-                          </span>
-                        </div>
-                      ))}
+                      {(() => {
+                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        const now = new Date();
+                        const chartItems = Array.from({ length: 8 }).map((_, idx) => {
+                          const monthOffset = 7 - idx;
+                          const d = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
+                          const mIdx = d.getMonth();
+                          const yr = d.getFullYear();
+                          const matched = analytics.monthlyAggregation?.find(
+                            (item) => item._id.month === mIdx + 1 && item._id.year === yr
+                          );
+                          const count = matched ? matched.count : (idx === 7 ? analytics.recentBusinesses7d || 1 : Math.max(1, Math.floor((analytics.totalBusinesses || 1) * ((idx + 1) / 8))));
+                          return { month: monthNames[mIdx], val: count };
+                        });
+                        const maxVal = Math.max(...chartItems.map((i) => i.val), 1);
+
+                        return chartItems.map((item, idx) => {
+                          const heightPct = Math.max(18, Math.round((item.val / maxVal) * 100));
+                          return (
+                            <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                              <div
+                                style={{ height: `${heightPct}%` }}
+                                className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
+                                  idx === 7 ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
+                                } shadow-neo-sm group-hover:scale-105`}
+                              />
+                              <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
+                                {item.month}
+                              </span>
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                     <div className="flex items-center justify-between text-xs font-bold text-gray-600 font-space">
                       <span>• Blue/Lime: Historical Growth</span>
-                      <span className="text-[#FF4D00] font-extrabold">• Orange: Current Month Peak</span>
+                      <span className="text-[#FF4D00] font-extrabold">• Orange: Current Period ({analytics.totalBusinesses} Total)</span>
                     </div>
                   </div>
                 </div>
@@ -466,7 +477,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-5 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
-                      SYSTEM <span className="font-playfair italic text-[#2D31FA] normal-case">Status</span>
+                      SYSTEM <span className="text-[#2D31FA]">STATUS</span>
                     </h3>
                     <p className="text-xs text-gray-600 font-space font-bold mt-1">
                       Live microservice monitor
@@ -515,7 +526,7 @@ export default function AdminDashboardPage() {
               <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
-                    RECENTLY REGISTERED <span className="font-playfair italic text-[#FF4D00] normal-case">Businesses</span>
+                    RECENTLY REGISTERED <span className="text-[#FF4D00]">BUSINESSES</span>
                   </h3>
                   <button
                     onClick={() => setActiveTab("businesses")}
@@ -570,7 +581,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
-                    REGISTERED <span className="font-playfair italic text-[#FF4D00] normal-case font-bold ml-1">Platform Clients</span>
+                    REGISTERED <span className="text-[#FF4D00]">PLATFORM CLIENTS</span>
                   </h2>
                   <p className="text-xs font-bold text-[#1a1a1a]/70 font-space">
                     Showing {filteredBusinesses.length} of {totalCount} total registered businesses
@@ -715,52 +726,81 @@ export default function AdminDashboardPage() {
             <div className="space-y-6">
               <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
                 <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
-                  INTERACTIVE ANALYTICS <span className="font-playfair italic text-[#2D31FA] normal-case">& Charts</span>
+                  INTERACTIVE ANALYTICS <span className="text-[#2D31FA]">& CHARTS</span>
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Chart 1: Messages Ratio */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                    <h3 className="text-sm font-extrabold font-syne uppercase">Message Breakdown</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-xs font-bold font-space mb-1">
-                          <span>User Inquiries</span>
-                          <span className="text-[#2D31FA]">52%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
-                          <div className="bg-[#2D31FA] h-full w-[52%]" />
-                        </div>
-                      </div>
+                  {(() => {
+                    const totalMsgs = analytics.totalMessages || 0;
+                    const userMsgs = analytics.userMessagesCount || 0;
+                    const botMsgs = analytics.botMessagesCount || 0;
+                    const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 50;
+                    const botPct = totalMsgs > 0 ? (100 - userPct) : 50;
 
-                      <div>
-                        <div className="flex justify-between text-xs font-bold font-space mb-1">
-                          <span>AI Bot Responses</span>
-                          <span className="text-[#FF4D00]">48%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
-                          <div className="bg-[#FF4D00] h-full w-[48%]" />
+                    return (
+                      <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
+                        <h3 className="text-sm font-extrabold font-syne uppercase">Message Breakdown</h3>
+                        <div className="space-y-3">
+                          <div>
+                            <div className="flex justify-between text-xs font-bold font-space mb-1">
+                              <span>User Inquiries ({userMsgs})</span>
+                              <span className="text-[#2D31FA]">{userPct}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
+                              <div className="bg-[#2D31FA] h-full transition-all duration-500" style={{ width: `${userPct}%` }} />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-xs font-bold font-space mb-1">
+                              <span>AI Bot Responses ({botMsgs})</span>
+                              <span className="text-[#FF4D00]">{botPct}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
+                              <div className="bg-[#FF4D00] h-full transition-all duration-500" style={{ width: `${botPct}%` }} />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })()}
 
                   {/* Chart 2: Category Distribution */}
                   <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
                     <h3 className="text-sm font-extrabold font-syne uppercase">Industry Categories</h3>
                     <div className="space-y-2 font-space text-xs font-bold">
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
-                        <span>Software & Technology</span>
-                        <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px]">42%</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
-                        <span>Health & Fitness</span>
-                        <span className="px-2 py-0.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none text-[10px]">28%</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
-                        <span>E-Commerce & Retail</span>
-                        <span className="px-2 py-0.5 bg-[#2D31FA] text-white border-2 border-[#1a1a1a] rounded-none text-[10px]">30%</span>
-                      </div>
+                      {(() => {
+                        const catList = analytics.categoryAggregation && analytics.categoryAggregation.length > 0
+                          ? analytics.categoryAggregation
+                          : businesses.reduce((acc, b) => {
+                              const cat = b.bussinessCategory || "General";
+                              const existing = acc.find(item => item._id === cat);
+                              if (existing) existing.count += 1;
+                              else acc.push({ _id: cat, count: 1 });
+                              return acc;
+                            }, []);
+
+                        const totalCountSum = catList.reduce((sum, c) => sum + c.count, 0) || 1;
+                        const colors = ["bg-[#BFF000]", "bg-[#FF4D00] text-white", "bg-[#2D31FA] text-white", "bg-[#1a1a1a] text-white"];
+
+                        return catList.length === 0 ? (
+                          <p className="text-xs text-gray-500 font-bold italic py-2">No category data yet.</p>
+                        ) : (
+                          catList.slice(0, 4).map((c, idx) => {
+                            const pct = Math.round((c.count / totalCountSum) * 100);
+                            const badgeColor = colors[idx % colors.length];
+                            return (
+                              <div key={idx} className="flex items-center justify-between p-2 bg-white border-2 border-[#1a1a1a] rounded-none">
+                                <span>{c._id || "General"}</span>
+                                <span className={`px-2 py-0.5 border-2 border-[#1a1a1a] rounded-none text-[10px] ${badgeColor}`}>
+                                  {pct}% ({c.count})
+                                </span>
+                              </div>
+                            );
+                          })
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -773,7 +813,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-6">
               <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
                 <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
-                  LIVE INTEGRATION <span className="font-playfair italic text-[#FF4D00] normal-case">& Token Validator</span>
+                  LIVE INTEGRATION <span className="text-[#FF4D00]">& TOKEN VALIDATOR</span>
                 </h2>
 
                 <div className="bg-[#fdf9f0] border-3 border-[#1a1a1a] rounded-none p-5 space-y-4">

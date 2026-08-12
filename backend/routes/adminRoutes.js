@@ -23,8 +23,8 @@ const adminLoginLimiter = rateLimit({
 
 router.post("/login", adminLoginLimiter, loginAdmin);
 router.post("/logout", isAdminAuthenticated, logoutAdmin);
-router.get("/analytics", isAdminAuthenticated, getAnalytics);
 router.get("/businesses", isAdminAuthenticated, getAllBusinesses);
 router.get("/businesses/:id", isAdminAuthenticated, getBusinessById);
+router.get("/business/:id", isAdminAuthenticated, getBusinessById);
 
 module.exports = router;

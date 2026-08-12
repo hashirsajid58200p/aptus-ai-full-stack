@@ -66,7 +66,7 @@ const logoutAdmin = async (req, res, next) => {
   }
 };
 
-// Get Analytics (Counts for Businesses, Sessions, Messages, and 7-day trend)
+// Get Analytics (Counts for Businesses, Sessions, Messages, Categories, and Monthly Trends)
 const getAnalytics = async (req, res, next) => {
   try {
     const sevenDaysAgo = new Date();
@@ -78,12 +78,38 @@ const getAnalytics = async (req, res, next) => {
       totalMessages,
       recentBusinesses7d,
       recentSessions7d,
+      userMessagesCount,
+      botMessagesCount,
+      categoryAggregation,
+      monthlyAggregation,
     ] = await Promise.all([
       User.countDocuments(),
       Session.countDocuments(),
       Message.countDocuments(),
       User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
       Session.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
+      Message.countDocuments({ role: "user" }),
+      Message.countDocuments({ role: { $ne: "user" } }),
+      User.aggregate([
+        {
+          $group: {
+            _id: { $ifNull: ["$bussinessCategory", "General"] },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      User.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { "_id.year": 1, "_id.month": 1 } },
+      ]),
     ]);
 
     return res.status(200).json({
@@ -94,6 +120,10 @@ const getAnalytics = async (req, res, next) => {
         totalMessages,
         recentBusinesses7d,
         recentSessions7d,
+        userMessagesCount,
+        botMessagesCount,
+        categoryAggregation,
+        monthlyAggregation,
       },
     });
   } catch (error) {
