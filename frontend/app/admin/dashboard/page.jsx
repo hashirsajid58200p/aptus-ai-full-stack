@@ -429,33 +429,44 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
 
-                  {/* Custom Neo-Brutalist Bar Chart */}
+                  {/* Custom Neo-Brutalist Bar Chart (Real Live Data) */}
                   <div className="pt-4 space-y-4">
                     <div className="h-44 flex items-end gap-4 px-2 pt-6 border-b-3 border-[#1a1a1a]">
                       {(() => {
-                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                         const now = new Date();
                         const chartItems = Array.from({ length: 8 }).map((_, idx) => {
                           const monthOffset = 7 - idx;
                           const d = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
-                          const mIdx = d.getMonth();
-                          const yr = d.getFullYear();
-                          const matched = analytics.monthlyAggregation?.find(
-                            (item) => item._id.month === mIdx + 1 && item._id.year === yr
-                          );
-                          const count = matched ? matched.count : (idx === 7 ? analytics.recentBusinesses7d || 1 : Math.max(1, Math.floor((analytics.totalBusinesses || 1) * ((idx + 1) / 8))));
-                          return { month: monthNames[mIdx], val: count };
+                          const targetMonth = d.getMonth();
+                          const targetYear = d.getFullYear();
+
+                          const count = businesses.filter((b) => {
+                            if (!b.createdAt) return false;
+                            const bDate = new Date(b.createdAt);
+                            return bDate.getMonth() === targetMonth && bDate.getFullYear() === targetYear;
+                          }).length;
+
+                          return {
+                            month: monthNames[targetMonth],
+                            val: count,
+                            isCurrent: idx === 7,
+                          };
                         });
+
                         const maxVal = Math.max(...chartItems.map((i) => i.val), 1);
 
                         return chartItems.map((item, idx) => {
-                          const heightPct = Math.max(18, Math.round((item.val / maxVal) * 100));
+                          const heightPct = item.val === 0 ? 8 : Math.max(16, Math.round((item.val / maxVal) * 85));
                           return (
-                            <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                            <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end">
+                              <span className="text-[10px] font-extrabold font-space text-[#1a1a1a]">
+                                {item.val}
+                              </span>
                               <div
                                 style={{ height: `${heightPct}%` }}
                                 className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
-                                  idx === 7 ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
+                                  item.isCurrent ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
                                 } shadow-neo-sm group-hover:scale-105`}
                               />
                               <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
@@ -468,13 +479,13 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex items-center justify-between text-xs font-bold text-gray-600 font-space">
                       <span>• Blue/Lime: Historical Growth</span>
-                      <span className="text-[#FF4D00] font-extrabold">• Orange: Current Period ({analytics.totalBusinesses} Total)</span>
+                      <span className="text-[#FF4D00] font-extrabold">• Orange: Current Month ({businesses.length} Total)</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Platform Health Quick Card */}
-                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-5 flex flex-col justify-between">
+                <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                       SYSTEM <span className="text-[#2D31FA]">STATUS</span>
@@ -484,41 +495,34 @@ export default function AdminDashboardPage() {
                     </p>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
-                      <span className="flex items-center gap-2 font-space">
+                  <div className="space-y-4 my-auto">
+                    <div className="flex items-center justify-between p-4 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
+                      <span className="flex items-center gap-2.5 font-space">
                         <Server className="w-4 h-4 text-[#FF4D00]" /> Express API Gateway
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
+                      <span className="px-2.5 py-1 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         ONLINE
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
-                      <span className="flex items-center gap-2 font-space">
+                    <div className="flex items-center justify-between p-4 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
+                      <span className="flex items-center gap-2.5 font-space">
                         <Globe className="w-4 h-4 text-[#2D31FA]" /> MongoDB Cluster
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
+                      <span className="px-2.5 py-1 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         HEALTHY
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
-                      <span className="flex items-center gap-2 font-space">
+                    <div className="flex items-center justify-between p-4 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-xs font-bold">
+                      <span className="flex items-center gap-2.5 font-space">
                         <Zap className="w-4 h-4 text-[#BFF000]" /> Groq AI Engine
                       </span>
-                      <span className="px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
+                      <span className="px-2.5 py-1 bg-[#BFF000] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
                         READY
                       </span>
                     </div>
                   </div>
-
-                  <button
-                    onClick={() => setActiveTab("businesses")}
-                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-space uppercase text-xs tracking-wider rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all cursor-pointer"
-                  >
-                    View All Clients →
-                  </button>
                 </div>
               </div>
 
@@ -530,38 +534,59 @@ export default function AdminDashboardPage() {
                   </h3>
                   <button
                     onClick={() => setActiveTab("businesses")}
-                    className="text-xs font-extrabold text-[#FF4D00] hover:underline font-space"
+                    className="text-xs font-extrabold text-[#FF4D00] hover:underline font-space uppercase tracking-wider"
                   >
-                    Manage All ({totalCount})
+                    Manage All
                   </button>
                 </div>
 
                 <div className="overflow-hidden w-full border-2 border-[#1a1a1a] rounded-none bg-white">
-                  <table className="w-full text-left text-xs border-collapse font-space">
+                  <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] font-syne font-extrabold uppercase">
-                        <th className="py-3 px-4 whitespace-nowrap">Business Name</th>
-                        <th className="py-3 px-4 whitespace-nowrap">Email</th>
-                        <th className="py-3 px-4 whitespace-nowrap">Category</th>
-                        <th className="py-3 px-4 whitespace-nowrap">Widget Token</th>
-                        <th className="py-3 px-4 text-right whitespace-nowrap">Action</th>
+                      <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
+                        <th className="py-3.5 px-4 whitespace-nowrap">Business Name</th>
+                        <th className="py-3.5 px-4 whitespace-nowrap">Owner Email</th>
+                        <th className="py-3.5 px-4 whitespace-nowrap">Category</th>
+                        <th className="py-3.5 px-4 whitespace-nowrap">Widget Token</th>
+                        <th className="py-3.5 px-4 whitespace-nowrap">Registered Date</th>
+                        <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y-2 divide-[#1a1a1a]">
+                    <tbody className="divide-y-2 divide-[#1a1a1a] text-[#1a1a1a] font-bold font-space">
                       {businesses.slice(0, 5).map((b) => (
-                        <tr key={b._id} className="hover:bg-[#fdf9f0]">
-                          <td className="py-3 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">{b.bussinessName}</td>
-                          <td className="py-3 px-4 font-bold text-gray-700">{b.email}</td>
-                          <td className="py-3 px-4 font-bold text-[#1a1a1a] text-xs whitespace-nowrap">
+                        <tr key={b._id} className="hover:bg-[#fdf9f0] transition-colors">
+                          <td className="py-3.5 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">
+                            {b.bussinessName || "N/A"}
+                          </td>
+                          <td className="py-3.5 px-4 text-[#1a1a1a] font-bold">
+                            {b.email || b.name}
+                          </td>
+                          <td className="py-3.5 px-4 text-[#1a1a1a] font-bold text-xs whitespace-nowrap">
                             {b.bussinessCategory || "General"}
                           </td>
-                          <td className="py-3 px-4 font-mono text-xs font-bold text-[#FF4D00] whitespace-nowrap">{b.chatbot_token}</td>
-                          <td className="py-3 px-4 text-right">
+                          <td className="py-3.5 px-4 font-mono text-[11px] whitespace-nowrap">
+                            {b.chatbot_token ? (
+                              <button
+                                onClick={() => copyToClipboard(b.chatbot_token)}
+                                className="text-[#FF4D00] font-extrabold hover:underline whitespace-nowrap cursor-pointer"
+                                title="Click to copy token"
+                              >
+                                {b.chatbot_token}
+                              </button>
+                            ) : (
+                              <span className="text-gray-400">None</span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4 text-gray-700 text-[11px] font-bold">
+                            {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "N/A"}
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold font-space text-[10px] uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
                             >
-                              View
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>View Profile</span>
                             </button>
                           </td>
                         </tr>
@@ -579,7 +604,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
-                    REGISTERED <span className="text-[#FF4D00]">PLATFORM</span>
+                    REGISTERED <span className="text-[#FF4D00]">BUSINESSES</span>
                   </h2>
                   <p className="text-xs font-bold text-[#1a1a1a]/70 font-space">
                     Showing {filteredBusinesses.length} of {totalCount} total registered businesses
