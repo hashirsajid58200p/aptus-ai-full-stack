@@ -769,6 +769,7 @@ export default function AdminDashboardPage() {
                   INTERACTIVE ANALYTICS <span className="text-[#2D31FA]">& CHARTS</span>
                 </h2>
 
+                {/* Row 1: Message Breakdown + Category Distribution */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Chart 1: Messages Ratio (100% Real Live Data) */}
                   {(() => {
@@ -778,6 +779,12 @@ export default function AdminDashboardPage() {
                     const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 0;
                     const botPct = totalMsgs > 0 ? (100 - userPct) : 0;
 
+                    // SVG Donut chart
+                    const r = 52;
+                    const circ = 2 * Math.PI * r;
+                    const userDash = (userPct / 100) * circ;
+                    const botDash = circ - userDash;
+
                     return (
                       <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
                         <div className="flex items-center justify-between">
@@ -785,28 +792,66 @@ export default function AdminDashboardPage() {
                             Message Breakdown
                           </h3>
                           <span className="text-[10px] font-extrabold font-space text-gray-600">
-                            {totalMsgs} Total Messages Exchanged
+                            {totalMsgs} Total
                           </span>
                         </div>
 
-                        <div className="space-y-3">
-                          <div>
-                            <div className="flex justify-between text-xs font-bold font-space mb-1">
-                              <span>User Inquiries ({userMsgs})</span>
-                              <span className="text-[#2D31FA] font-extrabold">{userPct}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
-                              <div className="bg-[#2D31FA] h-full transition-all duration-500" style={{ width: `${userPct}%` }} />
-                            </div>
+                        <div className="flex items-center gap-6">
+                          {/* Donut SVG */}
+                          <div className="relative shrink-0">
+                            <svg width="130" height="130" viewBox="0 0 130 130">
+                              <circle cx="65" cy="65" r={r} fill="none" stroke="#e5e7eb" strokeWidth="14" />
+                              {totalMsgs > 0 && (
+                                <>
+                                  <circle
+                                    cx="65" cy="65" r={r}
+                                    fill="none"
+                                    stroke="#2D31FA"
+                                    strokeWidth="14"
+                                    strokeDasharray={`${userDash} ${circ - userDash}`}
+                                    strokeDashoffset={circ * 0.25}
+                                    strokeLinecap="square"
+                                  />
+                                  <circle
+                                    cx="65" cy="65" r={r}
+                                    fill="none"
+                                    stroke="#FF4D00"
+                                    strokeWidth="14"
+                                    strokeDasharray={`${botDash} ${circ - botDash}`}
+                                    strokeDashoffset={circ * 0.25 - userDash}
+                                    strokeLinecap="square"
+                                  />
+                                </>
+                              )}
+                              <text x="65" y="62" textAnchor="middle" className="font-extrabold" style={{ fontSize: "18px", fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fill: "#1a1a1a" }}>
+                                {totalMsgs > 0 ? `${userPct}%` : "—"}
+                              </text>
+                              <text x="65" y="78" textAnchor="middle" style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, fill: "#666" }}>
+                                USER
+                              </text>
+                            </svg>
                           </div>
 
-                          <div>
-                            <div className="flex justify-between text-xs font-bold font-space mb-1">
-                              <span>AI Bot Responses ({botMsgs})</span>
-                              <span className="text-[#FF4D00] font-extrabold">{botPct}%</span>
+                          {/* Legend bars */}
+                          <div className="flex-1 space-y-3">
+                            <div>
+                              <div className="flex justify-between text-xs font-bold font-space mb-1">
+                                <span>User Inquiries ({userMsgs})</span>
+                                <span className="text-[#2D31FA] font-extrabold">{userPct}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
+                                <div className="bg-[#2D31FA] h-full transition-all duration-500" style={{ width: `${userPct}%` }} />
+                              </div>
                             </div>
-                            <div className="w-full bg-gray-200 h-4 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
-                              <div className="bg-[#FF4D00] h-full transition-all duration-500" style={{ width: `${botPct}%` }} />
+
+                            <div>
+                              <div className="flex justify-between text-xs font-bold font-space mb-1">
+                                <span>AI Bot Responses ({botMsgs})</span>
+                                <span className="text-[#FF4D00] font-extrabold">{botPct}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
+                                <div className="bg-[#FF4D00] h-full transition-all duration-500" style={{ width: `${botPct}%` }} />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -838,12 +883,8 @@ export default function AdminDashboardPage() {
                           .sort((a, b) => b.count - a.count);
 
                         const totalSum = businesses.length || 1;
-                        const colors = [
-                          "bg-[#BFF000] text-[#1a1a1a]",
-                          "bg-[#FF4D00] text-white",
-                          "bg-[#2D31FA] text-white",
-                          "bg-[#1a1a1a] text-white",
-                        ];
+                        const barColors = ["bg-[#BFF000]", "bg-[#FF4D00]", "bg-[#2D31FA]", "bg-[#1a1a1a]"];
+                        const textColors = ["text-[#1a1a1a]", "text-white", "text-white", "text-white"];
 
                         return catList.length === 0 ? (
                           <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
@@ -852,18 +893,106 @@ export default function AdminDashboardPage() {
                         ) : (
                           catList.map((c, idx) => {
                             const pct = Math.round((c.count / totalSum) * 100);
-                            const badgeColor = colors[idx % colors.length];
                             return (
-                              <div key={idx} className="flex items-center justify-between p-2.5 bg-white border-2 border-[#1a1a1a] rounded-none">
-                                <span className="font-bold text-[#1a1a1a]">{c.name}</span>
-                                <span className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold ${badgeColor}`}>
-                                  {pct}% ({c.count})
-                                </span>
+                              <div key={idx}>
+                                <div className="flex justify-between mb-1">
+                                  <span className="font-bold text-[#1a1a1a] truncate max-w-[65%]">{c.name}</span>
+                                  <span className="font-extrabold text-[#1a1a1a]">{c.count} ({pct}%)</span>
+                                </div>
+                                <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
+                                  <div
+                                    className={`${barColors[idx % barColors.length]} h-full transition-all duration-500`}
+                                    style={{ width: `${pct}%` }}
+                                  />
+                                </div>
                               </div>
                             );
                           })
                         );
                       })()}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: Platform Stats + Monthly Registration Trend */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Chart 3: Platform Engagement Key Metrics */}
+                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
+                    <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
+                      Platform Engagement
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { label: "Total Businesses", value: analytics.totalBusinesses || 0, color: "bg-[#FF4D00]", textColor: "text-white" },
+                        { label: "Total Sessions", value: analytics.totalSessions || 0, color: "bg-[#2D31FA]", textColor: "text-white" },
+                        { label: "Total Messages", value: analytics.totalMessages || 0, color: "bg-[#BFF000]", textColor: "text-[#1a1a1a]" },
+                        { label: "New This Week", value: analytics.recentBusinesses7d || 0, color: "bg-[#1a1a1a]", textColor: "text-white" },
+                        { label: "Sessions This Week", value: analytics.recentSessions7d || 0, color: "bg-[#FF4D00]", textColor: "text-white" },
+                        { label: "Avg Msgs/Business", value: analytics.totalBusinesses > 0 ? Math.round((analytics.totalMessages || 0) / analytics.totalBusinesses) : 0, color: "bg-[#2D31FA]", textColor: "text-white" },
+                      ].map((stat, idx) => (
+                        <div key={idx} className={`${stat.color} ${stat.textColor} border-2 border-[#1a1a1a] p-3 rounded-none shadow-neo-sm`}>
+                          <p className="text-[10px] font-extrabold uppercase font-syne leading-tight opacity-80">{stat.label}</p>
+                          <p className="text-2xl font-extrabold font-space mt-1">{stat.value.toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Chart 4: Monthly Registration Bar Chart (real from businesses list) */}
+                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
+                        Monthly Registrations
+                      </h3>
+                      <span className="text-[10px] font-extrabold font-space text-gray-600">
+                        Last 6 Months
+                      </span>
+                    </div>
+
+                    {(() => {
+                      const MONTH_NAMES = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+                      const now = new Date();
+                      const months = Array.from({ length: 6 }).map((_, i) => {
+                        const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+                        return { label: MONTH_NAMES[d.getMonth()], month: d.getMonth(), year: d.getFullYear() };
+                      });
+
+                      const counts = months.map(({ month, year }) =>
+                        businesses.filter((b) => {
+                          if (!b.createdAt) return false;
+                          const d = new Date(b.createdAt);
+                          return d.getMonth() === month && d.getFullYear() === year;
+                        }).length
+                      );
+
+                      const maxVal = Math.max(...counts, 1);
+
+                      return (
+                        <div className="flex items-end gap-2 h-36 border-b-2 border-l-2 border-[#1a1a1a] px-1 pb-0 pt-4">
+                          {counts.map((val, idx) => {
+                            const heightPct = val === 0 ? 5 : Math.max(10, Math.round((val / maxVal) * 100));
+                            const isLatest = idx === 5;
+                            return (
+                              <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group">
+                                <span className="text-[9px] font-extrabold font-space text-[#1a1a1a]">{val}</span>
+                                <div
+                                  style={{ height: `${heightPct}%` }}
+                                  className={`w-full border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${isLatest ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"} shadow-neo-sm`}
+                                />
+                                <span className="text-[9px] font-extrabold font-syne uppercase text-[#1a1a1a] pb-1">
+                                  {months[idx].label}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+
+                    <div className="flex items-center gap-4 text-[10px] font-bold font-space text-gray-600">
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#2D31FA] border border-[#1a1a1a] inline-block" /> Historical</span>
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#BFF000] border border-[#1a1a1a] inline-block" /> Alt Month</span>
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#FF4D00] border border-[#1a1a1a] inline-block" /> Current Month</span>
                     </div>
                   </div>
                 </div>
