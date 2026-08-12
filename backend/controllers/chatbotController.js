@@ -4,6 +4,42 @@ const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
 
+// GET /api/v1/chatbot/getDetails?token=... — validate a chatbot token and return safe business info
+exports.getDetails = catchAsyncError(async (req, res, next) => {
+  const token = req.query.token || req.headers["x-chatbot-token"];
+
+  if (!token) {
+    return res.status(400).json({
+      success: false,
+      message: "Token is required",
+    });
+  }
+
+  const owner = await User.findOne({ chatbot_token: token }).select(
+    "bussinessName bussinessCategory email chatbot_token createdAt"
+  );
+
+  if (!owner) {
+    return res.status(404).json({
+      success: false,
+      message: "Invalid or inactive chatbot token",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      businessName: owner.bussinessName,
+      category: owner.bussinessCategory,
+      email: owner.email,
+      token: owner.chatbot_token,
+      registeredAt: owner.createdAt,
+    },
+  });
+});
+
+
+
 const systemPrompt = `You are a friendly and professional customer service chatbot for a business.
 
 IMPORTANT RULES:
