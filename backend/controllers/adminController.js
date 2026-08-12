@@ -140,7 +140,7 @@ const getAnalytics = async (req, res, next) => {
 const getAllBusinesses = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 20;
+    const limit = parseInt(req.query.limit, 10) || 1000;
     const skip = (page - 1) * limit;
 
     const [businesses, totalCount] = await Promise.all([

@@ -53,8 +53,6 @@ export default function AdminDashboardPage() {
   });
 
   const [businesses, setBusinesses] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -107,20 +105,18 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Fetch Businesses (Paginated)
-  const fetchBusinesses = async (pageNumber = 1) => {
+  // Fetch Businesses
+  const fetchBusinesses = async () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${API_URL}/admin/businesses?page=${pageNumber}&limit=10`,
+        `${API_URL}/admin/businesses?limit=1000`,
         getAuthOptions()
       );
 
       if (res.data?.success) {
         setBusinesses(res.data.data);
-        setPage(res.data.page);
-        setTotalPages(res.data.totalPages);
-        setTotalCount(res.data.totalCount);
+        setTotalCount(res.data.totalCount || res.data.data.length);
       }
     } catch (err) {
       console.error("Error fetching businesses", err);
@@ -131,14 +127,8 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchAnalyticsAndAuth();
-    fetchBusinesses(1);
+    fetchBusinesses();
   }, []);
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      fetchBusinesses(newPage);
-    }
-  };
 
   const handleViewBusiness = async (id) => {
     try {
@@ -194,14 +184,23 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
+
   const categoriesList = ["ALL", ...Array.from(new Set(businesses.map(b => b.bussinessCategory || "General")))];
 
   const filteredBusinesses = businesses.filter((b) => {
+    const query = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      b.bussinessName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.bussinessCategory?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.chatbot_token?.toLowerCase().includes(searchQuery.toLowerCase());
+      !query ||
+      (b.bussinessName && b.bussinessName.toLowerCase().includes(query)) ||
+      (b.email && b.email.toLowerCase().includes(query)) ||
+      (b.bussinessCategory && b.bussinessCategory.toLowerCase().includes(query)) ||
+      (b.chatbot_token && b.chatbot_token.toLowerCase().includes(query));
 
     const matchesCategory =
       selectedCategory === "ALL" ||
@@ -209,6 +208,12 @@ export default function AdminDashboardPage() {
 
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredBusinesses.length / ITEMS_PER_PAGE));
+  const paginatedBusinesses = filteredBusinesses.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const sidebarTabs = [
     { id: "overview", label: "Overview", icon: <BarChart3 className="w-4 h-4" /> },
@@ -658,7 +663,7 @@ export default function AdminDashboardPage() {
                         </td>
                       </tr>
                     ) : (
-                      filteredBusinesses.map((b) => (
+                      paginatedBusinesses.map((b) => (
                         <tr key={b._id} className="hover:bg-[#fdf9f0] transition-colors">
                           <td className="py-3.5 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">
                             {b.bussinessName || "N/A"}
@@ -704,14 +709,14 @@ export default function AdminDashboardPage() {
               {/* Pagination Controls */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
                 <p className="text-xs font-bold text-[#1a1a1a] font-space">
-                  Page <span className="font-extrabold">{page}</span> of{" "}
-                  <span className="font-extrabold">{totalPages}</span>
+                  Page <span className="font-extrabold">{currentPage}</span> of{" "}
+                  <span className="font-extrabold">{totalPages}</span> (Showing {paginatedBusinesses.length} of {filteredBusinesses.length} results)
                 </p>
 
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page <= 1}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage <= 1}
                     className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-none text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
                   >
                     <ChevronLeft className="w-4 h-4" />
@@ -719,8 +724,8 @@ export default function AdminDashboardPage() {
                   </button>
 
                   <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= totalPages}
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage >= totalPages}
                     className="flex items-center gap-1 px-3.5 py-1.5 bg-white text-[#1a1a1a] font-extrabold rounded-none text-xs border-2 border-[#1a1a1a] shadow-neo-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#fdf9f0] transition-colors cursor-pointer font-space"
                   >
                     <span>Next</span>
