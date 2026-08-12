@@ -254,9 +254,9 @@ export default function AdminDashboardPage() {
                     setActiveTab(tab.id);
                     setIsSidebarOpen(false);
                   }}
-                  className={`flex items-center w-full text-left py-3 px-4 uppercase text-xs font-extrabold border-2 border-[#1a1a1a] rounded-none transition-all duration-150 font-space ${
+                  className={`flex items-center w-full text-left py-3 px-4 uppercase text-sm font-extrabold border-2 border-[#1a1a1a] rounded-none transition-all duration-150 ${
                     isActive
-                      ? "bg-[#FF4D00] text-white shadow-neo-sm translate-x-[1px]"
+                      ? "bg-[#FF4D00] text-white shadow-neo-sm"
                       : "bg-white hover:bg-[#BFF000] text-[#1a1a1a]"
                   }`}
                 >
@@ -268,39 +268,19 @@ export default function AdminDashboardPage() {
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="pt-6 border-t-3 border-[#1a1a1a] space-y-3 mt-6">
-          <div className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-none bg-[#2D31FA] text-white font-extrabold flex items-center justify-center text-xs border-2 border-[#1a1a1a] shrink-0 font-syne">
-              A
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-extrabold text-xs text-[#1a1a1a] truncate font-syne">Admin Control</p>
-              <p className="text-[10px] text-gray-600 font-bold font-space">Super Admin</p>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <Link
-              href="/"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-white text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#BFF000] transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Site</span>
-            </Link>
-
-            <button
-              onClick={() => {
-                if (window.confirm("Are you sure you want to log out of the admin panel?")) {
-                  handleLogout();
-                }
-              }}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF4D00] text-white font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm text-[11px] uppercase tracking-wider font-space hover:bg-[#e04400] transition-colors cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Logout</span>
-            </button>
-          </div>
+        {/* Sidebar Footer - Bottom Left Logout */}
+        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a]">
+          <button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to log out of the admin panel?")) {
+                handleLogout();
+              }
+            }}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
 
@@ -325,7 +305,7 @@ export default function AdminDashboardPage() {
                   fetchBusinesses(page);
                   toast.success("Metrics updated!");
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer font-space"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold font-syne border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Refresh Data</span>
@@ -514,7 +494,7 @@ export default function AdminDashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("businesses")}
-                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-syne uppercase text-xs rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all"
+                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-syne uppercase text-xs tracking-wider rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all cursor-pointer"
                   >
                     View All Clients →
                   </button>
@@ -560,7 +540,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold text-[10px] uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px]"
+                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold font-syne text-[10px] uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                             >
                               View
                             </button>
@@ -830,7 +810,7 @@ export default function AdminDashboardPage() {
                     <button
                       onClick={handleTestToken}
                       disabled={testingToken}
-                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-syne text-xs uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px]"
+                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-syne text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                     >
                       {testingToken ? "Validating..." : "Validate Token"}
                     </button>
