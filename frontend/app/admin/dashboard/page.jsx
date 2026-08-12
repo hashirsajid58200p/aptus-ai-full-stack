@@ -276,7 +276,7 @@ export default function AdminDashboardPage() {
                 handleLogout();
               }
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -529,7 +529,7 @@ export default function AdminDashboardPage() {
                     <tbody className="divide-y-2 divide-[#1a1a1a]">
                       {businesses.slice(0, 5).map((b) => (
                         <tr key={b._id} className="hover:bg-[#fdf9f0]">
-                          <td className="py-3 px-4 font-syne font-extrabold text-sm">{b.bussinessName}</td>
+                          <td className="py-3 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">{b.bussinessName}</td>
                           <td className="py-3 px-4 font-bold text-gray-700">{b.email}</td>
                           <td className="py-3 px-4">
                             <span className="px-2 py-0.5 bg-[#fdf9f0] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold">
@@ -626,7 +626,7 @@ export default function AdminDashboardPage() {
                     ) : (
                       filteredBusinesses.map((b) => (
                         <tr key={b._id} className="hover:bg-[#fdf9f0] transition-colors">
-                          <td className="py-3.5 px-4 font-extrabold font-syne text-sm text-[#1a1a1a]">
+                          <td className="py-3.5 px-4 font-space font-extrabold text-xs text-[#1a1a1a]">
                             {b.bussinessName || "N/A"}
                           </td>
                           <td className="py-3.5 px-4 text-[#1a1a1a] font-bold">
@@ -657,7 +657,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>View Profile</span>
