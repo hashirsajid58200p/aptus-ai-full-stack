@@ -161,7 +161,7 @@ export default function AuthForm() {
                       type="text"
                       required
                       className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                      placeholder="Alex Morgan"
+                      placeholder="John Doe"
                       value={formData.name}
                       onChange={handleChange}
                     />
@@ -183,7 +183,7 @@ export default function AuthForm() {
                     type="email"
                     required
                     className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                    placeholder="you@example.com"
+                    placeholder="john@example.com"
                     value={isSignUp ? formData.email : loginData.email}
                     onChange={isSignUp ? handleChange : handleLoginChange}
                   />
@@ -240,7 +240,7 @@ export default function AuthForm() {
                         type="text"
                         required
                         className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-                        placeholder="Acme Corporation"
+                        placeholder="Acme Inc."
                         value={formData.bussinessName}
                         onChange={handleChange}
                       />
@@ -270,8 +270,17 @@ export default function AuthForm() {
                         <option value="Education & E-Learning">Education & E-Learning</option>
                         <option value="Finance & Banking">Finance & Banking</option>
                         <option value="Real Estate & Construction">Real Estate & Construction</option>
-                        <option value="Marketing & Agency">Marketing & Agency</option>
+                        <option value="Marketing & Advertising">Marketing & Advertising</option>
                         <option value="Healthcare & Medical">Healthcare & Medical</option>
+                        <option value="AI & Automation">AI & Automation</option>
+                        <option value="Hospitality & Tourism">Hospitality & Tourism</option>
+                        <option value="Automotive & Transport">Automotive & Transport</option>
+                        <option value="Legal & Professional Services">Legal & Professional Services</option>
+                        <option value="Entertainment & Media">Entertainment & Media</option>
+                        <option value="Non-Profit & NGO">Non-Profit & NGO</option>
+                        <option value="Fashion & Beauty">Fashion & Beauty</option>
+                        <option value="Food & Restaurant">Food & Restaurant</option>
+                        <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
                         <option value="Services & Other">Services & Other</option>
                       </select>
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -294,7 +303,7 @@ export default function AuthForm() {
                         required
                         rows={3}
                         className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
-                        placeholder="Describe your business services or products..."
+                        placeholder="Tell us a little about your business..."
                         value={formData.bussinessDescription}
                         onChange={handleChange}
                       />
