@@ -40,6 +40,27 @@ export default function AuthForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const categoryOptions = [
+    "Software & Technology",
+    "E-Commerce & Retail",
+    "Health & Fitness",
+    "Education & E-Learning",
+    "Finance & Banking",
+    "Real Estate & Construction",
+    "Marketing & Advertising",
+    "Healthcare & Medical",
+    "AI & Automation",
+    "Hospitality & Tourism",
+    "Automotive & Transport",
+    "Legal & Professional Services",
+    "Entertainment & Media",
+    "Non-Profit & NGO",
+    "Fashion & Beauty",
+    "Food & Restaurant",
+    "Logistics & Supply Chain",
+    "Services & Other",
+  ];
+
   const toggleAuthMode = () => setIsSignUp(!isSignUp);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
