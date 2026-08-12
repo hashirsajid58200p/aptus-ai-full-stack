@@ -574,7 +574,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
-                    REGISTERED <span className="text-[#FF4D00]">PLATFORM CLIENTS</span>
+                    REGISTERED <span className="text-[#FF4D00]">PLATFORM</span>
                   </h2>
                   <p className="text-xs font-bold text-[#1a1a1a]/70 font-space">
                     Showing {filteredBusinesses.length} of {totalCount} total registered businesses
@@ -874,7 +874,7 @@ export default function AdminDashboardPage() {
       {/* Business Profile Detail Modal */}
       {selectedBusiness && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-3 border-[#1a1a1a] rounded-none max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border-3 border-[#1a1a1a] rounded-none max-w-2xl w-full p-6 space-y-6 shadow-neo-lg relative max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
               <div>
@@ -943,17 +943,16 @@ export default function AdminDashboardPage() {
 
             {/* Business FAQs */}
             <div>
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] font-syne mb-3 flex items-center gap-1.5">
-                <HelpCircle className="w-4 h-4 text-[#FF4D00]" />
-                <span>Configured Knowledge Base FAQs ({selectedBusiness.bussinessDetails?.length || 0})</span>
+              <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] font-syne mb-3">
+                Configured Knowledge Base FAQs ({selectedBusiness.bussinessDetails?.length || 0})
               </h4>
 
-              <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-60 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {selectedBusiness.bussinessDetails?.length > 0 ? (
                   selectedBusiness.bussinessDetails.map((faq, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#fdf9f0] p-3 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
+                      className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space shadow-neo-sm"
                     >
                       <p className="font-extrabold text-[#1a1a1a]">Q: {faq.question}</p>
                       <p className="font-bold text-gray-800">A: {faq.answer}</p>
@@ -971,7 +970,7 @@ export default function AdminDashboardPage() {
             <div className="border-t-3 border-[#1a1a1a] pt-4 text-right">
               <button
                 onClick={() => setSelectedBusiness(null)}
-                className="px-5 py-2 bg-[#1a1a1a] hover:bg-black text-white text-xs font-extrabold font-syne uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-[#1a1a1a] hover:bg-black text-white text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
               >
                 Close Profile
               </button>
