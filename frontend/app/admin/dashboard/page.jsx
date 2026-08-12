@@ -305,7 +305,7 @@ export default function AdminDashboardPage() {
                   fetchBusinesses(page);
                   toast.success("Metrics updated!");
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold font-syne border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold font-space border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Refresh Data</span>
@@ -494,7 +494,7 @@ export default function AdminDashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("businesses")}
-                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-syne uppercase text-xs tracking-wider rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all cursor-pointer"
+                    className="w-full py-3 bg-[#1a1a1a] text-white font-extrabold font-space uppercase text-xs tracking-wider rounded-none border-2 border-[#1a1a1a] hover:bg-black shadow-neo-sm transition-all cursor-pointer"
                   >
                     View All Clients →
                   </button>
@@ -540,7 +540,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold font-syne text-[10px] uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                              className="px-2.5 py-1 bg-[#FF4D00] text-white font-extrabold font-space text-[10px] uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                             >
                               View
                             </button>
@@ -657,7 +657,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-right">
                             <button
                               onClick={() => handleViewBusiness(b._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-syne border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] uppercase tracking-wider transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>View Profile</span>
@@ -810,7 +810,7 @@ export default function AdminDashboardPage() {
                     <button
                       onClick={handleTestToken}
                       disabled={testingToken}
-                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-syne text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
                     >
                       {testingToken ? "Validating..." : "Validate Token"}
                     </button>
