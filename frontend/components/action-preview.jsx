@@ -19,7 +19,7 @@ export default function ActionPreview() {
             See It In Action
           </span>
 
-          <h2 className="font-syne text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
+          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight">
             SEAMLESS EXPERIENCE <br />
             <span className="text-[#FF4D00]">ON ANY SCREEN</span>
           </h2>
