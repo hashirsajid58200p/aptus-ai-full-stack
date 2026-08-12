@@ -764,90 +764,101 @@ export default function AdminDashboardPage() {
           {/* TAB 3: ANALYTICS & CHARTS */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
-              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
-                <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
-                  INTERACTIVE ANALYTICS <span className="text-[#2D31FA]">& CHARTS</span>
-                </h2>
 
-                {/* Row 1: Message Breakdown + Category Distribution */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Chart 1: Messages Ratio (100% Real Live Data) */}
+              {/* Section Header */}
+              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg">
+                <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
+                      INTERACTIVE ANALYTICS <span className="text-[#2D31FA]">& CHARTS</span>
+                    </h2>
+                    <p className="text-xs font-bold font-space text-[#1a1a1a]/70 mt-1">
+                      Real-time platform insights from live data
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold uppercase font-space">
+                    Live Data
+                  </span>
+                </div>
+
+                {/* Row 1: Message Breakdown + Industry Categories */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                  {/* Chart 1: Message Breakdown — SVG Donut + Progress Bars */}
                   {(() => {
                     const userMsgs = analytics.userMessagesCount || 0;
                     const botMsgs = analytics.botMessagesCount || 0;
                     const totalMsgs = userMsgs + botMsgs || analytics.totalMessages || 0;
-                    const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 0;
-                    const botPct = totalMsgs > 0 ? (100 - userPct) : 0;
-
-                    // SVG Donut chart
-                    const r = 52;
+                    const userPct = totalMsgs > 0 ? Math.round((userMsgs / totalMsgs) * 100) : 50;
+                    const botPct = totalMsgs > 0 ? (100 - userPct) : 50;
+                    const r = 50;
                     const circ = 2 * Math.PI * r;
                     const userDash = (userPct / 100) * circ;
                     const botDash = circ - userDash;
 
                     return (
-                      <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
-                            Message Breakdown
-                          </h3>
-                          <span className="text-[10px] font-extrabold font-space text-gray-600">
-                            {totalMsgs} Total
+                      <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
+                        <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                          <div>
+                            <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                              MESSAGE <span className="text-[#FF4D00]">BREAKDOWN</span>
+                            </h3>
+                            <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                              User vs AI bot ratio
+                            </p>
+                          </div>
+                          <span className="text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
+                            {totalMsgs.toLocaleString()} Total
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                          {/* Donut SVG */}
-                          <div className="relative shrink-0">
-                            <svg width="130" height="130" viewBox="0 0 130 130">
-                              <circle cx="65" cy="65" r={r} fill="none" stroke="#e5e7eb" strokeWidth="14" />
+                        <div className="flex items-center gap-5 pt-1">
+                          {/* SVG Donut */}
+                          <div className="shrink-0">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                              <circle cx="60" cy="60" r={r} fill="none" stroke="#e5e7eb" strokeWidth="13" />
                               {totalMsgs > 0 && (
                                 <>
                                   <circle
-                                    cx="65" cy="65" r={r}
-                                    fill="none"
-                                    stroke="#2D31FA"
-                                    strokeWidth="14"
+                                    cx="60" cy="60" r={r}
+                                    fill="none" stroke="#2D31FA" strokeWidth="13"
                                     strokeDasharray={`${userDash} ${circ - userDash}`}
                                     strokeDashoffset={circ * 0.25}
                                     strokeLinecap="square"
                                   />
                                   <circle
-                                    cx="65" cy="65" r={r}
-                                    fill="none"
-                                    stroke="#FF4D00"
-                                    strokeWidth="14"
+                                    cx="60" cy="60" r={r}
+                                    fill="none" stroke="#FF4D00" strokeWidth="13"
                                     strokeDasharray={`${botDash} ${circ - botDash}`}
                                     strokeDashoffset={circ * 0.25 - userDash}
                                     strokeLinecap="square"
                                   />
                                 </>
                               )}
-                              <text x="65" y="62" textAnchor="middle" className="font-extrabold" style={{ fontSize: "18px", fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fill: "#1a1a1a" }}>
-                                {totalMsgs > 0 ? `${userPct}%` : "—"}
+                              <text x="60" y="57" textAnchor="middle" style={{ fontSize: "17px", fontFamily: "Syne, sans-serif", fontWeight: 800, fill: "#1a1a1a" }}>
+                                {userPct}%
                               </text>
-                              <text x="65" y="78" textAnchor="middle" style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, fill: "#666" }}>
+                              <text x="60" y="73" textAnchor="middle" style={{ fontSize: "8px", fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, fill: "#888", textTransform: "uppercase", letterSpacing: "1px" }}>
                                 USER
                               </text>
                             </svg>
                           </div>
 
-                          {/* Legend bars */}
+                          {/* Progress bars legend */}
                           <div className="flex-1 space-y-3">
                             <div>
-                              <div className="flex justify-between text-xs font-bold font-space mb-1">
-                                <span>User Inquiries ({userMsgs})</span>
-                                <span className="text-[#2D31FA] font-extrabold">{userPct}%</span>
+                              <div className="flex justify-between text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
+                                <span>User Inquiries</span>
+                                <span className="text-[#2D31FA]">{userMsgs.toLocaleString()} · {userPct}%</span>
                               </div>
                               <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                                 <div className="bg-[#2D31FA] h-full transition-all duration-500" style={{ width: `${userPct}%` }} />
                               </div>
                             </div>
-
                             <div>
-                              <div className="flex justify-between text-xs font-bold font-space mb-1">
-                                <span>AI Bot Responses ({botMsgs})</span>
-                                <span className="text-[#FF4D00] font-extrabold">{botPct}%</span>
+                              <div className="flex justify-between text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
+                                <span>AI Responses</span>
+                                <span className="text-[#FF4D00]">{botMsgs.toLocaleString()} · {botPct}%</span>
                               </div>
                               <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                                 <div className="bg-[#FF4D00] h-full transition-all duration-500" style={{ width: `${botPct}%` }} />
@@ -859,51 +870,50 @@ export default function AdminDashboardPage() {
                     );
                   })()}
 
-                  {/* Chart 2: Category Distribution (100% Real Live Data) */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
-                        Industry Categories
-                      </h3>
-                      <span className="text-[10px] font-extrabold font-space text-gray-600">
-                        {businesses.length} Registered Businesses
+                  {/* Chart 2: Industry Category Distribution */}
+                  <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                      <div>
+                        <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                          INDUSTRY <span className="text-[#FF4D00]">CATEGORIES</span>
+                        </h3>
+                        <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                          Business sector distribution
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
+                        {businesses.length} Businesses
                       </span>
                     </div>
 
-                    <div className="space-y-2.5 font-space text-xs font-bold">
+                    <div className="space-y-3">
                       {(() => {
                         const catMap = {};
                         businesses.forEach((b) => {
                           const cat = b.bussinessCategory || "General";
                           catMap[cat] = (catMap[cat] || 0) + 1;
                         });
-
                         const catList = Object.entries(catMap)
                           .map(([cat, count]) => ({ name: cat, count }))
                           .sort((a, b) => b.count - a.count);
-
                         const totalSum = businesses.length || 1;
                         const barColors = ["bg-[#BFF000]", "bg-[#FF4D00]", "bg-[#2D31FA]", "bg-[#1a1a1a]"];
-                        const textColors = ["text-[#1a1a1a]", "text-white", "text-white", "text-white"];
 
                         return catList.length === 0 ? (
-                          <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
-                            No registered business category data yet.
+                          <p className="text-xs text-gray-500 font-bold italic py-4 font-space text-center">
+                            No business category data yet.
                           </p>
                         ) : (
                           catList.map((c, idx) => {
                             const pct = Math.round((c.count / totalSum) * 100);
                             return (
                               <div key={idx}>
-                                <div className="flex justify-between mb-1">
-                                  <span className="font-bold text-[#1a1a1a] truncate max-w-[65%]">{c.name}</span>
-                                  <span className="font-extrabold text-[#1a1a1a]">{c.count} ({pct}%)</span>
+                                <div className="flex justify-between mb-1.5">
+                                  <span className="text-xs font-extrabold font-space text-[#1a1a1a] truncate max-w-[60%] uppercase tracking-wide">{c.name}</span>
+                                  <span className="text-xs font-extrabold font-space text-[#1a1a1a]">{c.count} · {pct}%</span>
                                 </div>
                                 <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
-                                  <div
-                                    className={`${barColors[idx % barColors.length]} h-full transition-all duration-500`}
-                                    style={{ width: `${pct}%` }}
-                                  />
+                                  <div className={`${barColors[idx % barColors.length]} h-full transition-all duration-500`} style={{ width: `${pct}%` }} />
                                 </div>
                               </div>
                             );
@@ -914,38 +924,52 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Row 2: Platform Stats + Monthly Registration Trend */}
+                {/* Row 2: Platform Engagement Stats + Monthly Bar Chart */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Chart 3: Platform Engagement Key Metrics */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                    <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
-                      Platform Engagement
-                    </h3>
+
+                  {/* Chart 3: Platform Engagement Stat Grid */}
+                  <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
+                    <div className="border-b-2 border-[#1a1a1a] pb-3">
+                      <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                        PLATFORM <span className="text-[#2D31FA]">ENGAGEMENT</span>
+                      </h3>
+                      <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                        Key performance metrics at a glance
+                      </p>
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { label: "Total Businesses", value: analytics.totalBusinesses || 0, color: "bg-[#FF4D00]", textColor: "text-white" },
-                        { label: "Total Sessions", value: analytics.totalSessions || 0, color: "bg-[#2D31FA]", textColor: "text-white" },
-                        { label: "Total Messages", value: analytics.totalMessages || 0, color: "bg-[#BFF000]", textColor: "text-[#1a1a1a]" },
-                        { label: "New This Week", value: analytics.recentBusinesses7d || 0, color: "bg-[#1a1a1a]", textColor: "text-white" },
-                        { label: "Sessions This Week", value: analytics.recentSessions7d || 0, color: "bg-[#FF4D00]", textColor: "text-white" },
-                        { label: "Avg Msgs/Business", value: analytics.totalBusinesses > 0 ? Math.round((analytics.totalMessages || 0) / analytics.totalBusinesses) : 0, color: "bg-[#2D31FA]", textColor: "text-white" },
+                        { label: "Total Businesses", value: analytics.totalBusinesses || 0, icon: <Building2 className="w-4 h-4" />, color: "bg-[#FF4D00]", text: "text-white" },
+                        { label: "Chat Sessions", value: analytics.totalSessions || 0, icon: <Users className="w-4 h-4" />, color: "bg-[#2D31FA]", text: "text-white" },
+                        { label: "Total Messages", value: analytics.totalMessages || 0, icon: <MessageSquare className="w-4 h-4" />, color: "bg-[#BFF000]", text: "text-[#1a1a1a]" },
+                        { label: "New This Week", value: analytics.recentBusinesses7d || 0, icon: <TrendingUp className="w-4 h-4" />, color: "bg-[#1a1a1a]", text: "text-white" },
+                        { label: "Sessions (7d)", value: analytics.recentSessions7d || 0, icon: <Activity className="w-4 h-4" />, color: "bg-[#FF4D00]", text: "text-white" },
+                        { label: "Avg Msgs/Client", value: analytics.totalBusinesses > 0 ? Math.round((analytics.totalMessages || 0) / analytics.totalBusinesses) : 0, icon: <BarChart3 className="w-4 h-4" />, color: "bg-[#2D31FA]", text: "text-white" },
                       ].map((stat, idx) => (
-                        <div key={idx} className={`${stat.color} ${stat.textColor} border-2 border-[#1a1a1a] p-3 rounded-none shadow-neo-sm`}>
-                          <p className="text-[10px] font-extrabold uppercase font-syne leading-tight opacity-80">{stat.label}</p>
-                          <p className="text-2xl font-extrabold font-space mt-1">{stat.value.toLocaleString()}</p>
+                        <div key={idx} className={`${stat.color} ${stat.text} border-2 border-[#1a1a1a] p-3 rounded-none shadow-neo-sm`}>
+                          <div className="flex items-center justify-between mb-2 opacity-80">
+                            {stat.icon}
+                            <span className="text-[9px] font-extrabold font-space uppercase tracking-wider leading-tight text-right">{stat.label}</span>
+                          </div>
+                          <p className="text-3xl font-extrabold font-syne">{stat.value.toLocaleString()}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Chart 4: Monthly Registration Bar Chart (real from businesses list) */}
-                  <div className="bg-[#fdf9f0] border-2 border-[#1a1a1a] p-5 rounded-none space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-extrabold font-syne uppercase text-[#1a1a1a]">
-                        Monthly Registrations
-                      </h3>
-                      <span className="text-[10px] font-extrabold font-space text-gray-600">
-                        Last 6 Months
+                  {/* Chart 4: Monthly Business Registrations Bar Chart */}
+                  <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                      <div>
+                        <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                          MONTHLY <span className="text-[#FF4D00]">REGISTRATIONS</span>
+                        </h3>
+                        <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                          Business sign-ups — last 6 months
+                        </p>
+                      </div>
+                      <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold uppercase font-space">
+                        Live Data
                       </span>
                     </div>
 
@@ -956,7 +980,6 @@ export default function AdminDashboardPage() {
                         const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
                         return { label: MONTH_NAMES[d.getMonth()], month: d.getMonth(), year: d.getFullYear() };
                       });
-
                       const counts = months.map(({ month, year }) =>
                         businesses.filter((b) => {
                           if (!b.createdAt) return false;
@@ -964,36 +987,37 @@ export default function AdminDashboardPage() {
                           return d.getMonth() === month && d.getFullYear() === year;
                         }).length
                       );
-
                       const maxVal = Math.max(...counts, 1);
 
                       return (
-                        <div className="flex items-end gap-2 h-36 border-b-2 border-l-2 border-[#1a1a1a] px-1 pb-0 pt-4">
-                          {counts.map((val, idx) => {
-                            const heightPct = val === 0 ? 5 : Math.max(10, Math.round((val / maxVal) * 100));
-                            const isLatest = idx === 5;
-                            return (
-                              <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group">
-                                <span className="text-[9px] font-extrabold font-space text-[#1a1a1a]">{val}</span>
-                                <div
-                                  style={{ height: `${heightPct}%` }}
-                                  className={`w-full border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${isLatest ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"} shadow-neo-sm`}
-                                />
-                                <span className="text-[9px] font-extrabold font-syne uppercase text-[#1a1a1a] pb-1">
-                                  {months[idx].label}
-                                </span>
-                              </div>
-                            );
-                          })}
+                        <div className="pt-2 space-y-3">
+                          <div className="h-44 flex items-end gap-4 px-2 pt-6 border-b-3 border-[#1a1a1a]">
+                            {counts.map((val, idx) => {
+                              const heightPct = val === 0 ? 8 : Math.max(16, Math.round((val / maxVal) * 85));
+                              const isLatest = idx === 5;
+                              return (
+                                <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end">
+                                  <span className="text-[10px] font-extrabold font-space text-[#1a1a1a]">{val}</span>
+                                  <div
+                                    style={{ height: `${heightPct}%` }}
+                                    className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 shadow-neo-sm group-hover:scale-105 ${
+                                      isLatest ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
+                                    }`}
+                                  />
+                                  <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
+                                    {months[idx].label}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="flex items-center justify-between text-xs font-bold text-gray-600 font-space">
+                            <span>• Blue/Lime: Historical Growth</span>
+                            <span className="text-[#FF4D00] font-extrabold">• Orange: Current Month ({businesses.length} Total)</span>
+                          </div>
                         </div>
                       );
                     })()}
-
-                    <div className="flex items-center gap-4 text-[10px] font-bold font-space text-gray-600">
-                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#2D31FA] border border-[#1a1a1a] inline-block" /> Historical</span>
-                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#BFF000] border border-[#1a1a1a] inline-block" /> Alt Month</span>
-                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-[#FF4D00] border border-[#1a1a1a] inline-block" /> Current Month</span>
-                    </div>
                   </div>
                 </div>
               </div>
