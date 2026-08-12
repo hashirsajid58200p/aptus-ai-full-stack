@@ -601,17 +601,17 @@ export default function AdminDashboardPage() {
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleViewBusiness(b._id)}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                                title="View Profile"
+                                className="inline-flex items-center justify-center p-2 bg-[#FF4D00] hover:bg-[#e04400] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                               >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>View Profile</span>
+                                <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 font-extrabold font-space uppercase tracking-wider border-2 border-red-600 rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                                title="Delete Business"
+                                className="inline-flex items-center justify-center p-2 bg-red-600 hover:bg-red-700 text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
-                                <span>Delete</span>
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </td>
@@ -745,17 +745,17 @@ export default function AdminDashboardPage() {
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleViewBusiness(b._id)}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white font-extrabold font-space uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                                title="View Profile"
+                                className="inline-flex items-center justify-center p-2 bg-[#FF4D00] hover:bg-[#e04400] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                               >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>View Profile</span>
+                                <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 font-extrabold font-space uppercase tracking-wider border-2 border-red-600 rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-[11px] transition-all cursor-pointer whitespace-nowrap"
+                                title="Delete Business"
+                                className="inline-flex items-center justify-center p-2 bg-red-600 hover:bg-red-700 text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
-                                <span>Delete</span>
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </td>
