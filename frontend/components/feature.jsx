@@ -35,20 +35,20 @@ export default function KeyBenefitsSection() {
       transition={{ duration: 0.8 }}
     >
       {/* Header Section */}
-      <div className="text-center max-w-2xl">
+      <div className="text-center max-w-4xl">
         <span className="bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs px-3 py-1 uppercase tracking-widest inline-block mb-3">
           Built For Developers
         </span>
-        <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] uppercase mb-4 tracking-tight">
+        <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold text-[#1a1a1a] uppercase mb-4 leading-tight tracking-tight">
           WHY DEVELOPERS CHOOSE <span className="underline decoration-[#FF4D00] decoration-4">APTUS AI</span>
         </h2>
-        <p className="text-lg font-medium text-[#1a1a1a]">
+        <p className="text-base sm:text-lg font-medium text-[#1a1a1a]">
           Designed from the ground up to be lightweight, developer-friendly, and instant to deploy.
         </p>
       </div>
 
       {/* Feature Icons Composite Banner (Single Cohesive Graphic Block) */}
-      <div className="w-full max-w-5xl bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4">
+      <div className="w-full max-w-xl bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-3">
         <img
           src="/feature-icons.png"
           alt="Aptus Feature Icon Set Banner"
