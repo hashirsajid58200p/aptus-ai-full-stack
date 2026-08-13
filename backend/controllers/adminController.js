@@ -1,24 +1,15 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const Admin = require("../models/adminModel");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
 
-// Login Admin (Static env credentials comparison)
+// Login Admin (DB-backed with bcrypt password verification)
 const loginAdmin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    const adminJwtSecret = process.env.ADMIN_JWT_SECRET;
-
-    if (!adminEmail || !adminPassword || !adminJwtSecret) {
-      return res.status(500).json({
-        success: false,
-        message: "Admin authentication is not configured",
-      });
-    }
 
     if (!email || !password) {
       return res.status(400).json({
@@ -27,7 +18,26 @@ const loginAdmin = async (req, res, next) => {
       });
     }
 
-    if (email !== adminEmail || password !== adminPassword) {
+    const adminJwtSecret = process.env.ADMIN_JWT_SECRET;
+    if (!adminJwtSecret) {
+      return res.status(500).json({
+        success: false,
+        message: "Admin authentication is not configured",
+      });
+    }
+
+    // Find admin by email, explicitly select password field
+    const admin = await Admin.findOne({ email: email.toLowerCase() }).select("+password");
+
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin credentials",
+      });
+    }
+
+    const isMatch = await admin.comparePassword(password);
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: "Invalid admin credentials",
@@ -56,6 +66,7 @@ const loginAdmin = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // Logout Admin
 const logoutAdmin = async (req, res, next) => {
