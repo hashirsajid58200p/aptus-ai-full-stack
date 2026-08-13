@@ -282,8 +282,8 @@ const updateBusiness = async (req, res, next) => {
       user.bussinessDetails = bussinessDetails;
     }
 
-    if (generateNewToken) {
-      user.chatbot_token = await generateToken();
+    if (generateNewToken && req.body.chatbot_token) {
+      user.chatbot_token = req.body.chatbot_token;
     }
 
     await user.save();

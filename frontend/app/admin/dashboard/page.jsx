@@ -180,7 +180,9 @@ export default function AdminDashboardPage() {
   };
 
   const handleRegenerateToken = () => {
-    const tempToken = 'A1ED-' + Math.random().toString(16).substring(2, 10).toUpperCase() + '-' + Math.random().toString(16).substring(2, 10).toUpperCase();
+    const part1 = Math.random().toString(16).substring(2, 10).toUpperCase().padEnd(8, '0');
+    const part2 = Math.random().toString(16).substring(2, 10).toUpperCase().padEnd(8, '0');
+    const tempToken = `A1ED-${part1}-${part2}`;
     setEditingBusiness({ ...editingBusiness, generateNewToken: true, chatbot_token: tempToken });
     setHasUnsavedChanges(true);
   };
@@ -1624,7 +1626,7 @@ export default function AdminDashboardPage() {
                           }}
                           onChange={(e) => {
                             const newFaqs = [...editingBusiness.bussinessDetails];
-                            newFaqs[idx].question = e.target.value;
+                            newFaqs[idx] = { ...newFaqs[idx], question: e.target.value };
                             setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
                             setHasUnsavedChanges(true);
                           }}
@@ -1646,7 +1648,7 @@ export default function AdminDashboardPage() {
                           }}
                           onChange={(e) => {
                             const newFaqs = [...editingBusiness.bussinessDetails];
-                            newFaqs[idx].answer = e.target.value;
+                            newFaqs[idx] = { ...newFaqs[idx], answer: e.target.value };
                             setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
                             setHasUnsavedChanges(true);
                           }}
