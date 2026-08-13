@@ -342,7 +342,7 @@ export default function AuthForm() {
                         name="bussinessDescription"
                         required
                         rows={3}
-                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
+                        className="w-full pl-10 pr-3 py-2 border-2 border-[#1a1a1a] bg-white text-sm text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none overflow-y-auto max-h-32"
                         placeholder="Tell us a little about your business..."
                         value={formData.bussinessDescription}
                         onChange={handleChange}
