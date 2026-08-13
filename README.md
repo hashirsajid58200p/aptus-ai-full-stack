@@ -28,43 +28,31 @@ Aptus AI is a premium, full-stack SaaS platform that empowers businesses to buil
 ---
 
 ### 🧠 Business Dashboard — Training Tab
-Train your chatbot by adding business info, FAQs, and AI-generated Q&A pairs.
 ![Business Dashboard Training Tab](previews/business_dashboard_training_tab.png)
 
 ---
 
 ### 🔗 Token Management
-Copy your unique chatbot token to integrate the widget into any website.
 ![Token Tab](previews/token_tab.png)
 
 ---
 
-### 💬 Chatbot Testing Playground
-Test your trained chatbot in real-time before going live.
-![Testing Playground](previews/aptus_widget_live_in_action.png)
-
----
-
 ### 🤖 Widget Live in Action
-The elegant floating customer-facing chatbot widget, fully customizable with 14 themes.
 ![Aptus Widget Live in Action](previews/aptus_widget_live_in_action.png)
 
 ---
 
 ### 🌐 Live Integration on External Platform
-The Aptus widget seamlessly integrated and live on a third-party site (FitLife Pro).
 ![Chatbot Live Integration on FitLife Pro](previews/fitlife_testingonaplatform.png)
 
 ---
 
 ### 📊 Admin Dashboard
-Full-featured admin panel for managing all registered businesses, viewing analytics, and monitoring chatbot activity.
 ![Admin Dashboard](previews/admin_dashboard.png)
 
 ---
 
 ### 📈 Analytics & Charts
-Visual analytics showing total sessions, messages, active businesses, and monthly usage trends.
 ![Analytics Charts](previews/analytics_charts.png)
 
 ---
