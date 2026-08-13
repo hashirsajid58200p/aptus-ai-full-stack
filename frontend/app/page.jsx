@@ -2,7 +2,7 @@
 
 import Hero from "@/components/hero";
 import NavBar from "@/components/navbar";
-import About from "@/components/about";
+import HowItWorks from "@/components/how-it-works";
 import Faq from "@/components/faq";
 import Feature from "@/components/feature";
 import ActionPreview from "@/components/action-preview";
@@ -33,7 +33,7 @@ export default function Home() {
         <Hero />
       </section>
       <section id="how-it-works" className="scroll-mt-[83px]">
-        <About />
+        <HowItWorks />
       </section>
       <section id="features" className="scroll-mt-[83px]">
         <Feature />
