@@ -248,9 +248,6 @@ export default function AdminDashboardPage() {
       {/* Mobile Header Bar */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b-3 border-[#1a1a1a]">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none flex items-center justify-center shadow-neo-sm">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
           <div className="flex flex-col">
             <h2 className="text-sm sm:text-base font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a] leading-tight">
               ADMINISTRATOR <span className="text-[#FF4D00]">DASHBOARD</span>
@@ -448,7 +445,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Acquisition Growth Chart SVG */}
                 <div className="lg:col-span-2 bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-4">
-                  <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-2">
                     <div>
                       <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                         CLIENT ACQUISITION <span className="text-[#FF4D00]">GROWTH TREND</span>
@@ -849,16 +846,16 @@ export default function AdminDashboardPage() {
 
                     return (
                       <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
-                        <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-2">
                           <div>
-                            <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                            <h3 className="text-sm sm:text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                               MESSAGE <span className="text-[#FF4D00]">BREAKDOWN</span>
                             </h3>
-                            <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                            <p className="text-[10px] sm:text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
                               User vs AI bot ratio
                             </p>
                           </div>
-                          <span className="text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
+                          <span className="text-[9px] sm:text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
                             {totalMsgs.toLocaleString()} Total
                           </span>
                         </div>
@@ -898,7 +895,7 @@ export default function AdminDashboardPage() {
                           {/* Progress bars legend */}
                           <div className="flex-1 space-y-3">
                             <div>
-                              <div className="flex justify-between text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
+                              <div className="flex justify-between text-[10px] sm:text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
                                 <span>User Inquiries</span>
                                 <span className="text-[#2D31FA]">{userMsgs.toLocaleString()} · {userPct}%</span>
                               </div>
@@ -907,7 +904,7 @@ export default function AdminDashboardPage() {
                               </div>
                             </div>
                             <div>
-                              <div className="flex justify-between text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
+                              <div className="flex justify-between text-[10px] sm:text-xs font-extrabold font-space mb-1.5 text-[#1a1a1a]">
                                 <span>AI Responses</span>
                                 <span className="text-[#FF4D00]">{botMsgs.toLocaleString()} · {botPct}%</span>
                               </div>
@@ -923,16 +920,16 @@ export default function AdminDashboardPage() {
 
                   {/* Chart 2: Industry Category Distribution */}
                   <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-2">
                       <div>
-                        <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                        <h3 className="text-sm sm:text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                           INDUSTRY <span className="text-[#FF4D00]">CATEGORIES</span>
                         </h3>
-                        <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                        <p className="text-[10px] sm:text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
                           Business sector distribution
                         </p>
                       </div>
-                      <span className="text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
+                      <span className="text-[9px] sm:text-[10px] font-extrabold font-space text-[#1a1a1a] bg-[#fdf9f0] border-2 border-[#1a1a1a] px-2 py-0.5">
                         {businesses.length} Businesses
                       </span>
                     </div>
@@ -960,8 +957,8 @@ export default function AdminDashboardPage() {
                             return (
                               <div key={idx}>
                                 <div className="flex justify-between mb-1.5">
-                                  <span className="text-xs font-extrabold font-space text-[#1a1a1a] truncate max-w-[60%] uppercase tracking-wide">{c.name}</span>
-                                  <span className="text-xs font-extrabold font-space text-[#1a1a1a]">{c.count} · {pct}%</span>
+                                  <span className="text-[10px] sm:text-xs font-extrabold font-space text-[#1a1a1a] truncate max-w-[60%] uppercase tracking-wide">{c.name}</span>
+                                  <span className="text-[10px] sm:text-xs font-extrabold font-space text-[#1a1a1a]">{c.count} · {pct}%</span>
                                 </div>
                                 <div className="w-full bg-gray-200 h-3.5 rounded-none border-2 border-[#1a1a1a] overflow-hidden">
                                   <div className={`${barColors[idx % barColors.length]} h-full transition-all duration-500`} style={{ width: `${pct}%` }} />
@@ -1010,16 +1007,16 @@ export default function AdminDashboardPage() {
 
                   {/* Chart 4: Monthly Business Registrations Bar Chart */}
                   <div className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-2">
                       <div>
-                        <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
+                        <h3 className="text-sm sm:text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                           MONTHLY <span className="text-[#FF4D00]">REGISTRATIONS</span>
                         </h3>
-                        <p className="text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
+                        <p className="text-[10px] sm:text-xs font-bold font-space text-[#1a1a1a]/60 mt-0.5">
                           Business sign-ups — last 6 months
                         </p>
                       </div>
-                      <span className="px-2.5 py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[10px] font-extrabold uppercase font-space">
+                      <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-none text-[8px] sm:text-[10px] font-extrabold uppercase font-space">
                         Live Data
                       </span>
                     </div>

@@ -547,7 +547,7 @@ Strict Instructions:
                           (e.target.placeholder =
                             "What is our Company Objective?")
                         }
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
                       />
                       <FaRobot className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
@@ -576,7 +576,7 @@ Strict Instructions:
                             "Our objective is to provide the best services to our customers...")
                         }
                         rows={4}
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
                       />
                       <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
@@ -602,7 +602,7 @@ Strict Instructions:
               type="button"
               onClick={handleGenerateAI}
               disabled={loading}
-              className="w-full btn-neo-secondary py-3 text-sm uppercase flex items-center justify-center gap-2 font-extrabold shadow-neo-sm"
+              className="w-full btn-neo-secondary py-2.5 sm:py-3 text-xs sm:text-sm uppercase flex items-center justify-center gap-2 font-extrabold shadow-neo-sm"
             >
               <AiFillThunderbolt className="text-xl text-[#FF4D00]" />
               {loading ? "Generating Questions..." : "Generate with AI"}
@@ -618,8 +618,8 @@ Strict Instructions:
             {generatedQuestions.length > 0 && (
               <div className="mt-6 p-5 border-3 border-[#1a1a1a] bg-[#FDF9F0] shadow-neo-sm space-y-4">
                 <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
-                  <h3 className="text-base font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
-                    <AiFillThunderbolt className="text-[#FF4D00] text-xl" />
+                  <h3 className="text-xs sm:text-base font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
+                    <AiFillThunderbolt className="text-[#FF4D00] text-lg sm:text-xl" />
                     AI-Generated Questions
                   </h3>
                   <Button
@@ -651,13 +651,13 @@ Strict Instructions:
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <h4 className="font-semibold text-sm text-[#1a1a1a]">{q.question}</h4>
-                        <span className="text-[#FF4D00] font-black text-sm ml-2">
+                        <h4 className="font-semibold text-xs sm:text-sm text-[#1a1a1a] pr-2">{q.question}</h4>
+                        <span className="text-[#FF4D00] font-black text-xs sm:text-sm ml-2">
                           {selectedQuestionIndex === index ? "▲" : "▼"}
                         </span>
                       </div>
                       {selectedQuestionIndex === index && (
-                        <div className="mt-3 pt-2 border-t-2 border-gray-100 text-xs font-normal text-gray-700 leading-relaxed">
+                        <div className="mt-3 pt-2 border-t-2 border-gray-100 text-[10px] sm:text-xs font-normal text-gray-700 leading-relaxed">
                           {q.answer}
                         </div>
                       )}
@@ -677,7 +677,7 @@ Strict Instructions:
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full btn-neo-primary py-3.5 text-base font-extrabold uppercase shadow-neo-sm"
+              className="w-full btn-neo-primary py-2.5 sm:py-3.5 text-xs sm:text-base font-extrabold uppercase shadow-neo-sm"
             >
               SUBMIT BUSINESS DETAILS
             </Button>
@@ -736,7 +736,7 @@ Strict Instructions:
                           <div>
                             <div className="flex items-center gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
                               <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
-                              <CardTitle className="text-base sm:text-lg font-bold text-[#1a1a1a] flex-1">
+                              <CardTitle className="text-sm sm:text-lg font-bold text-[#1a1a1a] flex-1">
                                 {item.question}
                               </CardTitle>
                               <div className="ml-auto flex items-center gap-2 shrink-0">
@@ -785,7 +785,7 @@ Strict Instructions:
                             </div>
 
                             <div className="pt-1">
-                              <p className="text-sm font-normal text-gray-700 leading-relaxed">
+                              <p className="text-xs sm:text-sm font-normal text-gray-700 leading-relaxed">
                                 {item.answer}
                               </p>
                             </div>
