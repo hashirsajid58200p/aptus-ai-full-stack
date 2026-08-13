@@ -12,12 +12,15 @@ const sendToken = (user, statusCode, res, message) => {
   };
   
 
+  const userResponse = user.toObject ? user.toObject() : { ...user };
+  delete userResponse.password;
+
   res.status(statusCode)
     .cookie("token", token, options)
     .json({
       success: true,
       token,
-      user,
+      user: userResponse,
       message
     });
 };
