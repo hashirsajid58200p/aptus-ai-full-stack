@@ -94,14 +94,14 @@ export default function App() {
         <main className="flex-1 bg-white border-4 border-[#1a1a1a] p-4 md:p-10 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] min-h-[400px] overflow-hidden">
           {activeTab === "intro" && (
             <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
+              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Introduction
               </h2>
               
               <div className="pt-2 space-y-6">
                 <p className="text-base md:text-lg font-medium leading-relaxed text-gray-800">
                   Welcome to the official documentation for the <strong className="text-[#FF4D00]">Aptus AI Chatbot Widget</strong>. 
-                  Our npm package (<code className="bg-[#FDF9F0] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#FF4D00] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code>) allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
+                  Our npm package <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code> allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
                 </p>
                 
                 <div className="bg-[#FDF9F0] border-3 border-[#1a1a1a] p-5 md:p-6 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6">
@@ -144,7 +144,7 @@ export default function App() {
               
               <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-4 md:p-6 relative group shadow-[4px_4px_0px_0px_rgba(255,77,0,1)] mt-6">
                 <div className="absolute top-0 left-0 bg-[#FF4D00] text-white text-xs font-extrabold px-3 py-1.5 border-b-2 border-r-2 border-[#1a1a1a] uppercase tracking-wider">NPM</div>
-                <pre className="text-[#BFF000] font-mono text-sm md:text-base pt-6 pb-2 overflow-x-auto whitespace-pre-wrap word-break">
+                <pre className="text-[#BFF000] font-mono text-sm md:text-base pt-6 pb-2 pr-12 md:pr-14 overflow-x-auto whitespace-pre-wrap word-break">
                   <code>npm install aptus-ai-chatbot-widget</code>
                 </pre>
                 <button 
@@ -157,7 +157,7 @@ export default function App() {
 
               <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-4 md:p-6 relative group shadow-[4px_4px_0px_0px_rgba(191,240,0,1)] mt-6">
                 <div className="absolute top-0 left-0 bg-[#BFF000] text-[#1a1a1a] text-xs font-extrabold px-3 py-1.5 border-b-2 border-r-2 border-[#1a1a1a] uppercase tracking-wider">YARN</div>
-                <pre className="text-[#FF4D00] font-mono text-sm md:text-base pt-6 pb-2 overflow-x-auto whitespace-pre-wrap word-break">
+                <pre className="text-[#FF4D00] font-mono text-sm md:text-base pt-6 pb-2 pr-12 md:pr-14 overflow-x-auto whitespace-pre-wrap word-break">
                   <code>yarn add aptus-ai-chatbot-widget</code>
                 </pre>
                 <button 
@@ -177,7 +177,7 @@ export default function App() {
               </h2>
               
               <p className="text-base md:text-lg font-medium text-gray-800">
-                Import the <code className="bg-[#FDF9F0] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#FF4D00] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
+                Import the <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
               </p>
               
               <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-0 relative shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6 overflow-hidden">
@@ -196,7 +196,7 @@ export default function App() {
                     <span className="text-[10px] md:text-xs font-bold uppercase hidden sm:inline">{copiedUsage ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <div className="p-4 md:p-6 overflow-x-auto">
+                <div className="p-4 md:p-6 pr-16 md:pr-24 overflow-x-auto">
                   <pre className="font-mono text-xs md:text-sm leading-relaxed">
 <code className="text-[#FF4D00]">import</code><code className="text-white"> React </code><code className="text-[#FF4D00]">from</code><code className="text-[#BFF000]"> 'react'</code><code className="text-white">;</code>
 <br/>
