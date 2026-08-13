@@ -1540,9 +1540,19 @@ export default function AdminDashboardPage() {
                     Chatbot Integration Token
                   </span>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
-                    <p className={`flex-1 w-full text-xs font-mono font-bold p-2.5 rounded-none border-2 break-all select-all ${editingBusiness.generateNewToken ? 'bg-yellow-100 text-gray-600 border-yellow-300' : 'bg-white text-[#FF4D00] border-[#1a1a1a]'}`}>
-                      {editingBusiness.chatbot_token || "No token generated"}
-                    </p>
+                    <div className={`flex-1 w-full flex items-center justify-between text-xs font-mono font-bold p-2.5 rounded-none border-2 break-all ${editingBusiness.generateNewToken ? 'bg-yellow-100 text-gray-600 border-yellow-300' : 'bg-white text-[#FF4D00] border-[#1a1a1a]'}`}>
+                      <span className="select-all">{editingBusiness.chatbot_token || "No token generated"}</span>
+                      {editingBusiness.generateNewToken && (
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(editingBusiness.chatbot_token)}
+                          className="ml-2 text-gray-600 hover:text-[#1a1a1a] transition-colors shrink-0 cursor-pointer"
+                          title="Copy Token"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={handleRegenerateToken}
