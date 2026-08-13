@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
@@ -188,12 +189,22 @@ const getBusinessById = async (req, res, next) => {
 };
 
 
-// Delete a business and all its related data (sessions + messages)
+// Delete a business and ALL its related data (messages + sessions + user)
 const deleteBusiness = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const business = await User.findById(id);
+    // Validate id format first
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid business ID format",
+      });
+    }
+
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    const business = await User.findById(objectId);
     if (!business) {
       return res.status(404).json({
         success: false,
@@ -201,18 +212,30 @@ const deleteBusiness = async (req, res, next) => {
       });
     }
 
-    // 1. Delete all messages linked to this business
-    await Message.deleteMany({ chatbotId: id });
+    const businessName = business.bussinessName;
 
-    // 2. Delete all sessions linked to this business
-    await Session.deleteMany({ chatbotId: id });
+    // Delete ALL related data in parallel — messages, sessions, then the user itself
+    const [msgResult, sessionResult] = await Promise.all([
+      Message.deleteMany({ chatbotId: objectId }),
+      Session.deleteMany({ chatbotId: objectId }),
+    ]);
 
-    // 3. Delete the business (user) account itself
-    await User.findByIdAndDelete(id);
+    // Finally delete the user/business account itself
+    await User.findByIdAndDelete(objectId);
+
+    console.log(
+      `[Admin Delete] Business "${businessName}" (${id}) wiped: ` +
+      `${msgResult.deletedCount} messages, ${sessionResult.deletedCount} sessions, 1 user`
+    );
 
     return res.status(200).json({
       success: true,
-      message: `Business "${business.bussinessName}" and all related data deleted successfully`,
+      message: `"${businessName}" permanently deleted`,
+      deleted: {
+        messages: msgResult.deletedCount,
+        sessions: sessionResult.deletedCount,
+        business: 1,
+      },
     });
   } catch (error) {
     next(error);
