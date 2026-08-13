@@ -37,22 +37,22 @@ const Token = () => {
 
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8">
-      <div className="flex items-center gap-3 border-b-2 border-[#1a1a1a] pb-4 mb-4">
-        <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase tracking-wider">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 border-b-2 border-[#1a1a1a] pb-4 mb-4">
+        <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 sm:px-3 py-0.5 sm:py-1 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
           API Key
         </span>
-        <h3 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase">
+        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
           Aptus AI Chatbot Token
         </h3>
       </div>
-      <p className="mb-4 text-[#1a1a1a] font-semibold text-sm">
+      <p className="mb-4 text-[#1a1a1a] font-semibold text-xs sm:text-sm">
         Use this unique token to integrate the Aptus AI chatbot widget into your website:
       </p>
       <div className="relative mb-4">
         <input
           value={user?.chatbot_token || ''}
           readOnly
-          className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] font-mono text-sm py-3 pl-4 pr-12 text-[#1a1a1a] font-bold shadow-neo-sm focus:outline-none"
+          className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] font-mono text-xs sm:text-sm py-2.5 sm:py-3 pl-3 sm:pl-4 pr-12 text-[#1a1a1a] font-bold shadow-neo-sm focus:outline-none"
         />
         <button
           type="button"
@@ -63,12 +63,12 @@ const Token = () => {
           <Copy className="w-4 h-4" />
         </button>
       </div>
-      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-6 flex items-center gap-1.5">
+      <p className="text-[10px] sm:text-xs font-bold text-gray-600 uppercase tracking-wide mb-4 sm:mb-6 flex items-start sm:items-center gap-1.5">
         <ShieldAlert className="w-4 h-4 text-[#FF4D00] shrink-0" />
         <span>Keep this token secret. Do not share it publicly.</span>
       </p>
       <button
-        className="btn-neo-primary px-6 py-3 text-sm font-extrabold"
+        className="btn-neo-primary px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold"
         onClick={handleGenerateNewToken}
       >
         RESET TOKEN

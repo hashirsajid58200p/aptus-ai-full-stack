@@ -734,12 +734,14 @@ Strict Instructions:
                       <div className="relative p-6 bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo max-h-[38vh] min-h-[38vh] flex flex-col justify-between">
                         <div className="h-full relative flex flex-col justify-between">
                           <div>
-                            <div className="flex items-center gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
-                              <FaRobot className="text-2xl text-[#FF4D00] shrink-0" />
-                              <CardTitle className="text-sm sm:text-lg font-bold text-[#1a1a1a] flex-1">
-                                {item.question}
-                              </CardTitle>
-                              <div className="ml-auto flex items-center gap-2 shrink-0">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
+                              <div className="flex items-start sm:items-center gap-3 w-full sm:w-auto flex-1">
+                                <FaRobot className="text-2xl text-[#FF4D00] shrink-0 mt-0.5 sm:mt-0" />
+                                <CardTitle className="text-sm sm:text-lg font-bold text-[#1a1a1a]">
+                                  {item.question}
+                                </CardTitle>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                                 {/* Edit Button */}
                                 <button
                                   type="button"

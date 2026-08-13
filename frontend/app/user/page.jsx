@@ -6,6 +6,7 @@ import {
   MessageSquare,
   Coins,
   History,
+  Menu,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
@@ -190,14 +191,14 @@ export default function UserDashboard() {
 
       {/* Main content */}
       <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
-        <header className="flex flex-wrap md:flex-nowrap justify-between items-center gap-3 md:gap-4 border-3 border-[#1a1a1a] mb-4 md:mb-8 bg-white p-4 md:p-6 shadow-neo">
-          <h1 className="font-syne text-lg md:text-3xl font-extrabold text-[#1a1a1a] uppercase truncate w-full md:w-auto max-w-full">
+        <header className="flex flex-row justify-between items-center gap-2 md:gap-4 border-3 border-[#1a1a1a] mb-4 md:mb-8 bg-white p-4 md:p-6 shadow-neo">
+          <h1 className="font-syne text-sm sm:text-lg md:text-3xl font-extrabold text-[#1a1a1a] uppercase flex-1">
             {activeTab === "business details"
               ? `WELCOME, ${user?.name || "USER"}`
               : activeTab}
           </h1>
 
-          <div className="flex items-center gap-2 md:space-x-4 w-full md:w-auto justify-end">
+          <div className="flex items-center gap-2 md:space-x-4 shrink-0">
             <div className="hidden md:block">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -232,23 +233,10 @@ export default function UserDashboard() {
               </AlertDialog>
             </div>
             <button
-              className="block md:hidden p-2 bg-[#BFF000] border-2 border-[#1a1a1a]"
+              className="block md:hidden p-2 bg-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-              <svg
-                className="w-6 h-6 text-[#1a1a1a]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
+              <Menu className="w-5 h-5 text-[#1a1a1a]" />
             </button>
           </div>
         </header>
