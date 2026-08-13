@@ -9,9 +9,16 @@ const loginAdmin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@aptus.com";
-    const adminPassword = process.env.ADMIN_PASSWORD || "aptus_admin_secret_2026";
-    const adminJwtSecret = process.env.ADMIN_JWT_SECRET || "aptus_admin_jwt_secret_key_2026_x89a";
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminJwtSecret = process.env.ADMIN_JWT_SECRET;
+
+    if (!adminEmail || !adminPassword || !adminJwtSecret) {
+      return res.status(500).json({
+        success: false,
+        message: "Admin authentication is not configured",
+      });
+    }
 
     if (!email || !password) {
       return res.status(400).json({

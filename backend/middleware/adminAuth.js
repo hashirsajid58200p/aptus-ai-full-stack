@@ -15,10 +15,15 @@ const isAdminAuthenticated = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(
-      adminToken,
-      process.env.ADMIN_JWT_SECRET || "aptus_admin_jwt_secret_key_2026_x89a"
-    );
+    const secret = process.env.ADMIN_JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({
+        success: false,
+        message: "Admin authentication is not configured",
+      });
+    }
+
+    const decoded = jwt.verify(adminToken, secret);
 
     if (decoded.role !== "admin") {
       return res.status(403).json({
