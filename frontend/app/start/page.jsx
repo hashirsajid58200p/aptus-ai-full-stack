@@ -150,29 +150,29 @@ export default function AuthForm() {
   const currentPassword = isSignUp ? formData.password : loginData.password;
 
   return (
-    <div className="text-[#1a1a1a] min-h-screen flex items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative">
-      <div className="absolute top-5 left-5">
+    <div className="text-[#1a1a1a] min-h-screen flex flex-col items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative pt-20 sm:pt-12">
+      <div className="absolute top-4 sm:top-5 left-4 sm:left-5 z-20">
         <button
-          className="flex items-center gap-2 p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+          className="flex items-center gap-2 p-1.5 sm:p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
           onClick={() => (window.location.href = "/")}
         >
-          <ArrowLeft className="h-6 w-6 text-[#1a1a1a]" />
-          <span className="font-extrabold text-sm uppercase">Home</span>
+          <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-[#1a1a1a]" />
+          <span className="font-extrabold text-xs sm:text-sm uppercase">Home</span>
         </button>
       </div>
 
-      <div className="max-w-md w-full space-y-6">
+      <div className="max-w-md w-full space-y-6 mt-8 sm:mt-0 relative z-10">
         <div className="text-center">
-          <h2 className="font-syne text-[22px] font-black text-[#FF4D00] uppercase tracking-wide mb-1.5">
+          <h2 className="font-syne text-[20px] sm:text-[22px] font-black text-[#FF4D00] uppercase tracking-wide mb-1.5">
             {isSignUp ? "WELCOME TO" : "SIGN IN TO"}
           </h2>
           <img
             src="/aptus-logo.png"
             alt="Aptus Logo"
-            className="h-[68px] w-auto mx-auto cursor-pointer object-contain mb-3"
+            className="h-[50px] sm:h-[68px] w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
-          <p className="text-sm font-semibold text-gray-700">
+          <p className="text-xs sm:text-sm font-semibold text-gray-700">
             {isSignUp
               ? "Create an account to get started with Aptus Chatbot Integration"
               : "Sign in to manage your Aptus AI assistant"}
@@ -183,9 +183,9 @@ export default function AuthForm() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white p-8 border-3 border-[#1a1a1a] shadow-neo-lg"
+          className="bg-white p-5 sm:p-8 border-3 border-[#1a1a1a] shadow-neo-lg w-full"
         >
-          <form className="space-y-5" onSubmit={isSignUp ? handleSignUp : handleLogin}>
+          <form className="space-y-4 sm:space-y-5" onSubmit={isSignUp ? handleSignUp : handleLogin}>
             <div className="space-y-4">
               {isSignUp && (
                 <div>

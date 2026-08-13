@@ -164,26 +164,26 @@ export default function UserDashboard() {
                 <span>LOGOUT</span>
               </button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
-                  Confirm Logout
+            <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-[90%] mx-auto flex flex-col items-center text-center gap-0">
+              <div className="flex flex-col items-center text-center w-full mb-6">
+                <AlertDialogTitle className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
+                  CONFIRM<br />LOGOUT
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                <AlertDialogDescription className="text-[#1a1a1a] font-bold text-sm">
                   Are you sure you want to log out of your account?
                 </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter className="mt-6 flex flex-col gap-3">
+              </div>
+              <div className="w-full flex flex-col gap-3">
                 <AlertDialogAction
                   onClick={handleLogout}
-                  className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase w-full"
+                  className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0"
                 >
-                  Yes, Logout
+                  YES, LOGOUT
                 </AlertDialogAction>
-                <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase w-full mt-0">
-                  Cancel
+                <AlertDialogCancel className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0">
+                  CANCEL
                 </AlertDialogCancel>
-              </AlertDialogFooter>
+              </div>
             </AlertDialogContent>
           </AlertDialog>
         </div>
@@ -209,26 +209,26 @@ export default function UserDashboard() {
                     <span>LOGOUT</span>
                   </button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
-                      Confirm Logout
+                <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-full flex flex-col items-center text-center gap-0">
+                  <div className="flex flex-col items-center text-center w-full mb-6">
+                    <AlertDialogTitle className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
+                      CONFIRM<br />LOGOUT
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                    <AlertDialogDescription className="text-[#1a1a1a] font-bold text-sm">
                       Are you sure you want to log out of your account?
                     </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter className="mt-6 flex flex-row gap-3 justify-end">
-                    <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
-                      Cancel
-                    </AlertDialogCancel>
+                  </div>
+                  <div className="w-full flex flex-col gap-3">
                     <AlertDialogAction
                       onClick={handleLogout}
-                      className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
+                      className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0"
                     >
-                      Yes, Logout
+                      YES, LOGOUT
                     </AlertDialogAction>
-                  </AlertDialogFooter>
+                    <AlertDialogCancel className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0">
+                      CANCEL
+                    </AlertDialogCancel>
+                  </div>
                 </AlertDialogContent>
               </AlertDialog>
             </div>

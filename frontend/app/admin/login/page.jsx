@@ -47,38 +47,38 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="text-[#1a1a1a] min-h-screen flex items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="text-[#1a1a1a] min-h-screen flex flex-col items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative pt-20 sm:pt-12">
       {/* Top Navbar Back Button */}
-      <div className="absolute top-5 left-5">
+      <div className="absolute top-4 sm:top-5 left-4 sm:left-5 z-20">
         <button
-          className="flex items-center gap-2 p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer"
+          className="flex items-center gap-2 p-1.5 sm:p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer"
           onClick={() => router.push("/")}
         >
-          <ArrowLeft className="h-6 w-6 text-[#1a1a1a]" />
-          <span className="font-extrabold text-sm uppercase">Home</span>
+          <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-[#1a1a1a]" />
+          <span className="font-extrabold text-xs sm:text-sm uppercase">Home</span>
         </button>
       </div>
 
-      <div className="max-w-md w-full space-y-6">
+      <div className="max-w-md w-full space-y-6 mt-8 sm:mt-0 relative z-10">
         {/* Title Section */}
         <div className="text-center">
-          <h2 className="font-syne text-[22px] font-black text-[#FF4D00] uppercase tracking-wide mb-1.5">
+          <h2 className="font-syne text-[20px] sm:text-[22px] font-black text-[#FF4D00] uppercase tracking-wide mb-1.5">
             SIGN IN TO ADMIN
           </h2>
           <img
             src="/aptus-logo.png"
             alt="Aptus Logo"
-            className="h-[68px] w-auto mx-auto cursor-pointer object-contain mb-3"
+            className="h-[50px] sm:h-[68px] w-auto mx-auto cursor-pointer object-contain mb-3"
             onClick={() => router.push("/")}
           />
-          <p className="text-sm font-semibold text-gray-700">
+          <p className="text-xs sm:text-sm font-semibold text-gray-700">
             Sign in to access the platform control panel & analytics
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white border-3 border-[#1a1a1a] p-8 shadow-neo-lg space-y-6">
-          <form onSubmit={handleAdminLogin} className="space-y-5">
+        <div className="bg-white border-3 border-[#1a1a1a] p-5 sm:p-8 shadow-neo-lg w-full">
+          <form onSubmit={handleAdminLogin} className="space-y-4 sm:space-y-5">
             <div>
               <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Admin Email

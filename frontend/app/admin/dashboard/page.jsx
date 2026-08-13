@@ -1128,50 +1128,74 @@ export default function AdminDashboardPage() {
           className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setConfirmAction(null)}
         >
-          <div
-            className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo-lg w-full max-w-md p-6 space-y-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start gap-3">
-              <div className={`p-2 border-2 border-[#1a1a1a] rounded-none shrink-0 ${confirmAction.type === "delete" ? "bg-red-600 text-white" : "bg-[#FF4D00] text-white"}`}>
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
-                  {confirmAction.type === "delete" ? "Delete Business?" : "Logout?"}
-                </h3>
-                <p className="text-xs font-bold font-space text-[#1a1a1a]/70 mt-1">
-                  {confirmAction.type === "delete"
-                    ? <>Are you sure you want to permanently delete <span className="text-red-600 font-extrabold">"{confirmAction.business.name}"</span>? This will also remove all related sessions and chat messages. This action cannot be undone.</>
-                    : "Are you sure you want to log out of the admin panel?"}
+          {confirmAction.type === "logout" ? (
+            <div
+              className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-[90%] flex flex-col items-center text-center gap-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col items-center text-center w-full mb-6">
+                <h2 className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
+                  CONFIRM<br />LOGOUT
+                </h2>
+                <p className="text-[#1a1a1a] font-bold text-sm">
+                  Are you sure you want to log out of your account?
                 </p>
               </div>
-            </div>
-            <div className="border-t-2 border-[#1a1a1a]" />
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setConfirmAction(null)}
-                className="px-5 py-2.5 bg-white text-[#1a1a1a] font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:bg-[#fdf9f0] transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  if (confirmAction.type === "delete") {
-                    handleDeleteBusiness(confirmAction.business.id, confirmAction.business.name);
-                  } else {
+              <div className="w-full flex flex-col gap-3">
+                <button
+                  onClick={() => {
                     handleLogout();
                     setConfirmAction(null);
-                  }
-                }}
-                className={`px-5 py-2.5 font-extrabold font-space text-xs uppercase tracking-wider text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer ${
-                  confirmAction.type === "delete" ? "bg-red-600 hover:bg-red-700" : "bg-[#FF4D00] hover:bg-[#e04400]"
-                }`}
-              >
-                {confirmAction.type === "delete" ? "Yes, Delete" : "Yes, Logout"}
-              </button>
+                  }}
+                  className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 transition-colors"
+                >
+                  YES, LOGOUT
+                </button>
+                <button
+                  onClick={() => setConfirmAction(null)}
+                  className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0 transition-colors"
+                >
+                  CANCEL
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className="bg-white border-3 border-[#1a1a1a] rounded-none shadow-neo-lg w-full max-w-md p-6 space-y-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 border-2 border-[#1a1a1a] rounded-none shrink-0 bg-red-600 text-white">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
+                    Delete Business?
+                  </h3>
+                  <p className="text-xs font-bold font-space text-[#1a1a1a]/70 mt-1">
+                    Are you sure you want to permanently delete <span className="text-red-600 font-extrabold">"{confirmAction.business?.name}"</span>? This will also remove all related sessions and chat messages. This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+              <div className="border-t-2 border-[#1a1a1a]" />
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={() => setConfirmAction(null)}
+                  className="px-5 py-2.5 bg-white text-[#1a1a1a] font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:bg-[#fdf9f0] transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    handleDeleteBusiness(confirmAction.business.id, confirmAction.business.name);
+                  }}
+                  className="px-5 py-2.5 font-extrabold font-space text-xs uppercase tracking-wider text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer bg-red-600 hover:bg-red-700"
+                >
+                  Yes, Delete
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
