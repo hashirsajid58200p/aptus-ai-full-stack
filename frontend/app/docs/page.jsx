@@ -9,15 +9,38 @@ export default function DocsPage() {
   const [activeTab, setActiveTab] = useState("intro");
   const [copiedNpm, setCopiedNpm] = useState(false);
   const [copiedYarn, setCopiedYarn] = useState(false);
+  const [copiedUsage, setCopiedUsage] = useState(false);
+
+  const usageCode = `import React from 'react';
+import { ChatBot } from 'aptus-ai-chatbot-widget';
+
+export default function App() {
+  return (
+    <div>
+      <h1>My Awesome Website</h1>
+
+      {/* Drop the widget anywhere in your root layout */}
+      <ChatBot 
+        token="YOUR_BUSINESS_TOKEN" 
+        apiUrl="https://aptus-ai-full-stack.vercel.app/api/v1" 
+        theme="aptus"
+        wantToShowSuggestions={true}
+      />
+    </div>
+  );
+}`;
 
   const copyToClipboard = (text, type) => {
     navigator.clipboard.writeText(text);
     if (type === 'npm') {
       setCopiedNpm(true);
       setTimeout(() => setCopiedNpm(false), 2000);
-    } else {
+    } else if (type === 'yarn') {
       setCopiedYarn(true);
       setTimeout(() => setCopiedYarn(false), 2000);
+    } else if (type === 'usage') {
+      setCopiedUsage(true);
+      setTimeout(() => setCopiedUsage(false), 2000);
     }
   };
 
@@ -68,22 +91,22 @@ export default function DocsPage() {
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 bg-white border-4 border-[#1a1a1a] p-5 md:p-10 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] min-h-[400px] overflow-hidden">
+        <main className="flex-1 bg-white border-4 border-[#1a1a1a] p-4 md:p-10 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] min-h-[400px] overflow-hidden">
           {activeTab === "intro" && (
             <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2">
+              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Introduction
               </h2>
               
               <div className="pt-2 space-y-6">
                 <p className="text-base md:text-lg font-medium leading-relaxed text-gray-800">
                   Welcome to the official documentation for the <strong className="text-[#FF4D00]">Aptus AI Chatbot Widget</strong>. 
-                  Our npm package (<span className="text-[#FF4D00] font-mono font-extrabold">aptus-ai-chatbot-widget</span>) allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
+                  Our npm package (<code className="bg-[#FDF9F0] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#FF4D00] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code>) allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
                 </p>
                 
                 <div className="bg-[#FDF9F0] border-3 border-[#1a1a1a] p-5 md:p-6 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6">
-                  <h3 className="font-syne font-extrabold text-xl md:text-2xl mb-4 flex items-center gap-3 uppercase">
-                    <span className="bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] w-7 h-7 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">✓</span>
+                  <h3 className="font-syne font-extrabold text-xl md:text-2xl mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 uppercase">
+                    <span className="bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] w-8 h-8 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">✓</span>
                     Why use Aptus?
                   </h3>
                   <ul className="space-y-3 font-medium text-base md:text-lg ml-1 md:ml-2">
@@ -111,7 +134,7 @@ export default function DocsPage() {
 
           {activeTab === "install" && (
             <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2">
+              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Installation
               </h2>
               
@@ -149,20 +172,29 @@ export default function DocsPage() {
 
           {activeTab === "usage" && (
             <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2">
+              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Quick Start
               </h2>
               
               <p className="text-base md:text-lg font-medium text-gray-800">
-                Import the <span className="text-[#FF4D00] font-mono font-extrabold">ChatBot</span> component and pass your unique business token to immediately render the floating widget.
+                Import the <code className="bg-[#FDF9F0] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#FF4D00] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
               </p>
               
               <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-0 relative shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6 overflow-hidden">
-                <div className="bg-white border-b-4 border-[#1a1a1a] px-3 md:px-4 py-2 md:py-3 flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500 border border-black"></div>
-                  <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-400 border border-black"></div>
-                  <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500 border border-black"></div>
-                  <span className="ml-2 md:ml-4 font-mono text-xs md:text-sm font-extrabold uppercase tracking-wider text-gray-600">App.jsx</span>
+                <div className="bg-white border-b-4 border-[#1a1a1a] px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500 border border-black"></div>
+                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-400 border border-black"></div>
+                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500 border border-black"></div>
+                    <span className="ml-2 md:ml-4 font-mono text-xs md:text-sm font-extrabold uppercase tracking-wider text-gray-600">App.jsx</span>
+                  </div>
+                  <button 
+                    onClick={() => copyToClipboard(usageCode, "usage")}
+                    className="bg-[#FDF9F0] p-1.5 md:p-2 border-2 border-[#1a1a1a] hover:bg-[#BFF000] transition-colors shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center gap-1 md:gap-2"
+                  >
+                    {copiedUsage ? <Check className="w-3 h-3 md:w-4 md:h-4 text-[#1a1a1a]" /> : <Copy className="w-3 h-3 md:w-4 md:h-4 text-[#1a1a1a]" />}
+                    <span className="text-[10px] md:text-xs font-bold uppercase hidden sm:inline">{copiedUsage ? 'Copied' : 'Copy'}</span>
+                  </button>
                 </div>
                 <div className="p-4 md:p-6 overflow-x-auto">
                   <pre className="font-mono text-xs md:text-sm leading-relaxed">
@@ -201,7 +233,7 @@ export default function DocsPage() {
                 </div>
               </div>
               
-              <div className="p-4 md:p-5 bg-white border-4 border-[#FF4D00] shadow-[4px_4px_0px_0px_rgba(255,77,0,1)] flex items-start gap-3 md:gap-4 mt-6">
+              <div className="p-4 md:p-5 bg-[#FDF9F0] border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex items-start gap-3 md:gap-4 mt-6">
                 <div className="bg-[#FF4D00] text-white p-1.5 md:p-2 border-2 border-[#1a1a1a] flex-shrink-0">
                   <Settings className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
@@ -217,66 +249,66 @@ export default function DocsPage() {
 
           {activeTab === "props" && (
             <section className="space-y-6 animate-in fade-in duration-500 w-full overflow-hidden">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2">
+              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Props API Reference
               </h2>
               
-              <p className="text-base md:text-lg font-medium text-gray-800 pb-2">
+              <p className="text-sm md:text-base font-medium text-gray-800 pb-2">
                 Configure the widget's behavior, colors, and layout directly via these robust props.
               </p>
               
               <div className="overflow-x-auto border-3 md:border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] bg-white w-full">
-                <table className="w-full text-left border-collapse min-w-[600px]">
+                <table className="w-full text-left border-collapse min-w-[500px]">
                   <thead>
-                    <tr className="bg-[#1a1a1a] text-white font-syne text-xs md:text-sm tracking-widest">
-                      <th className="p-3 md:p-4 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Prop Name</th>
-                      <th className="p-3 md:p-4 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Type</th>
-                      <th className="p-3 md:p-4 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Default</th>
-                      <th className="p-3 md:p-4 border-b-4 border-[#1a1a1a] font-extrabold uppercase">Description</th>
+                    <tr className="bg-[#1a1a1a] text-white font-syne text-[10px] md:text-xs tracking-widest">
+                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Prop Name</th>
+                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Type</th>
+                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Default</th>
+                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase">Description</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white font-medium text-xs md:text-sm">
+                  <tbody className="bg-white font-medium text-[11px] md:text-xs">
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-extrabold text-[#FF4D00]">token *</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">string</td>
-                      <td className="p-3 md:p-4 text-gray-400 font-bold">-</td>
-                      <td className="p-3 md:p-4 text-gray-800">Required. Your unique business chatbot token to authenticate API calls.</td>
+                      <td className="p-2 md:p-3 font-mono font-extrabold text-[#FF4D00]">token *</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
+                      <td className="p-2 md:p-3 text-gray-400 font-bold">-</td>
+                      <td className="p-2 md:p-3 text-gray-800">Required. Your unique business chatbot token to authenticate API calls.</td>
                     </tr>
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-extrabold text-[#FF4D00]">apiUrl *</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">string</td>
-                      <td className="p-3 md:p-4 text-gray-400 font-bold">-</td>
-                      <td className="p-3 md:p-4 text-gray-800">Required. The base URL to your Aptus API backend.</td>
+                      <td className="p-2 md:p-3 font-mono font-extrabold text-[#FF4D00]">apiUrl *</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
+                      <td className="p-2 md:p-3 text-gray-400 font-bold">-</td>
+                      <td className="p-2 md:p-3 text-gray-800">Required. The base URL to your Aptus API backend.</td>
                     </tr>
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-bold text-[#1a1a1a]">theme</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">string</td>
-                      <td className="p-3 md:p-4 font-mono">"aptus"</td>
-                      <td className="p-3 md:p-4 text-gray-800">Select one of the 14 available design themes. See the Themes tab.</td>
+                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">theme</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
+                      <td className="p-2 md:p-3 font-mono">"aptus"</td>
+                      <td className="p-2 md:p-3 text-gray-800">Select one of the 14 available design themes. See the Themes tab.</td>
                     </tr>
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-bold text-[#1a1a1a]">position</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">"left" | "right"</td>
-                      <td className="p-3 md:p-4 font-mono">"right"</td>
-                      <td className="p-3 md:p-4 text-gray-800">Determines which side of the screen bottom the widget button anchors to.</td>
+                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">position</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">"left" | "right"</td>
+                      <td className="p-2 md:p-3 font-mono">"right"</td>
+                      <td className="p-2 md:p-3 text-gray-800">Determines which side of the screen bottom the widget button anchors to.</td>
                     </tr>
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-bold text-[#1a1a1a]">wantToShowSuggestions</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">boolean</td>
-                      <td className="p-3 md:p-4 font-mono text-[#FF4D00]">false</td>
-                      <td className="p-3 md:p-4 text-gray-800">Show AI quick-action suggestion chips inside the chat after replies.</td>
+                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">wantToShowSuggestions</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">boolean</td>
+                      <td className="p-2 md:p-3 font-mono text-[#FF4D00]">false</td>
+                      <td className="p-2 md:p-3 text-gray-800">Show AI quick-action suggestion chips inside the chat after replies.</td>
                     </tr>
                     <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-bold text-[#1a1a1a]">toggleBtnBgColor</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">string</td>
-                      <td className="p-3 md:p-4 text-gray-500 italic">Theme spec</td>
-                      <td className="p-3 md:p-4 text-gray-800">Overrides the default background color of the floating launcher button.</td>
+                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">toggleBtnBgColor</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
+                      <td className="p-2 md:p-3 text-gray-500 italic">Theme spec</td>
+                      <td className="p-2 md:p-3 text-gray-800">Overrides the default background color of the floating launcher button.</td>
                     </tr>
                     <tr className="hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-3 md:p-4 font-mono font-bold text-[#1a1a1a]">icon</td>
-                      <td className="p-3 md:p-4 text-gray-600 font-mono">ReactNode</td>
-                      <td className="p-3 md:p-4 text-gray-500 italic">MsgIcon</td>
-                      <td className="p-3 md:p-4 text-gray-800">Pass a custom SVG or React Icon component for the toggle button.</td>
+                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">icon</td>
+                      <td className="p-2 md:p-3 text-gray-600 font-mono">ReactNode</td>
+                      <td className="p-2 md:p-3 text-gray-500 italic">MsgIcon</td>
+                      <td className="p-2 md:p-3 text-gray-800">Pass a custom SVG or React Icon component for the toggle button.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -286,7 +318,7 @@ export default function DocsPage() {
 
           {activeTab === "themes" && (
             <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2">
+              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
                 Theming System
               </h2>
               
