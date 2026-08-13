@@ -24,16 +24,6 @@ export default function NotFound() {
       {/* Main 404 Neo-Brutalist Card */}
       <div className="max-w-md w-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-8 sm:p-10 text-center space-y-6">
         
-        {/* Aptus Logo */}
-        <div className="flex justify-center">
-          <img
-            src="/aptus-logo.png"
-            alt="Aptus AI"
-            className="h-12 w-auto object-contain cursor-pointer hover:scale-105 transition-transform"
-            onClick={() => router.push("/")}
-          />
-        </div>
-
         {/* Status Badge */}
         <div>
           <span className="inline-flex items-center gap-1.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[11px] font-extrabold uppercase px-3 py-1 shadow-neo-sm font-space tracking-wider">
@@ -69,11 +59,6 @@ export default function NotFound() {
           <span>BACK TO HOME</span>
         </Link>
       </div>
-
-      {/* Footer copyright */}
-      <p className="mt-8 text-center text-[11px] font-extrabold font-space text-[#1a1a1a]/50 uppercase tracking-wider">
-        © {new Date().getFullYear()} Aptus AI. All Rights Reserved.
-      </p>
     </div>
   );
 }
