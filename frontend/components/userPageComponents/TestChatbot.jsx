@@ -51,6 +51,10 @@ const TestChatbot = () => {
 
         const data = await response.json();
 
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Request failed");
+        }
+
         setMessages(prev =>
           prev.map((msg, index) =>
             index === prev.length - 1
