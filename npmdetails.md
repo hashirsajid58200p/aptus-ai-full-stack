@@ -1,3 +1,4 @@
+```typescript
 export interface ThemeConfig {
   containerBg: string;
   headerBg: string;
@@ -615,3 +616,4 @@ export function getThemeConfig(
     toggleRadius: formattedToggleRadius ?? (formattedRadius ?? baseConfig.toggleRadius ?? baseConfig.wrapperRadius),
   };
 }
+```
