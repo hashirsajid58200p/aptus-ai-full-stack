@@ -212,7 +212,25 @@ export default function AdminDashboardPage() {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
 
-  const categoriesList = ["ALL", ...Array.from(new Set(businesses.map(b => b.bussinessCategory || "General")))];
+  const categoryOptions = [
+    "Software & Technology",
+    "E-Commerce & Retail",
+    "Health & Fitness",
+    "Education & E-Learning",
+    "Finance & Banking",
+    "Real Estate & Construction",
+    "Marketing & Advertising",
+    "Healthcare & Medical",
+    "AI & Automation",
+    "Hospitality & Tourism",
+    "Automotive & Transport",
+    "Legal & Professional Services",
+    "Entertainment & Media",
+    "Non-Profit & NGO",
+    "Fashion & Beauty",
+  ];
+
+  const categoriesList = ["ALL", ...categoryOptions];
 
   const filteredBusinesses = businesses.filter((b) => {
     const query = searchQuery.trim().toLowerCase();

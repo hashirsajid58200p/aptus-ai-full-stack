@@ -41,8 +41,8 @@ export default function RootLayout({ children }) {
                     color: "#1a1a1a",
                   },
                   iconTheme: {
-                    primary: "#1a1a1a",
-                    secondary: "#BFF000",
+                    primary: "#10B981",
+                    secondary: "#ffffff",
                   },
                 },
                 error: {
