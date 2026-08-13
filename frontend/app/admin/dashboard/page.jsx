@@ -228,6 +228,9 @@ export default function AdminDashboardPage() {
     "Entertainment & Media",
     "Non-Profit & NGO",
     "Fashion & Beauty",
+    "Food & Restaurant",
+    "Logistics & Supply Chain",
+    "Services & Other",
   ];
 
   const categoriesList = ["ALL", ...categoryOptions];
