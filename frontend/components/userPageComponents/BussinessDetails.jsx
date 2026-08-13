@@ -356,10 +356,10 @@ const BusinessDetails = () => {
       "1. Enterprise Features, 2. High-volume Scalability, 3. Automated Workflows, 4. Migration Assistance, 5. Customer Service Channels"
     ];
 
-    // Force a different topic pool every call by rotating based on timestamp
-    const topicIndex = Math.floor(Date.now() / 1000) % topicPools.length;
+    // Force a different topic pool every call by picking randomly
+    const topicIndex = Math.floor(Math.random() * topicPools.length);
     const chosenTopics = topicPools[topicIndex];
-    const randomSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const randomSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
     const businessDetails = `
       Business Name: ${user?.bussinessName || "N/A"},
       Business Category: ${user?.bussinessCategory || "N/A"},
@@ -466,7 +466,7 @@ Strict Instructions:
       <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg relative z-10">
         <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b-3 border-[#1a1a1a] bg-white">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-2xl font-semibold text-black-500">
+            <CardTitle className="text-lg sm:text-2xl font-semibold text-[#1a1a1a]">
               Company Details
             </CardTitle>
             <AlertDialog>

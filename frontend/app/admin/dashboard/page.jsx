@@ -251,9 +251,17 @@ export default function AdminDashboardPage() {
           <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none flex items-center justify-center shadow-neo-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
-          <span className="font-syne font-extrabold uppercase text-sm tracking-tight text-[#1a1a1a]">
-            APTUS <span className="text-[#FF4D00]">ADMIN</span>
-          </span>
+          <div className="flex flex-col">
+            <h2 className="text-sm sm:text-base font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a] leading-tight">
+              ADMINISTRATOR <span className="text-[#FF4D00]">DASHBOARD</span>
+            </h2>
+            <p className="hidden sm:block text-[10px] font-bold text-[#1a1a1a]/70 font-space leading-tight mt-0.5 max-w-[250px] truncate">
+              Real-time platform metrics, business directory, and system health
+            </p>
+            <p className="sm:hidden text-[9px] font-bold text-[#1a1a1a]/70 font-space leading-tight mt-0.5 max-w-[180px] truncate">
+              Platform metrics & health
+            </p>
+          </div>
         </div>
 
         <button
@@ -637,7 +645,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-4 sm:p-6 shadow-neo-lg space-y-6 w-full overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
+                  <h2 className="text-lg sm:text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">
                     REGISTERED <span className="text-[#FF4D00]">BUSINESSES</span>
                   </h2>
                   <p className="text-xs font-bold text-[#1a1a1a]/70 font-space">
@@ -812,7 +820,7 @@ export default function AdminDashboardPage() {
               <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg">
                 <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-4 mb-6">
                   <div>
-                    <h2 className="text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
+                    <h2 className="text-lg sm:text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
                       INTERACTIVE ANALYTICS <span className="text-[#2D31FA]">& CHARTS</span>
                     </h2>
                     <p className="text-xs font-bold font-space text-[#1a1a1a]/70 mt-1">
@@ -1039,15 +1047,15 @@ export default function AdminDashboardPage() {
                               const heightPct = val === 0 ? 8 : Math.max(16, Math.round((val / maxVal) * 85));
                               const isLatest = idx === 5;
                               return (
-                                <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end">
-                                  <span className="text-[10px] font-extrabold font-space text-[#1a1a1a]">{val}</span>
+                                <div key={idx} className="flex-1 flex flex-col items-center gap-1 sm:gap-1.5 group h-full justify-end">
+                                  <span className="text-[8px] sm:text-[10px] font-extrabold font-space text-[#1a1a1a]">{val}</span>
                                   <div
                                     style={{ height: `${heightPct}%` }}
-                                    className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 shadow-neo-sm group-hover:scale-105 ${
+                                    className={`w-full max-w-[24px] sm:max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 shadow-neo-sm group-hover:scale-105 ${
                                       isLatest ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
                                     }`}
                                   />
-                                  <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
+                                  <span className="text-[8px] sm:text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
                                     {months[idx].label}
                                   </span>
                                 </div>
@@ -1071,7 +1079,7 @@ export default function AdminDashboardPage() {
           {activeTab === "system" && (
             <div className="space-y-6">
               <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
-                <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
+                <h2 className="text-lg sm:text-xl font-extrabold font-syne uppercase text-[#1a1a1a]">
                   LIVE INTEGRATION <span className="text-[#FF4D00]">& TOKEN VALIDATOR</span>
                 </h2>
 
@@ -1079,7 +1087,7 @@ export default function AdminDashboardPage() {
                   <label className="block text-xs font-extrabold font-syne uppercase text-[#1a1a1a]">
                     Test / Validate Widget Token
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={testToken}
@@ -1090,7 +1098,7 @@ export default function AdminDashboardPage() {
                     <button
                       onClick={handleTestToken}
                       disabled={testingToken}
-                      className="px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer"
+                      className="px-4 py-2 w-full sm:w-auto bg-[#FF4D00] text-white font-extrabold font-space text-xs uppercase tracking-wider border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] transition-all cursor-pointer shrink-0"
                     >
                       {testingToken ? "Validating..." : "Validate Token"}
                     </button>

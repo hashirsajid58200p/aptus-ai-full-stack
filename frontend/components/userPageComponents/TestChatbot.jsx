@@ -69,11 +69,11 @@ const TestChatbot = () => {
 
   return (
     <div className="flex flex-col h-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 sm:p-6">
-      <div className="flex items-center gap-3 border-b-2 border-[#1a1a1a] pb-3 mb-4">
-        <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 border-b-2 border-[#1a1a1a] pb-3 mb-4">
+        <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase inline-block">
           Live Sandbox
         </span>
-        <h3 className="font-syne text-2xl font-extrabold text-[#1a1a1a] uppercase">
+        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight mt-1 sm:mt-0">
           Test Aptus AI Chatbot
         </h3>
       </div>

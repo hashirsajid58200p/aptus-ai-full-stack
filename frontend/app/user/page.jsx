@@ -98,8 +98,8 @@ export default function UserDashboard() {
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 block" : "hidden"
-        } md:block w-64 bg-white p-5 h-screen sticky top-0 border-r-3 border-[#1a1a1a] shadow-neo shrink-0`}
+          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 flex flex-col" : "hidden"
+        } md:flex md:flex-col w-64 bg-white p-5 h-screen sticky top-0 border-r-3 border-[#1a1a1a] shadow-neo shrink-0`}
       >
         <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
           <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
@@ -153,49 +153,84 @@ export default function UserDashboard() {
             );
           })}
         </nav>
+
+        {/* Mobile Logout Button inside sidebar */}
+        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a] flex md:hidden justify-start h-full items-end">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="flex w-full items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm">
+                <LogOut className="h-4 w-4" />
+                <span>LOGOUT</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
+                  Confirm Logout
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                  Are you sure you want to log out of your account?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="mt-6 flex flex-col gap-3">
+                <AlertDialogAction
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase w-full"
+                >
+                  Yes, Logout
+                </AlertDialogAction>
+                <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase w-full mt-0">
+                  Cancel
+                </AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
-        <header className="flex flex-wrap md:flex-nowrap justify-between items-center gap-4 border-3 border-[#1a1a1a] mb-6 sm:mb-8 bg-white p-4 sm:p-6 shadow-neo">
-          <h1 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold text-[#1a1a1a] uppercase truncate w-full sm:w-auto max-w-full">
+        <header className="flex flex-wrap md:flex-nowrap justify-between items-center gap-3 md:gap-4 border-3 border-[#1a1a1a] mb-4 md:mb-8 bg-white p-4 md:p-6 shadow-neo">
+          <h1 className="font-syne text-lg md:text-3xl font-extrabold text-[#1a1a1a] uppercase truncate w-full md:w-auto max-w-full">
             {activeTab === "business details"
               ? `WELCOME, ${user?.name || "USER"}`
               : activeTab}
           </h1>
 
-          <div className="flex items-center gap-2 sm:space-x-4 w-full sm:w-auto justify-end">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button
-                  className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
-                >
-                  <LogOut className="h-4 w-4 shrink-0" />
-                  <span className="hidden sm:inline">LOGOUT</span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
-                    Confirm Logout
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-gray-700 font-bold text-sm">
-                    Are you sure you want to log out of your account?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="mt-6 flex flex-row gap-3 justify-end">
-                  <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
+          <div className="flex items-center gap-2 md:space-x-4 w-full md:w-auto justify-end">
+            <div className="hidden md:block">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button
+                    className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
                   >
-                    Yes, Logout
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    <LogOut className="h-4 w-4 shrink-0" />
+                    <span>LOGOUT</span>
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="font-syne font-extrabold text-xl uppercase text-[#1a1a1a]">
+                      Confirm Logout
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-gray-700 font-bold text-sm">
+                      Are you sure you want to log out of your account?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="mt-6 flex flex-row gap-3 justify-end">
+                    <AlertDialogCancel className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleLogout}
+                      className="bg-red-600 text-white font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm px-4 py-2 text-xs uppercase hover:bg-red-700"
+                    >
+                      Yes, Logout
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
             <button
               className="block md:hidden p-2 bg-[#BFF000] border-2 border-[#1a1a1a]"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}

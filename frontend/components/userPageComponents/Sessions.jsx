@@ -40,19 +40,19 @@ const Sessions = () => {
 
   return (
     <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6">
-      <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-3 border-[#1a1a1a] pb-4 gap-4">
         <div>
-          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase mr-3">
+          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-3 py-1 font-extrabold text-xs uppercase mr-3 inline-block mb-2 sm:mb-0">
             Analytics & Logs
           </span>
-          <h2 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#1a1a1a] uppercase inline-block">
+          <h2 className="font-syne text-lg sm:text-2xl md:text-3xl font-extrabold text-[#1a1a1a] uppercase block sm:inline-block">
             Customer Chat Sessions
           </h2>
         </div>
         <button
           onClick={fetchSessions}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-sm uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-4 py-2 w-full sm:w-auto bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-sm uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh</span>
