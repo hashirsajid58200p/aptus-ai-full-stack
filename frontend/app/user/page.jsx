@@ -87,11 +87,19 @@ export default function UserDashboard() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#FDF9F0] text-[#1a1a1a]">
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "block" : "hidden"
-        } md:block w-64 bg-white p-5 h-screen fixed top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 md:z-0 md:relative`}
+          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 block" : "hidden"
+        } md:block w-64 bg-white p-5 h-screen sticky top-0 border-r-3 border-[#1a1a1a] shadow-neo shrink-0`}
       >
         <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
           <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
