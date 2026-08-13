@@ -47,6 +47,7 @@ next-env.d.ts
 # Credentials & Secrets
 credentials.txt
 new_env.txt
+details.md
 
 # OS / Editor files
 .vscode/
