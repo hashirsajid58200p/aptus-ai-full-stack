@@ -706,20 +706,6 @@ export default function AdminDashboardPage() {
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
-                              <button
-                                onClick={() => handleEditBusiness(b._id)}
-                                title="Edit Business"
-                                className="inline-flex items-center justify-center p-2 bg-[#1a1a1a] hover:bg-[#333] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
-                                title="Delete Business"
-                                className="inline-flex items-center justify-center p-2 bg-red-600 hover:bg-red-700 text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
                             </div>
                           </td>
                         </tr>
