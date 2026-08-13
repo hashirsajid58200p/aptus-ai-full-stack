@@ -18,16 +18,9 @@ const connectDB = async () => {
   }
 
   try {
-    const rawUri = process.env.DB_URI || "";
-    const cleanUri = rawUri.replace(/^["']|["']$/g, "").trim();
-
-    if (!cleanUri) {
-      throw new Error("DB_URI environment variable is missing or empty");
-    }
-
-    const db = await mongoose.connect(cleanUri);
+    const db = await mongoose.connect(process.env.DB_URI);
     isConnected = db.connections[0].readyState === 1;
-    console.log("Database connected successfully");
+    console.log("Database connected");
   } catch (err) {
     console.error("Database connection error:", err);
     throw err;
