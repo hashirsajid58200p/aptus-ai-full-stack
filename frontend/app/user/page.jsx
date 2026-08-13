@@ -7,6 +7,7 @@ import {
   Coins,
   History,
   Menu,
+  Lock,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
@@ -149,7 +150,7 @@ export default function UserDashboard() {
                 <span className="flex-1">
                   {tab.name}
                 </span>
-                {isLocked && <span className="text-xs">🔒</span>}
+                {isLocked && <Lock className="w-4 h-4 text-gray-500" strokeWidth={2.5} />}
               </button>
             );
           })}
