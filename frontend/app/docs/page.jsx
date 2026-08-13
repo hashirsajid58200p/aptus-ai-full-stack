@@ -101,7 +101,7 @@ export default function App() {
               <div className="pt-2 space-y-6">
                 <p className="text-base md:text-lg font-medium leading-relaxed text-gray-800">
                   Welcome to the official documentation for the <strong className="text-[#FF4D00]">Aptus AI Chatbot Widget</strong>. 
-                  Our npm package <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code> allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
+                  Our npm package <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code> allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
                 </p>
                 
                 <div className="bg-[#FDF9F0] border-3 border-[#1a1a1a] p-5 md:p-6 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6">
@@ -177,7 +177,7 @@ export default function App() {
               </h2>
               
               <p className="text-base md:text-lg font-medium text-gray-800">
-                Import the <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 mx-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
+                Import the <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
               </p>
               
               <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-0 relative shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6 overflow-hidden">
