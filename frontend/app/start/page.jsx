@@ -26,6 +26,7 @@ export default function AuthForm() {
   );
   const [isSignUp, setIsSignUp] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const dropdownRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -84,11 +85,15 @@ export default function AuthForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Check if user is already logged in (immediate check)
   useEffect(() => {
-    if (user) {
+    const storedUser = localStorage.getItem("aptus_user");
+    if (storedUser) {
       router.push("/user");
+    } else {
+      setCheckingAuth(false);
     }
-  }, [user, router]);
+  }, [router]);
 
   useEffect(() => {
     if (isUserRegistered) {
@@ -149,8 +154,8 @@ export default function AuthForm() {
 
   const currentPassword = isSignUp ? formData.password : loginData.password;
 
-  // Prevent flash of login form if user is already authenticated
-  if (user) {
+  // Prevent flash of login form while checking auth
+  if (checkingAuth || user) {
     return null;
   }
 
