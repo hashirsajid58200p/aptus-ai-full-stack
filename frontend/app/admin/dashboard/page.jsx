@@ -64,6 +64,7 @@ export default function AdminDashboardPage() {
   const [editingBusiness, setEditingBusiness] = useState(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [isEditDropdownOpen, setIsEditDropdownOpen] = useState(false);
   const editDropdownRef = useRef(null);
 
@@ -171,6 +172,7 @@ export default function AdminDashboardPage() {
         setEditingBusiness(res.data.data);
         setHasUnsavedChanges(false);
         setShowCancelConfirm(false);
+        setShowSaveConfirm(false);
       }
     } catch (err) {
       toast.error("Failed to fetch business details for editing");
@@ -178,7 +180,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleRegenerateToken = () => {
-    const tempToken = 'TEMP-' + Math.random().toString(16).substring(2, 10).toUpperCase() + '-' + Math.random().toString(16).substring(2, 10).toUpperCase();
+    const tempToken = 'A1ED-' + Math.random().toString(16).substring(2, 10).toUpperCase() + '-' + Math.random().toString(16).substring(2, 10).toUpperCase();
     setEditingBusiness({ ...editingBusiness, generateNewToken: true, chatbot_token: tempToken });
     setHasUnsavedChanges(true);
   };
@@ -191,8 +193,12 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSaveEdit = async (e) => {
+  const handleSaveEdit = (e) => {
     e.preventDefault();
+    setShowSaveConfirm(true);
+  };
+
+  const confirmSaveEdit = async () => {
     try {
       const res = await axios.put(
         `${API_URL}/admin/businesses/${editingBusiness._id}`,
@@ -202,6 +208,7 @@ export default function AdminDashboardPage() {
 
       if (res.data?.success) {
         toast.success("Business updated successfully");
+        setShowSaveConfirm(false);
         setEditingBusiness(null);
         fetchBusinesses(); // Refresh the list
       }
@@ -1603,6 +1610,12 @@ export default function AdminDashboardPage() {
                         <textarea
                           placeholder="Question"
                           rows={1}
+                          ref={(el) => {
+                            if (el && el.value) {
+                              el.style.height = 'auto';
+                              el.style.height = el.scrollHeight + 'px';
+                            }
+                          }}
                           className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
                           value={faq.question}
                           onInput={(e) => {
@@ -1619,6 +1632,12 @@ export default function AdminDashboardPage() {
                         <textarea
                           placeholder="Answer"
                           rows={2}
+                          ref={(el) => {
+                            if (el && el.value) {
+                              el.style.height = 'auto';
+                              el.style.height = el.scrollHeight + 'px';
+                            }
+                          }}
                           className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
                           value={faq.answer}
                           onInput={(e) => {
@@ -1699,6 +1718,43 @@ export default function AdminDashboardPage() {
                 className="flex-1 py-2.5 bg-white hover:bg-gray-100 text-[#1a1a1a] text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
               >
                 Continue Editing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Changes Confirm Modal */}
+      {showSaveConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowSaveConfirm(false)}
+          />
+          <div className="relative bg-[#fdf9f0] w-full max-w-sm border-3 border-[#1a1a1a] shadow-neo-xl rounded-none p-6 z-20 flex flex-col items-center text-center gap-4">
+            <div className="w-12 h-12 rounded-full border-2 border-[#1a1a1a] bg-blue-500 flex items-center justify-center shadow-neo-sm">
+              <CheckCircle2 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold font-syne uppercase tracking-wider text-[#1a1a1a]">
+                Save Changes?
+              </h3>
+              <p className="text-xs font-bold text-gray-600 tracking-wide font-space mt-2">
+                Are you sure you want to apply these changes to the business profile?
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row w-full gap-3 mt-2">
+              <button
+                onClick={() => setShowSaveConfirm(false)}
+                className="flex-1 py-2.5 bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSaveEdit}
+                className="flex-1 py-2.5 bg-[#FF4D00] hover:bg-[#e04400] text-white text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
+              >
+                Yes, Save
               </button>
             </div>
           </div>
