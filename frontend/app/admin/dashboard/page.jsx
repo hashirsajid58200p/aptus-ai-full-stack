@@ -36,6 +36,7 @@ import {
   Trash2,
   AlertTriangle,
   Edit2,
+  Briefcase,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -61,6 +62,10 @@ export default function AdminDashboardPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [editingBusiness, setEditingBusiness] = useState(null);
+  const [enabledFields, setEnabledFields] = useState({});
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isEditDropdownOpen, setIsEditDropdownOpen] = useState(false);
+  const editDropdownRef = useRef(null);
 
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const filterDropdownRef = useRef(null);
@@ -69,6 +74,9 @@ export default function AdminDashboardPage() {
     const handleClickOutsideFilter = (event) => {
       if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
         setIsFilterDropdownOpen(false);
+      }
+      if (editDropdownRef.current && !editDropdownRef.current.contains(event.target)) {
+        setIsEditDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutsideFilter);
@@ -161,10 +169,37 @@ export default function AdminDashboardPage() {
 
       if (res.data?.success) {
         setEditingBusiness(res.data.data);
+        setEnabledFields({});
+        setHasUnsavedChanges(false);
       }
     } catch (err) {
       toast.error("Failed to fetch business details for editing");
     }
+  };
+
+  const handleRegenerateToken = async () => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/admin/businesses/${editingBusiness._id}`,
+        { generateNewToken: true },
+        getAuthOptions()
+      );
+      if (res.data?.success) {
+        toast.success("Token regenerated successfully");
+        setEditingBusiness({ ...editingBusiness, chatbot_token: res.data.business.chatbot_token });
+        fetchBusinesses();
+      }
+    } catch (err) {
+      toast.error("Failed to regenerate token");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    if (hasUnsavedChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) return;
+    }
+    setEditingBusiness(null);
   };
 
   const handleSaveEdit = async (e) => {
@@ -1387,9 +1422,6 @@ export default function AdminDashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
               <div className="flex items-center gap-3">
-                <div className="bg-[#1a1a1a] p-2">
-                  <Edit2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-extrabold font-syne uppercase tracking-wider text-[#1a1a1a]">
                     Edit <span className="text-[#FF4D00]">Business Profile</span>
@@ -1399,103 +1431,179 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setEditingBusiness(null)}
-                className="p-1 hover:bg-[#1a1a1a] hover:text-white transition-colors cursor-pointer border-2 border-transparent hover:border-[#1a1a1a]"
-              >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="square" strokeLinejoin="miter" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
 
             <form onSubmit={handleSaveEdit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    Owner Full Name
-                  </label>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      Owner Full Name
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, name: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    disabled={!enabledFields.name}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     value={editingBusiness.name}
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, name: e.target.value })}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, name: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    Email Address
-                  </label>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      Email Address
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, email: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
                   <input
                     type="email"
                     required
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    disabled={!enabledFields.email}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     value={editingBusiness.email}
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, email: e.target.value })}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, email: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    New Password (Optional)
-                  </label>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      New Password (Optional)
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, password: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
                   <input
                     type="password"
+                    disabled={!enabledFields.password}
                     placeholder="Leave blank to keep current"
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, password: e.target.value })}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, password: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    Business Category
-                  </label>
-                  <select
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
-                    value={editingBusiness.bussinessCategory}
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessCategory: e.target.value })}
-                  >
-                    {categoryOptions.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      Business Category
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, bussinessCategory: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div className="relative" ref={editDropdownRef}>
+                    <button
+                      type="button"
+                      disabled={!enabledFields.bussinessCategory}
+                      onClick={() => enabledFields.bussinessCategory && setIsEditDropdownOpen(!isEditDropdownOpen)}
+                      className={`w-full text-left border-2 border-[#1a1a1a] py-2 pl-9 pr-8 text-xs font-bold bg-white focus:outline-none focus:bg-[#fdf9f0] flex items-center justify-between ${!enabledFields.bussinessCategory ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "cursor-pointer"}`}
+                    >
+                      <span className={editingBusiness.bussinessCategory ? "text-[#1a1a1a]" : "text-gray-400"}>
+                        {editingBusiness.bussinessCategory || "Select Category"}
+                      </span>
+                    </button>
+                    <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                      <Briefcase className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                      <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isEditDropdownOpen ? "rotate-180" : ""}`} />
+                    </div>
+                    {isEditDropdownOpen && enabledFields.bussinessCategory && (
+                      <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-white border-2 border-[#1a1a1a] shadow-neo-md max-h-48 overflow-y-auto">
+                        {categoryOptions.map((cat) => (
+                          <div
+                            key={cat}
+                            onClick={() => {
+                              setEditingBusiness({ ...editingBusiness, bussinessCategory: cat });
+                              setHasUnsavedChanges(true);
+                              setIsEditDropdownOpen(false);
+                            }}
+                            className={`px-3 py-2 text-[11px] font-bold uppercase cursor-pointer hover:bg-[#BFF000] border-b border-gray-100 last:border-none ${
+                              editingBusiness.bussinessCategory === cat ? "bg-[#FF4D00] text-white hover:bg-[#FF4D00]" : "text-[#1a1a1a]"
+                            }`}
+                          >
+                            {cat}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    Business Name
-                  </label>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      Business Name
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, bussinessName: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    disabled={!enabledFields.bussinessName}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     value={editingBusiness.bussinessName}
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessName: e.target.value })}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, bussinessName: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
-                    Business Description
-                  </label>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                      Business Description
+                    </label>
+                    <button type="button" onClick={() => setEnabledFields({...enabledFields, bussinessDescription: true})} className="text-gray-500 hover:text-[#1a1a1a]">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
                   <textarea
                     rows={3}
-                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] resize-none"
+                    disabled={!enabledFields.bussinessDescription}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] resize-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     value={editingBusiness.bussinessDescription}
-                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessDescription: e.target.value })}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, bussinessDescription: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  id="generateToken"
-                  className="w-4 h-4 accent-[#FF4D00]"
-                  checked={editingBusiness.generateNewToken || false}
-                  onChange={(e) => setEditingBusiness({ ...editingBusiness, generateNewToken: e.target.checked })}
-                />
-                <label htmlFor="generateToken" className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a]">
-                  Generate New Chatbot Token <span className="text-red-500 normal-case tracking-normal">(This will invalidate the old one)</span>
-                </label>
+              <div className="mt-4 p-3 bg-white border-2 border-[#1a1a1a] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                    Chatbot Access Token
+                  </label>
+                  <p className="text-xs font-mono font-bold text-gray-600 mt-1">
+                    {editingBusiness.chatbot_token || "No token generated"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRegenerateToken}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#FF4D00] hover:bg-[#e04400] text-white text-[10px] font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  Regenerate Token
+                </button>
               </div>
 
               <hr className="border-[#1a1a1a] border-t-2 my-4" />
@@ -1537,23 +1645,25 @@ export default function AdminDashboardPage() {
                       <input
                         type="text"
                         placeholder="Question"
-                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-[90%] pb-1 focus:outline-none focus:border-[#FF4D00]"
+                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-[90%] pb-1 focus:outline-none focus:border-[#FF4D00] bg-transparent text-[#1a1a1a]"
                         value={faq.question}
                         onChange={(e) => {
                           const newFaqs = [...editingBusiness.bussinessDetails];
                           newFaqs[idx].question = e.target.value;
                           setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                          setHasUnsavedChanges(true);
                         }}
                       />
                       <textarea
                         placeholder="Answer"
                         rows={2}
-                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-full pb-1 focus:outline-none focus:border-[#FF4D00] resize-none"
+                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-full pb-1 focus:outline-none focus:border-[#FF4D00] resize-none bg-transparent text-[#1a1a1a]"
                         value={faq.answer}
                         onChange={(e) => {
                           const newFaqs = [...editingBusiness.bussinessDetails];
                           newFaqs[idx].answer = e.target.value;
                           setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                          setHasUnsavedChanges(true);
                         }}
                       />
                     </div>
@@ -1564,7 +1674,7 @@ export default function AdminDashboardPage() {
               <div className="pt-4 text-right flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setEditingBusiness(null)}
+                  onClick={handleCancelEdit}
                   className="px-5 py-2.5 bg-white hover:bg-gray-100 text-[#1a1a1a] text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
                 >
                   Cancel
