@@ -1375,6 +1375,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </div>
+      )}
       {/* Edit Modal Overlay */}
       {editingBusiness && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
