@@ -7,9 +7,10 @@ const {
 } = require("../controllers/sessionController");
 const validateWidget = require("../middleware/validateWidget");
 const { isAuthenticatedUser } = require("../middleware/Auth");
+const { widgetCors, dashboardCors } = require("../config/cors");
 
-router.route("/addMessages").post(validateWidget, addMessageToSession);
-router.route("/create").post(validateWidget, createSession);
-router.route("/owner/all").get(isAuthenticatedUser, getOwnerSessions);
+router.route("/addMessages").post(widgetCors, validateWidget, addMessageToSession);
+router.route("/create").post(widgetCors, validateWidget, createSession);
+router.route("/owner/all").get(dashboardCors, isAuthenticatedUser, getOwnerSessions);
 
 module.exports = router;

@@ -13,16 +13,7 @@ const PORT = process.env.PORT || 3100;
 
 require("dotenv").config({ path: "./config/.env" });
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, Postman)
-    // Allow any localhost port (development)
-    // Allow any .vercel.app subdomain (staging/preview deploys)
-    // Allow any other origin — this API serves a widget SDK embedded on customer sites
-    callback(null, true);
-  },
-  credentials: true
-}));
+const { dashboardCors } = require("./config/cors");
 
 // Middleware to ensure DB is connected before processing requests
 app.use(async (req, res, next) => {
@@ -56,7 +47,7 @@ const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
 app.use("/api/v1/session", sessionRoutes);
-app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/admin", dashboardCors, adminRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is healthy!" });

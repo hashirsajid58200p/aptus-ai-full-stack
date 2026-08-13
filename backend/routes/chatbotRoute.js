@@ -8,15 +8,16 @@ const {
 } = require("../controllers/chatbotController");
 const { isAuthenticatedUser } = require("../middleware/Auth");
 const validateWidget = require("../middleware/validateWidget");
+const { widgetCors, dashboardCors } = require("../config/cors");
 
-router.route("/getResponse").post(validateWidget, getResponse);
+router.route("/getResponse").post(widgetCors, validateWidget, getResponse);
 
-router.route("/generate").post(validateWidget, generateTextGeneral);
+router.route("/generate").post(widgetCors, validateWidget, generateTextGeneral);
 
-router.route("/test/owner").post(isAuthenticatedUser, testByOwner);
+router.route("/test/owner").post(dashboardCors, isAuthenticatedUser, testByOwner);
 
 // Public endpoint — validates a chatbot widget token and returns safe business info
-router.route("/getDetails").get(getDetails);
+router.route("/getDetails").get(widgetCors, getDetails);
 
 
 
