@@ -2,25 +2,11 @@
 
 import Link from "next/link";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function NotFound() {
-  const router = useRouter();
-
   return (
     <div className="text-[#1a1a1a] min-h-screen flex flex-col items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative">
       
-      {/* Top Left Navigation Button */}
-      <div className="absolute top-5 left-5">
-        <button
-          className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer font-space font-extrabold text-xs uppercase"
-          onClick={() => router.push("/")}
-        >
-          <ArrowLeft className="h-4 w-4 text-[#1a1a1a]" />
-          <span>Home</span>
-        </button>
-      </div>
-
       {/* Main 404 Neo-Brutalist Card */}
       <div className="max-w-md w-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-8 sm:p-10 text-center space-y-6">
         
