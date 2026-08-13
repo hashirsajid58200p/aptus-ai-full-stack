@@ -252,11 +252,8 @@ export default function AdminDashboardPage() {
             <h2 className="text-sm sm:text-base font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a] leading-tight">
               ADMINISTRATOR <span className="text-[#FF4D00]">DASHBOARD</span>
             </h2>
-            <p className="hidden sm:block text-[10px] font-bold text-[#1a1a1a]/70 font-space leading-tight mt-0.5 max-w-[250px] truncate">
+            <p className="text-[9px] sm:text-[10px] font-bold text-[#1a1a1a]/70 font-space leading-tight mt-0.5 max-w-[200px] sm:max-w-[250px] truncate">
               Real-time platform metrics, business directory, and system health
-            </p>
-            <p className="sm:hidden text-[9px] font-bold text-[#1a1a1a]/70 font-space leading-tight mt-0.5 max-w-[180px] truncate">
-              Platform metrics & health
             </p>
           </div>
         </div>

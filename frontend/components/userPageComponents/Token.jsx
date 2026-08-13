@@ -52,15 +52,15 @@ const Token = () => {
         <input
           value={user?.chatbot_token || ''}
           readOnly
-          className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] font-mono text-xs sm:text-sm py-2.5 sm:py-3 pl-3 sm:pl-4 pr-12 text-[#1a1a1a] font-bold shadow-neo-sm focus:outline-none"
+          className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] font-mono text-xs sm:text-sm py-2.5 sm:py-3 pl-3 sm:pl-4 pr-14 sm:pr-16 text-[#1a1a1a] font-bold shadow-neo-sm focus:outline-none"
         />
         <button
           type="button"
           onClick={handleCopyToken}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#a6d000] transition-colors shadow-neo-sm flex items-center justify-center"
+          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#a6d000] transition-colors shadow-neo-sm flex items-center justify-center"
           title="Copy to clipboard"
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </div>
       <p className="text-[10px] sm:text-xs font-bold text-gray-600 uppercase tracking-wide mb-4 sm:mb-6 flex items-start sm:items-center gap-1.5">

@@ -878,19 +878,19 @@ Strict Instructions:
 
       {/* Edit Modal (Sharp Edges & Clean Fonts) */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-white text-[#1a1a1a] max-w-lg border-3 border-[#1a1a1a] shadow-neo-lg p-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
-              <MdOutlineEdit className="text-[#FF4D00] text-2xl" /> Edit Question & Answer
+        <DialogContent hideClose={true} className="bg-white text-[#1a1a1a] max-w-lg border-3 border-[#1a1a1a] shadow-neo-lg p-4 sm:p-6">
+          <DialogHeader className="text-left space-y-1.5">
+            <DialogTitle className="text-lg sm:text-xl font-bold uppercase text-[#1a1a1a]">
+              Edit Question & Answer
             </DialogTitle>
-            <DialogDescription className="text-xs font-bold text-gray-600">
+            <DialogDescription className="text-[10px] sm:text-xs font-bold text-gray-600">
               Update the question and answer for your chatbot's training context.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleUpdateSubmit} className="space-y-4 mt-4">
             <div>
-              <label htmlFor="edit-question" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+              <label htmlFor="edit-question" className="block text-[10px] sm:text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Company Related Question
               </label>
               <div className="relative">
@@ -904,17 +904,17 @@ Strict Instructions:
                     }))
                   }
                   required
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2 sm:py-2.5 pl-3 pr-10"
                 />
-                <FaRobot className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
+                <FaRobot className="absolute right-3 top-1/2 -translate-y-1/2 text-lg sm:text-xl text-[#FF4D00]" />
               </div>
             </div>
 
             <div>
-              <label htmlFor="edit-answer" className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+              <label htmlFor="edit-answer" className="block text-[10px] sm:text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Answer
               </label>
-              <div className="relative">
+              <div className="relative h-full">
                 <Textarea
                   id="edit-answer"
                   value={editFormData.answer}
@@ -926,24 +926,24 @@ Strict Instructions:
                   }
                   required
                   rows={4}
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2 sm:py-2.5 pl-3 pr-10"
                 />
-                <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00]" />
+                <FaCommentDots className="absolute right-3 top-3 sm:top-3.5 text-lg sm:text-xl text-[#FF4D00]" />
               </div>
             </div>
 
-            <DialogFooter className="flex justify-end space-x-2 pt-4 border-t-2 border-gray-200">
+            <DialogFooter className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-2 pt-4 border-t-2 border-gray-200">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsEditOpen(false)}
-                className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-xs uppercase hover:bg-gray-200"
+                className="bg-gray-100 text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] px-4 py-2 text-[10px] sm:text-xs uppercase hover:bg-gray-200 w-full sm:w-auto"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="btn-neo-primary font-extrabold px-5 py-2 text-xs uppercase shadow-neo-sm"
+                className="btn-neo-primary font-extrabold px-5 py-2 text-[10px] sm:text-xs uppercase shadow-neo-sm w-full sm:w-auto"
               >
                 Save Changes
               </Button>
