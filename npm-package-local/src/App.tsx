@@ -109,8 +109,10 @@ const ChatbotWrapper = styled.div<{ $show: boolean; $position: string; $config: 
   position: fixed;
   ${({ $position }) => ($position === 'left' ? 'left: 20px;' : 'right: 20px;')}
   bottom: 96px;
-  width: 360px;
-  height: 520px;
+  width: 380px;
+  height: 600px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 120px);
   background-color: ${({ $config }) => $config.containerBg};
   border-radius: ${({ $config }) => $config.wrapperRadius};
   border: ${({ $config }) => $config.wrapperBorder || 'none'};
@@ -121,8 +123,9 @@ const ChatbotWrapper = styled.div<{ $show: boolean; $position: string; $config: 
   overflow: hidden;
 
   @media (max-width: 768px) {
-    width: 330px;
-    height: 80%;
+    width: calc(100vw - 40px);
+    height: 600px;
+    max-height: calc(100vh - 120px);
     bottom: 90px;
   }
 `;
