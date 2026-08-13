@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#09090b"/>
+  <defs>
+    <linearGradient id="fitlifeGradient" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a3e635"/>
+      <stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+  <!-- Stylish Dumbbell Icon -->
+  <path d="M25 16H7M25 16C25 17.6569 23.6569 19 22 19C20.3431 19 19 17.6569 19 16C19 14.3431 20.3431 13 22 13C23.6569 13 25 14.3431 25 16ZM13 16C13 17.6569 11.6569 19 10 19C8.34315 19 7 17.6569 7 16C7 14.3431 8.34315 13 10 13C11.6569 13 13 14.3431 13 16ZM5 16H3M29 16H27" 
+        stroke="url(#fitlifeGradient)" 
+        stroke-width="2.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+</svg>

@@ -57,6 +57,18 @@ Aptus AI is a premium, full-stack SaaS platform that empowers businesses to buil
 
 ---
 
+### 🎨 Demo Projects (Live Widget Integration)
+**FitLife Pro (Dark Theme)**
+![FitLife Pro Preview](previews/fitlifepro_preview.png)
+
+**VeloVita Wellness Hub (Light Theme)**
+![VeloVita Wellness Preview](previews/velovita_preview.png)
+
+**NexusCloud Solutions (Dracula Theme)**
+![NexusCloud Preview](previews/nexuscloud_preview.png)
+
+---
+
 ## ✨ Features
 
 - **Instant Chatbot Setup**: Get your AI chatbot live in minutes — just enter your business details and FAQs.
