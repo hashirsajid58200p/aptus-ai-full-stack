@@ -610,7 +610,7 @@ Strict Instructions:
 
             {loading && (
               <div className="flex justify-center my-4">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#FF4D00] border-t-transparent"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#FF4D00]"></div>
               </div>
             )}
 

@@ -61,7 +61,7 @@ const Sessions = () => {
 
       {loading ? (
         <div className="flex justify-center items-center p-12">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#FF4D00] border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#FF4D00]"></div>
         </div>
       ) : sessions.length === 0 ? (
         <div className="text-center p-12 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
