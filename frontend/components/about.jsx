@@ -47,7 +47,7 @@ export default function About() {
             3-Step Integration
           </span>
 
-          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold uppercase leading-tight tracking-tight whitespace-nowrap flex items-center gap-2 sm:gap-3">
+          <h2 className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[36px] font-extrabold uppercase leading-tight tracking-tight flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
             <span className="text-[#FF4D00]">TRAIN</span>
             <span className="text-[#1a1a1a]">➔</span>
             <span className="text-[#2D31FA]">INSTALL</span>

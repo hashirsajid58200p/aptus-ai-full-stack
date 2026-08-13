@@ -32,48 +32,48 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden sm:flex sm:space-x-8">
+          <div className="hidden md:flex md:space-x-6 lg:space-x-8">
             <a
               href="#how-it-works"
-              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               HOW IT WORKS
             </a>
             <a
               href="#features"
-              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FEATURES
             </a>
             <a
               href="#action-preview"
-              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               IN ACTION
             </a>
             <a
               href="#faq"
-              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-sm font-extrabold uppercase tracking-wider transition-colors"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FAQ
             </a>
           </div>
 
           {/* Desktop Buttons */}
-          <div className="hidden sm:flex sm:items-center gap-3">
+          <div className="hidden md:flex md:items-center gap-3">
             {loading && !user ? (
               <div className="w-28 h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
             ) : user ? (
               <Button
                 onClick={() => router.push("/user")}
-                className="btn-neo px-6 py-2 rounded-none"
+                className="btn-neo px-5 lg:px-6 py-2 rounded-none text-xs lg:text-sm"
               >
                 DASHBOARD
               </Button>
             ) : (
               <Button
                 onClick={() => router.push("/start")}
-                className="btn-neo-primary px-6 py-2 rounded-none"
+                className="btn-neo-primary px-5 lg:px-6 py-2 rounded-none text-xs lg:text-sm"
               >
                 GET TOKEN
               </Button>
@@ -81,7 +81,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Toggle Button */}
-          <div className="flex sm:hidden">
+          <div className="flex md:hidden">
             <button
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 text-[#1a1a1a] border-2 border-[#1a1a1a] bg-[#BFF000] focus:outline-none"
@@ -93,27 +93,31 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="sm:hidden border-t-3 border-[#1a1a1a] bg-[#FDF9F0] py-4 px-2 space-y-3">
+          <div className="md:hidden border-t-3 border-[#1a1a1a] bg-[#FDF9F0] py-4 px-2 space-y-3">
             <a
               href="#how-it-works"
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               HOW IT WORKS
             </a>
             <a
               href="#features"
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               FEATURES
             </a>
             <a
               href="#action-preview"
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               IN ACTION
             </a>
             <a
               href="#faq"
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               FAQ

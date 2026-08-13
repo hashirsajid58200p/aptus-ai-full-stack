@@ -56,14 +56,14 @@ export default function Hero() {
             variants={fadeInUp}
             className="font-syne text-[20px] sm:text-[28px] md:text-[32px] lg:text-[31px] xl:text-[37px] font-extrabold text-[#1a1a1a] uppercase leading-tight tracking-tight space-y-[4px]"
           >
-            <span className="block whitespace-nowrap">INSTALL PACKAGE.</span>
+            <span className="block sm:whitespace-nowrap">INSTALL PACKAGE.</span>
             <motion.span
               variants={fadeInUp}
-              className="text-[#FF4D00] block whitespace-nowrap"
+              className="text-[#FF4D00] block sm:whitespace-nowrap"
             >
               EMBED TOKEN.
             </motion.span>
-            <span className="block whitespace-nowrap">GO LIVE.</span>
+            <span className="block sm:whitespace-nowrap">GO LIVE.</span>
           </motion.h1>
 
           <motion.p
