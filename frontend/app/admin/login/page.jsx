@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -13,8 +13,19 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   const API_URL = baseurl;
+
+  // Check if admin is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      router.push("/admin/dashboard");
+    } else {
+      setCheckingAuth(false);
+    }
+  }, [router]);
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -45,6 +56,11 @@ export default function AdminLoginPage() {
       setLoading(false);
     }
   };
+
+  // Prevent flash of login page while checking auth
+  if (checkingAuth) {
+    return null;
+  }
 
   return (
     <div className="text-[#1a1a1a] min-h-screen flex flex-col items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative pt-20 sm:pt-12">

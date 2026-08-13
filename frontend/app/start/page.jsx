@@ -149,6 +149,11 @@ export default function AuthForm() {
 
   const currentPassword = isSignUp ? formData.password : loginData.password;
 
+  // Prevent flash of login form if user is already authenticated
+  if (user) {
+    return null;
+  }
+
   return (
     <div className="text-[#1a1a1a] min-h-screen flex flex-col items-center justify-center bg-[#FDF9F0] py-12 px-4 sm:px-6 lg:px-8 relative pt-20 sm:pt-12">
       <div className="absolute top-4 sm:top-5 left-4 sm:left-5 z-20">
