@@ -11,9 +11,10 @@ const ErrorHandler = require("./middleware/error");
 
 const PORT = process.env.PORT || 3100;
 
-require("dotenv").config({ path: "./config/.env" });
-
 const { dashboardCors } = require("./config/cors");
+
+// Apply CORS globally first so preflights & error responses always include CORS headers
+app.use(dashboardCors);
 
 // Middleware to ensure DB is connected before processing requests
 app.use(async (req, res, next) => {
