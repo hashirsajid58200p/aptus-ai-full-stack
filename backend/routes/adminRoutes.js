@@ -7,6 +7,7 @@ const {
   getAllBusinesses,
   getBusinessById,
   deleteBusiness,
+  updateBusiness,
 } = require("../controllers/adminController");
 const { isAdminAuthenticated } = require("../middleware/adminAuth");
 
@@ -29,6 +30,7 @@ router.get("/analytics", isAdminAuthenticated, getAnalytics);
 router.get("/businesses", isAdminAuthenticated, getAllBusinesses);
 router.get("/businesses/:id", isAdminAuthenticated, getBusinessById);
 router.get("/business/:id", isAdminAuthenticated, getBusinessById);
+router.put("/businesses/:id", isAdminAuthenticated, updateBusiness);
 router.delete("/businesses/:id", isAdminAuthenticated, deleteBusiness);
 
 module.exports = router;

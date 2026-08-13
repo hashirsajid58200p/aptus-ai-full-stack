@@ -35,6 +35,7 @@ import {
   ChevronDown,
   Trash2,
   AlertTriangle,
+  Edit2,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -59,6 +60,7 @@ export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [editingBusiness, setEditingBusiness] = useState(null);
 
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const filterDropdownRef = useRef(null);
@@ -147,6 +149,40 @@ export default function AdminDashboardPage() {
       }
     } catch (err) {
       toast.error("Failed to fetch business details");
+    }
+  };
+
+  const handleEditBusiness = async (id) => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/admin/businesses/${id}`,
+        getAuthOptions()
+      );
+
+      if (res.data?.success) {
+        setEditingBusiness(res.data.data);
+      }
+    } catch (err) {
+      toast.error("Failed to fetch business details for editing");
+    }
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `${API_URL}/admin/businesses/${editingBusiness._id}`,
+        editingBusiness,
+        getAuthOptions()
+      );
+
+      if (res.data?.success) {
+        toast.success("Business updated successfully");
+        setEditingBusiness(null);
+        fetchBusinesses(); // Refresh the list
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update business");
     }
   };
 
@@ -638,6 +674,13 @@ export default function AdminDashboardPage() {
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
+                                onClick={() => handleEditBusiness(b._id)}
+                                title="Edit Business"
+                                className="inline-flex items-center justify-center p-2 bg-[#1a1a1a] hover:bg-[#333] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
                                 onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
                                 title="Delete Business"
                                 className="inline-flex items-center justify-center p-2 bg-red-600 hover:bg-red-700 text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
@@ -780,6 +823,13 @@ export default function AdminDashboardPage() {
                                 className="inline-flex items-center justify-center p-2 bg-[#FF4D00] hover:bg-[#e04400] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleEditBusiness(b._id)}
+                                title="Edit Business"
+                                className="inline-flex items-center justify-center p-2 bg-[#1a1a1a] hover:bg-[#333] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
+                              >
+                                <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setConfirmAction({ type: "delete", business: { id: b._id, name: b.bussinessName || "this business" } })}
@@ -1323,6 +1373,209 @@ export default function AdminDashboardPage() {
                 Close Profile
               </button>
             </div>
+          </div>
+        </div>
+      {/* Edit Modal Overlay */}
+      {editingBusiness && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setEditingBusiness(null)}
+          />
+          <div className="relative bg-[#fdf9f0] w-full max-w-2xl max-h-[90vh] overflow-y-auto border-3 border-[#1a1a1a] shadow-neo-xl rounded-none p-4 sm:p-6 z-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden flex flex-col gap-5">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-3 border-[#1a1a1a] pb-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-[#1a1a1a] p-2">
+                  <Edit2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-extrabold font-syne uppercase tracking-wider text-[#1a1a1a]">
+                    Edit <span className="text-[#FF4D00]">Business Profile</span>
+                  </h3>
+                  <p className="text-[10px] font-bold text-gray-600 tracking-wide font-space">
+                    Modify business details, credentials, and knowledge base
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingBusiness(null)}
+                className="p-1 hover:bg-[#1a1a1a] hover:text-white transition-colors cursor-pointer border-2 border-transparent hover:border-[#1a1a1a]"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="square" strokeLinejoin="miter" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    Owner Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    value={editingBusiness.name}
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    value={editingBusiness.email}
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    New Password (Optional)
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Leave blank to keep current"
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, password: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    Business Category
+                  </label>
+                  <select
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    value={editingBusiness.bussinessCategory}
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessCategory: e.target.value })}
+                  >
+                    {categoryOptions.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    Business Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0]"
+                    value={editingBusiness.bussinessName}
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessName: e.target.value })}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider mb-1">
+                    Business Description
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full text-xs font-bold border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] p-2 focus:outline-none focus:bg-[#fdf9f0] resize-none"
+                    value={editingBusiness.bussinessDescription}
+                    onChange={(e) => setEditingBusiness({ ...editingBusiness, bussinessDescription: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="generateToken"
+                  className="w-4 h-4 accent-[#FF4D00]"
+                  checked={editingBusiness.generateNewToken || false}
+                  onChange={(e) => setEditingBusiness({ ...editingBusiness, generateNewToken: e.target.checked })}
+                />
+                <label htmlFor="generateToken" className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a]">
+                  Generate New Chatbot Token <span className="text-red-500 normal-case tracking-normal">(This will invalidate the old one)</span>
+                </label>
+              </div>
+
+              <hr className="border-[#1a1a1a] border-t-2 my-4" />
+
+              {/* FAQs Editor */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider">
+                    Configured Knowledge Base FAQs
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newFaqs = [...(editingBusiness.bussinessDetails || [])];
+                      newFaqs.push({ question: "", answer: "" });
+                      setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                    }}
+                    className="text-[10px] bg-[#1a1a1a] text-white px-2 py-1 font-bold uppercase tracking-wider hover:bg-[#333]"
+                  >
+                    + Add Q&A
+                  </button>
+                </div>
+
+                <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                  {(editingBusiness.bussinessDetails || []).map((faq, idx) => (
+                    <div key={idx} className="bg-white border-2 border-[#1a1a1a] p-3 flex flex-col gap-2 relative">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFaqs = [...editingBusiness.bussinessDetails];
+                          newFaqs.splice(idx, 1);
+                          setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                        }}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                        title="Remove Q&A"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="text"
+                        placeholder="Question"
+                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-[90%] pb-1 focus:outline-none focus:border-[#FF4D00]"
+                        value={faq.question}
+                        onChange={(e) => {
+                          const newFaqs = [...editingBusiness.bussinessDetails];
+                          newFaqs[idx].question = e.target.value;
+                          setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                        }}
+                      />
+                      <textarea
+                        placeholder="Answer"
+                        rows={2}
+                        className="text-xs font-bold border-b-2 border-[#1a1a1a] w-full pb-1 focus:outline-none focus:border-[#FF4D00] resize-none"
+                        value={faq.answer}
+                        onChange={(e) => {
+                          const newFaqs = [...editingBusiness.bussinessDetails];
+                          newFaqs[idx].answer = e.target.value;
+                          setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 text-right flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingBusiness(null)}
+                  className="px-5 py-2.5 bg-white hover:bg-gray-100 text-[#1a1a1a] text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#e04400] text-white text-xs font-extrabold font-space uppercase tracking-wider rounded-none border-2 border-[#1a1a1a] shadow-neo-sm transition-all cursor-pointer"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

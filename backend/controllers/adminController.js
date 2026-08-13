@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
+const { generateToken } = require("../utils/chatbotToken");
 
 // Login Admin (Static env credentials comparison)
 const loginAdmin = async (req, res, next) => {
@@ -249,6 +250,60 @@ const deleteBusiness = async (req, res, next) => {
   }
 };
 
+// Update Business Data
+const updateBusiness = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      email,
+      password,
+      bussinessName,
+      bussinessCategory,
+      bussinessDescription,
+      bussinessDetails,
+      generateNewToken
+    } = req.body;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Business not found" });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = password; // mongoose pre-save hook will hash this
+    if (bussinessName) user.bussinessName = bussinessName;
+    if (bussinessCategory) user.bussinessCategory = bussinessCategory;
+    if (bussinessDescription) user.bussinessDescription = bussinessDescription;
+    
+    if (bussinessDetails && Array.isArray(bussinessDetails)) {
+      user.bussinessDetails = bussinessDetails;
+    }
+
+    if (generateNewToken) {
+      user.chatbot_token = await generateToken();
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Business updated successfully",
+      business: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        bussinessName: user.bussinessName,
+        chatbot_token: user.chatbot_token
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   loginAdmin,
   logoutAdmin,
@@ -256,4 +311,5 @@ module.exports = {
   getAllBusinesses,
   getBusinessById,
   deleteBusiness,
+  updateBusiness,
 };
