@@ -27,7 +27,7 @@ export default function Home() {
   }, [dispatch]);
 
   return (
-    <main className="flex flex-col min-h-dvh bg-[#FDF9F0] text-[#1a1a1a]">
+    <main className="flex flex-col min-h-dvh bg-[#FDF9F0] text-[#1a1a1a] overflow-x-hidden w-full">
       <NavBar />
       <section id="hero">
         <Hero />

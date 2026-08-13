@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/aptus-logo.png" />
         <link rel="alternate icon" href="/favicon-32x32.png" />
       </head>
-      <body className="bg-[#FDF9F0] text-[#1A1A1A]">
+      <body className="bg-[#FDF9F0] text-[#1A1A1A] overflow-x-hidden w-full">
         <ReduxProvider>
           <Providers>
             <Toaster
