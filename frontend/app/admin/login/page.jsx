@@ -19,6 +19,7 @@ export default function AdminLoginPage() {
 
   // Check if admin is already logged in
   useEffect(() => {
+    document.title = "Admin Login — Aptus AI";
     const token = localStorage.getItem("adminToken");
     if (token) {
       router.push("/admin/dashboard");

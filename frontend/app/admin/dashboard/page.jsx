@@ -72,6 +72,10 @@ export default function AdminDashboardPage() {
   const filterDropdownRef = useRef(null);
 
   useEffect(() => {
+    document.title = "Admin Dashboard — Aptus AI";
+  }, []);
+
+  useEffect(() => {
     const handleClickOutsideFilter = (event) => {
       if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
         setIsFilterDropdownOpen(false);

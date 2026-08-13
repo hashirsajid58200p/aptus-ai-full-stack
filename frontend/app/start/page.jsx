@@ -65,6 +65,10 @@ export default function AuthForm() {
   ];
 
   useEffect(() => {
+    document.title = isSignUp ? "Register — Aptus AI" : "Login — Aptus AI";
+  }, [isSignUp]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, BookOpen, Terminal, Code, Palette, Settings, Check, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +10,10 @@ export default function DocsPage() {
   const [copiedNpm, setCopiedNpm] = useState(false);
   const [copiedYarn, setCopiedYarn] = useState(false);
   const [copiedUsage, setCopiedUsage] = useState(false);
+
+  useEffect(() => {
+    document.title = "Documentation — Aptus AI";
+  }, []);
 
   const usageCode = `import React from 'react';
 import { ChatBot } from 'aptus-ai-chatbot-widget';

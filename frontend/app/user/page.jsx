@@ -49,6 +49,10 @@ export default function UserDashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    document.title = "Business Dashboard — Aptus AI";
+  }, []);
+
+  useEffect(() => {
     dispatch(loadUser());
   }, [dispatch]);
 
