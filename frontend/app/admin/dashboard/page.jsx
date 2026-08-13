@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#fdf9f0] text-[#1a1a1a]">
       {/* Mobile Header Bar */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-white border-b-3 border-[#1a1a1a]">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b-3 border-[#1a1a1a]">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none flex items-center justify-center shadow-neo-sm">
             <ShieldCheck className="w-5 h-5" />
@@ -264,11 +264,19 @@ export default function AdminDashboardPage() {
         </button>
       </div>
 
+      {/* Mobile/Tablet Sidebar Overlay Backdrop */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Neo-Brutalist Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "flex" : "hidden"
-        } md:flex flex-col justify-between w-72 bg-white p-5 h-screen sticky top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-50 shrink-0`}
+          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 flex" : "hidden"
+        } lg:flex flex-col justify-between w-64 lg:w-72 bg-white p-5 h-screen sticky top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-40 shrink-0`}
       >
         <div>
           {/* Logo & Admin Branding */}
@@ -325,7 +333,7 @@ export default function AdminDashboardPage() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Sticky Header */}
-        <header className="bg-white border-b-3 border-[#1a1a1a] sticky top-0 z-30 px-6 py-4 hidden md:block">
+        <header className="bg-white border-b-3 border-[#1a1a1a] sticky top-0 z-30 px-4 sm:px-6 py-4 hidden lg:block">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
@@ -353,7 +361,7 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Tab Contents */}
-        <main className="p-6 flex-1 space-y-8 max-w-7xl w-full">
+        <main className="p-4 sm:p-6 lg:p-8 flex-1 space-y-6 sm:space-y-8 max-w-7xl w-full mx-auto">
           {/* TAB 1: OVERVIEW */}
           {activeTab === "overview" && (
             <div className="space-y-8">
@@ -448,7 +456,7 @@ export default function AdminDashboardPage() {
 
                   {/* Custom Neo-Brutalist Bar Chart (Real Live Data) */}
                   <div className="pt-4 space-y-4">
-                    <div className="h-44 flex items-end gap-4 px-2 pt-6 border-b-3 border-[#1a1a1a]">
+                    <div className="h-44 flex items-end gap-1.5 sm:gap-2.5 md:gap-4 px-1 sm:px-2 pt-6 border-b-3 border-[#1a1a1a]">
                       {(() => {
                         const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                         const now = new Date();
@@ -557,8 +565,8 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="overflow-hidden w-full border-2 border-[#1a1a1a] rounded-none bg-white">
-                  <table className="w-full text-left text-xs border-collapse">
+                <div className="overflow-x-auto w-full border-2 border-[#1a1a1a] rounded-none bg-white [scrollbar-width:thin]">
+                  <table className="w-full min-w-[640px] text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-[#fdf9f0] border-b-2 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
                         <th className="py-3.5 px-4 whitespace-nowrap">Business Name</th>
@@ -687,8 +695,8 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Business Table */}
-              <div className="overflow-hidden w-full border-3 border-[#1a1a1a] rounded-none bg-white">
-                <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto w-full border-3 border-[#1a1a1a] rounded-none bg-white [scrollbar-width:thin]">
+                <table className="w-full min-w-[640px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#fdf9f0] border-b-3 border-[#1a1a1a] text-[#1a1a1a] font-extrabold font-syne uppercase tracking-wider">
                       <th className="py-3.5 px-4 whitespace-nowrap">Business Name</th>
@@ -847,7 +855,7 @@ export default function AdminDashboardPage() {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-5 pt-1">
+                        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 pt-1">
                           {/* SVG Donut */}
                           <div className="shrink-0">
                             <svg width="120" height="120" viewBox="0 0 120 120">
@@ -1026,7 +1034,7 @@ export default function AdminDashboardPage() {
 
                       return (
                         <div className="pt-2 space-y-3">
-                          <div className="h-44 flex items-end gap-4 px-2 pt-6 border-b-3 border-[#1a1a1a]">
+                          <div className="h-44 flex items-end gap-1.5 sm:gap-2.5 md:gap-4 px-1 sm:px-2 pt-6 border-b-3 border-[#1a1a1a]">
                             {counts.map((val, idx) => {
                               const heightPct = val === 0 ? 8 : Math.max(16, Math.round((val / maxVal) * 85));
                               const isLatest = idx === 5;
