@@ -356,21 +356,29 @@ const BusinessDetails = () => {
       "1. Enterprise Features, 2. High-volume Scalability, 3. Automated Workflows, 4. Migration Assistance, 5. Customer Service Channels"
     ];
 
-    const chosenTopics = topicPools[Math.floor(Math.random() * topicPools.length)];
-    const randomSeed = Math.floor(Math.random() * 1000000);
+    // Force a different topic pool every call by rotating based on timestamp
+    const topicIndex = Math.floor(Date.now() / 1000) % topicPools.length;
+    const chosenTopics = topicPools[topicIndex];
+    const randomSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const businessDetails = `
       Business Name: ${user?.bussinessName || "N/A"},
       Business Category: ${user?.bussinessCategory || "N/A"},
       Business Description: ${user?.bussinessDescription || "N/A"}
     `;
 
-    const prompt = `Generate exactly 5 UNIQUE, CREATIVE, and DIVERSE questions with answers for this business from a customer perspective.
-Target Topics for this batch (Batch Seed ${randomSeed}): ${chosenTopics}.
+    const prompt = `You are generating a FRESH, UNIQUE set of 5 FAQ questions for a business chatbot.
+
+Generation ID: ${randomSeed} — use this to vary your output. DO NOT repeat any questions from previous generations.
+Target Topics (Topic Set ${topicIndex + 1} of 5): ${chosenTopics}.
 Business Info: ${businessDetails}.
+
 Strict Instructions:
-- Formulate 5 questions corresponding to the 5 target topics provided above.
-- Make each question distinct, fresh, and relevant to the target topic.
-- Format: Return ONLY a valid JSON array of 5 objects: [{"question": "...", "answer": "..."}]`;
+- Generate EXACTLY 5 questions, one per topic listed above.
+- Every question MUST be brand new — never repeat wording from prior batches.
+- Make questions specific to the business details provided, not generic.
+- Keep answers factual, concise, and helpful.
+- Return ONLY a valid JSON array with exactly 5 objects: [{"question": "...", "answer": "..."}]
+- No extra text, no markdown, no explanation — ONLY the JSON array.`;
 
     try {
       const questions = await generateJSONContent(prompt);
@@ -602,7 +610,7 @@ Strict Instructions:
 
             {loading && (
               <div className="flex justify-center my-4">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#FF4D00]"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#FF4D00] border-t-transparent"></div>
               </div>
             )}
 
