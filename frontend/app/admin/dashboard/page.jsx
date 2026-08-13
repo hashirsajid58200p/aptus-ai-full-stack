@@ -1572,7 +1572,7 @@ export default function AdminDashboardPage() {
 
               {/* Business FAQs */}
               <div>
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
                   <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] font-syne">
                     Configured Knowledge Base FAQs
                   </h4>
@@ -1583,7 +1583,7 @@ export default function AdminDashboardPage() {
                       newFaqs.push({ question: "", answer: "" });
                       setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
                     }}
-                    className="text-[10px] bg-[#1a1a1a] hover:bg-black text-white px-2 py-1 font-bold uppercase tracking-wider border-2 border-[#1a1a1a] shadow-neo-sm transition-all"
+                    className="w-full sm:w-auto text-[10px] bg-[#1a1a1a] hover:bg-black text-white px-3 py-2 sm:py-1 font-bold uppercase tracking-wider border-2 border-[#1a1a1a] shadow-neo-sm transition-all whitespace-nowrap shrink-0 text-center"
                   >
                     + Add Q&A
                   </button>
