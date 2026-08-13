@@ -46,6 +46,7 @@ next-env.d.ts
 
 # Credentials & Secrets
 credentials.txt
+credentials.md
 new_env.txt
 details.md
 
