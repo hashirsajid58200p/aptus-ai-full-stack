@@ -1,28 +1,41 @@
 const express = require("express");
-const cors = require("cors");
-const { connectDB } = require("./database/database");
+const path = require("path");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
-const compression = require('compression');
-const app = express();
+const compression = require("compression");
+
+// Load environment variables cleanly from config/.env
+require("dotenv").config({ path: path.join(__dirname, "config", ".env") });
+
+const { connectDB } = require("./database/database");
 const ErrorHandler = require("./middleware/error");
+const { dashboardCors } = require("./config/cors");
 
-
+const app = express();
 const PORT = process.env.PORT || 3100;
 
-const { dashboardCors } = require("./config/cors");
+// Enable trust proxy for Vercel / reverse proxy environments
+app.set("trust proxy", 1);
 
 // Apply CORS globally first so preflights & error responses always include CORS headers
 app.use(dashboardCors);
+app.options("*", dashboardCors);
 
-// Middleware to ensure DB is connected before processing requests
+// Middleware to ensure DB is connected before processing non-preflight requests
 app.use(async (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
   try {
     await connectDB();
     next();
   } catch (err) {
-    next(err);
+    console.error("Database connection middleware error:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Database connection failed. Please check backend DB_URI configuration.",
+    });
   }
 });
 
@@ -34,7 +47,7 @@ app.use(cookieParser());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: "Too many requests from this IP, please try again after 15 minutes.",
 });
 
@@ -48,7 +61,7 @@ const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
 app.use("/api/v1/session", sessionRoutes);
-app.use("/api/v1/admin", dashboardCors, adminRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is healthy!" });
@@ -65,7 +78,6 @@ app.use((req, res, next) => {
     message: "Page not found",
   });
 });
-
 
 app.use(ErrorHandler);
 
