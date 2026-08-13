@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
-const { generateToken } = require("../utils/chatbotToken");
 
 // Login Admin (Static env credentials comparison)
 const loginAdmin = async (req, res, next) => {

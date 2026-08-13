@@ -3,7 +3,6 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
 const { generateToken } = require("../utils/chatbotToken");
 const CustomError = require("../utils/errorHandler");
-require("dotenv").config();
 
 // register a user
 exports.registerUser = catchAsyncError(async (req, res, next) => {
