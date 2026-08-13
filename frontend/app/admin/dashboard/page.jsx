@@ -251,8 +251,8 @@ export default function AdminDashboardPage() {
           <div className="w-9 h-9 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none flex items-center justify-center shadow-neo-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
-          <span className="font-syne font-extrabold uppercase text-sm tracking-tight">
-            APTUS <span className="font-playfair italic text-[#FF4D00]">Admin</span>
+          <span className="font-syne font-extrabold uppercase text-sm tracking-tight text-[#1a1a1a]">
+            APTUS <span className="text-[#FF4D00]">ADMIN</span>
           </span>
         </div>
 
@@ -484,17 +484,17 @@ export default function AdminDashboardPage() {
                         return chartItems.map((item, idx) => {
                           const heightPct = item.val === 0 ? 8 : Math.max(16, Math.round((item.val / maxVal) * 85));
                           return (
-                            <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end">
-                              <span className="text-[10px] font-extrabold font-space text-[#1a1a1a]">
+                            <div key={idx} className="flex-1 flex flex-col items-center gap-1 sm:gap-1.5 group h-full justify-end">
+                              <span className="text-[8px] sm:text-[10px] font-extrabold font-space text-[#1a1a1a]">
                                 {item.val}
                               </span>
                               <div
                                 style={{ height: `${heightPct}%` }}
-                                className={`w-full max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
+                                className={`w-full max-w-[24px] sm:max-w-[36px] border-2 border-[#1a1a1a] rounded-none transition-all duration-300 ${
                                   item.isCurrent ? "bg-[#FF4D00]" : idx % 2 === 0 ? "bg-[#2D31FA]" : "bg-[#BFF000]"
                                 } shadow-neo-sm group-hover:scale-105`}
                               />
-                              <span className="text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
+                              <span className="text-[8px] sm:text-[10px] font-extrabold font-syne uppercase text-[#1a1a1a]">
                                 {item.month}
                               </span>
                             </div>
@@ -552,7 +552,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Recent Clients Quick Table Preview */}
-              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-4">
+              <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-4 sm:p-6 shadow-neo-lg space-y-4 w-full overflow-hidden">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold font-syne uppercase text-[#1a1a1a]">
                     RECENTLY REGISTERED <span className="text-[#FF4D00]">BUSINESSES</span>
@@ -634,7 +634,7 @@ export default function AdminDashboardPage() {
 
           {/* TAB 2: BUSINESSES */}
           {activeTab === "businesses" && (
-            <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-6 shadow-neo-lg space-y-6">
+            <div className="bg-white border-3 border-[#1a1a1a] rounded-none p-4 sm:p-6 shadow-neo-lg space-y-6 w-full overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold font-syne uppercase text-[#1a1a1a] tracking-tight">

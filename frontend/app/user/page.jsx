@@ -157,21 +157,21 @@ export default function UserDashboard() {
 
       {/* Main content */}
       <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
-        <header className="flex justify-between items-center border-3 border-[#1a1a1a] mb-8 bg-white p-6 shadow-neo">
-          <h1 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#1a1a1a] uppercase">
+        <header className="flex flex-wrap md:flex-nowrap justify-between items-center gap-4 border-3 border-[#1a1a1a] mb-6 sm:mb-8 bg-white p-4 sm:p-6 shadow-neo">
+          <h1 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold text-[#1a1a1a] uppercase truncate w-full sm:w-auto max-w-full">
             {activeTab === "business details"
               ? `WELCOME, ${user?.name || "USER"}`
               : activeTab}
           </h1>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2 sm:space-x-4 w-full sm:w-auto justify-end">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button
-                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                  className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>LOGOUT</span>
+                  <LogOut className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">LOGOUT</span>
                 </button>
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-xl p-6">

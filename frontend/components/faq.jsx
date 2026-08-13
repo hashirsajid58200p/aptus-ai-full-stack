@@ -67,7 +67,7 @@ export default function Faq() {
                 key={index}
                 aria-label={item.question}
                 title={
-                  <span className="font-syne font-bold text-base sm:text-lg text-[#1a1a1a] uppercase">
+                  <span className="font-syne font-bold text-sm sm:text-base md:text-lg text-[#1a1a1a] uppercase whitespace-normal break-words text-left block">
                     {item.question}
                   </span>
                 }
