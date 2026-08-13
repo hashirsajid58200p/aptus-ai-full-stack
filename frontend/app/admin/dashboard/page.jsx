@@ -178,7 +178,8 @@ export default function AdminDashboardPage() {
   };
 
   const handleRegenerateToken = () => {
-    setEditingBusiness({ ...editingBusiness, generateNewToken: true });
+    const tempToken = 'TEMP-' + Math.random().toString(16).substring(2, 10).toUpperCase() + '-' + Math.random().toString(16).substring(2, 10).toUpperCase();
+    setEditingBusiness({ ...editingBusiness, generateNewToken: true, chatbot_token: tempToken });
     setHasUnsavedChanges(true);
   };
 
@@ -1412,7 +1413,7 @@ export default function AdminDashboardPage() {
             <div className="border-b-3 border-[#1a1a1a] pb-4">
               <div>
                 <h3 className="text-xl font-extrabold font-syne text-[#1a1a1a] uppercase tracking-tight flex items-center gap-2">
-                  <Edit2 className="w-5 h-5 text-[#FF4D00]" /> Edit Profile
+                  Edit Profile
                 </h3>
                 <p className="text-[10px] font-bold text-gray-600 tracking-wide font-space mt-1">
                   Modify business details, credentials, and knowledge base
@@ -1526,28 +1527,20 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] sm:col-span-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
-                      Chatbot Integration Token
-                    </span>
-                    {editingBusiness.generateNewToken && (
-                      <span className="text-[9px] font-bold text-red-500 bg-red-100 px-2 py-0.5 border border-red-500 rounded-full">
-                        New token on save
-                      </span>
-                    )}
-                  </div>
+                  <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
+                    Chatbot Integration Token
+                  </span>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
-                    <p className={`flex-1 w-full text-xs font-mono font-bold p-2.5 rounded-none border-2 break-all select-all ${editingBusiness.generateNewToken ? 'bg-gray-100 text-gray-400 border-gray-300' : 'bg-white text-[#FF4D00] border-[#1a1a1a]'}`}>
-                      {editingBusiness.generateNewToken ? "************************" : (editingBusiness.chatbot_token || "No token generated")}
+                    <p className={`flex-1 w-full text-xs font-mono font-bold p-2.5 rounded-none border-2 break-all select-all ${editingBusiness.generateNewToken ? 'bg-yellow-100 text-gray-600 border-yellow-300' : 'bg-white text-[#FF4D00] border-[#1a1a1a]'}`}>
+                      {editingBusiness.chatbot_token || "No token generated"}
                     </p>
                     <button
                       type="button"
                       onClick={handleRegenerateToken}
-                      disabled={editingBusiness.generateNewToken}
-                      className="w-full sm:w-auto p-2.5 bg-[#FF4D00] hover:bg-[#e04400] text-white text-xs font-extrabold uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto p-2.5 bg-[#FF4D00] hover:bg-[#e04400] text-white text-xs font-extrabold uppercase border-2 border-[#1a1a1a] rounded-none shadow-neo-sm transition-colors flex items-center justify-center gap-2"
                     >
                       <RefreshCw className="w-4 h-4" />
-                      Regen
+                      Regenerate Token
                     </button>
                   </div>
                 </div>
@@ -1607,11 +1600,15 @@ export default function AdminDashboardPage() {
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <div className="flex flex-col gap-2">
-                        <input
-                          type="text"
+                        <textarea
                           placeholder="Question"
-                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00]"
+                          rows={1}
+                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
                           value={faq.question}
+                          onInput={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                          }}
                           onChange={(e) => {
                             const newFaqs = [...editingBusiness.bussinessDetails];
                             newFaqs[idx].question = e.target.value;
@@ -1622,8 +1619,12 @@ export default function AdminDashboardPage() {
                         <textarea
                           placeholder="Answer"
                           rows={2}
-                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none"
+                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
                           value={faq.answer}
+                          onInput={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                          }}
                           onChange={(e) => {
                             const newFaqs = [...editingBusiness.bussinessDetails];
                             newFaqs[idx].answer = e.target.value;
