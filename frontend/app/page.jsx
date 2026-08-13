@@ -47,7 +47,7 @@ export default function Home() {
 
       {/* Live npm package ChatBot widget integration */}
       <ChatBotWidget
-        token="A1ED-BACD7C30-0A894508"
+        token="A1ED-AC9D6DEE-46A3DFD8"
         apiUrl={baseurl}
         theme="aptus"
         wantToShowSuggestions={true}
