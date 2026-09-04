@@ -7,16 +7,17 @@ const seedAccounts = async () => {
   try {
     // 1. Seed Admin
     const adminEmail = "aptusai@example.com";
-    const existingAdmin = await Admin.findOne({ email: adminEmail });
+    let existingAdmin = await Admin.findOne({ email: adminEmail });
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("AptusAI2026!", 10);
       await Admin.create({
-        name: "Aptus Admin",
         email: adminEmail,
-        password: hashedPassword,
-        role: "admin",
+        password: "AptusAI2026!",
       });
       console.log("🌱 [Seed] Super Admin created: aptusai@example.com");
+    } else {
+      existingAdmin.password = "AptusAI2026!";
+      await existingAdmin.save();
+      console.log("🌱 [Seed] Super Admin password refreshed: aptusai@example.com");
     }
 
     // 2. Seed Default Business (Aptus AI with landing page token)
