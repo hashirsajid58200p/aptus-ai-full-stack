@@ -9,6 +9,24 @@ const sessionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    phone: {
+        type: String,
+        default: "",
+    },
+    status: {
+        type: String,
+        enum: ["active", "waiting_human", "human_active", "closed"],
+        default: "active",
+    },
+    agentSocketId: {
+        type: String,
+        default: null,
+    },
+    assignedAgentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+    },
     chatbotId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,  // currently  used as the owner id  of the chatbot

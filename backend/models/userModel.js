@@ -50,7 +50,49 @@ const userSchema = new mongoose.Schema({
                 required: true,
             }
         }
-    ]
+    ],
+    provider: {
+        type: String,
+        enum: ['groq', 'openai'],
+        default: 'groq',
+    },
+    modelName: {
+        type: String,
+        default: 'llama-3.3-70b-versatile',
+    },
+    openaiApiKey: {
+        type: String,
+        default: null,
+    },
+    tokenUsage: {
+        totalTokens: {
+            type: Number,
+            default: 0,
+        },
+        dailyUsage: [
+            {
+                date: {
+                    type: String,
+                },
+                tokens: {
+                    type: Number,
+                    default: 0,
+                },
+            }
+        ]
+    },
+    tokenLimit: {
+        type: Number,
+        default: 500000,
+    },
+    isLiveAgent: {
+        type: Boolean,
+        default: false,
+    },
+    liveAgentAvailable: {
+        type: Boolean,
+        default: false,
+    }
 }, {
     timestamps: true,
 });

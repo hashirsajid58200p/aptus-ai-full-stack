@@ -1,8 +1,12 @@
 const catchAsyncError = require("../middleware/catchAsyncError");
-const GroqAI = require("../utils/groqAI");
+const LLMService = require("../utils/llmService");
+const RAGService = require("../utils/ragService");
+const FunctionCallingEngine = require("../utils/functionCalling");
+const { recordTokenUsage } = require("../middleware/tokenTracker");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
+const Lead = require("../models/leadModel");
 
 // GET /api/v1/chatbot/getDetails?token=... — validate a chatbot token and return safe business info
 exports.getDetails = catchAsyncError(async (req, res, next) => {
@@ -16,7 +20,7 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
   }
 
   const owner = await User.findOne({ chatbot_token: token }).select(
-    "bussinessName bussinessCategory email chatbot_token createdAt"
+    "bussinessName bussinessCategory email chatbot_token createdAt provider modelName isLiveAgent liveAgentAvailable"
   );
 
   if (!owner) {
@@ -29,29 +33,36 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     data: {
-      businessName: owner.bussinessName,
-      category: owner.bussinessCategory,
+      id: owner._id,
+      bussinessName: owner.bussinessName,
+      bussinessCategory: owner.bussinessCategory,
       email: owner.email,
       token: owner.chatbot_token,
       registeredAt: owner.createdAt,
+      provider: owner.provider || 'groq',
+      modelName: owner.modelName || 'llama-3.3-70b-versatile',
+      isLiveAgent: owner.isLiveAgent || false,
+      liveAgentAvailable: owner.liveAgentAvailable || false,
     },
   });
 });
 
-
-
-const systemPrompt = `You are a friendly and professional customer service chatbot for a business.
+const baseSystemPrompt = `You are a friendly, professional, and knowledgeable customer service AI chatbot.
 
 IMPORTANT RULES:
-- Respond naturally and conversationally like a human customer service agent
-- Never show template labels like "*Business Details*", "*Response*", "*User's Message*" in your replies
-- Never repeat the question back to the user
-- Keep responses concise and helpful
-- If you don't know something, politely say so and suggest contacting the business directly
-- Use the business details provided to answer questions accurately
-- Remember the conversation history and refer to it when relevant
-- Always respond directly to what the user just said`;
+- Respond naturally and conversationally like an attentive human customer service agent.
+- Never show template labels like "*Business Details*", "*Response*", "*User's Message*" in your replies.
+- Never repeat the customer's question back to them.
+- Keep responses concise, direct, and actionable.
+- If verified knowledge base context or business FAQ is provided below, prioritize it to answer accurately.
+- If you do not know something, politely say so and offer to connect with a representative or have them leave an inquiry.
+- When the customer asks about features, plans, trust, or payment security, you may optionally include one of these rich media trigger tags on a new line at the end of your response to showcase visual badges:
+  - [PROMO:showcase] (to display feature highlight cards)
+  - [PROMO:trust] (to display enterprise trust and safety badges)
+  - [PROMO:payment] (to display secure checkout and payment methods)
+- Always respond directly to what the customer just said.`;
 
+// POST /api/v1/chatbot/getResponse — Primary Chat Endpoint
 exports.getResponse = catchAsyncError(async (req, res, next) => {
   const { messages, message, session_id } = req.body;
 
@@ -66,15 +77,45 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   const owner = req.owner;
   const chatbot_id = req.chatbot_id;
 
-  const bussinessDetails = owner.bussinessDetails;
-
-  if (!bussinessDetails || bussinessDetails.length < 5) {
-    return res.status(400).json({
+  // Check token limits
+  const tokenLimit = owner.tokenLimit || 500000;
+  const totalTokensUsed = owner.tokenUsage?.totalTokens || 0;
+  if (totalTokensUsed >= tokenLimit) {
+    return res.status(429).json({
       success: false,
-      message: "Please add at least 5 business details to use the chatbot",
+      message: "Chatbot monthly token quota has been reached. Please contact business administration.",
+      quotaExceeded: true,
     });
   }
 
+  const session = await Session.findById(session_id);
+  if (!session) {
+    return res.status(404).json({
+      success: false,
+      message: "Session not found",
+    });
+  }
+
+  // If session is currently actively in live human mode, do not auto-respond with AI
+  if (session.status === 'human_active') {
+    const userMessage = await Message.create({
+      sessionId: session_id,
+      message,
+      role: "user",
+      sender: "user",
+      chatbotId: chatbot_id,
+    });
+    session.messages.push(userMessage._id);
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      data: "Your message has been delivered to the human agent.",
+      isHumanMode: true,
+    });
+  }
+
+  const bussinessDetails = owner.bussinessDetails || [];
   const businessDetailsText = bussinessDetails
     .map(detail => `Q: ${detail.question}\nA: ${detail.answer}`)
     .join("\n");
@@ -91,53 +132,158 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
       }).filter(Boolean).join("\n")
     : "No previous messages";
 
-  const groqAI = new GroqAI();
-
-  const completion = await groqAI.generateContent({
-    contents: [
-      {
-        parts: [
-          { text: systemPrompt },
-          { text: `\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription}\n\nBusiness Details:\n${businessDetailsText}` },
-          { text: `\n\n--- CONVERSATION HISTORY ---\n${messagesText}` },
-          { text: `\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:` },
-        ],
-      },
-    ],
-  });
-
-  const session = await Session.findById(session_id);
-
-  if (!session) {
-    return res.status(404).json({
-      success: false,
-      message: "Session not found",
-    });
+  // Check Function Calling Intent
+  let actionResult = null;
+  const toolIntent = FunctionCallingEngine.detectToolIntent(message);
+  if (toolIntent) {
+    try {
+      actionResult = await FunctionCallingEngine.executeTool(toolIntent.toolName, toolIntent.args);
+    } catch (toolErr) {
+      console.warn("Function calling execution error:", toolErr.message);
+    }
   }
 
+  // Retrieve RAG knowledge base context
+  let ragContext = "";
+  try {
+    ragContext = await RAGService.searchRelevantContext(owner._id, message, 3, owner.openaiApiKey);
+  } catch (ragErr) {
+    console.warn("RAG retrieval skipped:", ragErr.message);
+  }
+
+  // Assemble full prompt
+  let fullPrompt = `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\n`;
+  if (businessDetailsText) {
+    fullPrompt += `\nBusiness FAQ:\n${businessDetailsText}\n`;
+  }
+  if (ragContext) {
+    fullPrompt += `\n--- VERIFIED KNOWLEDGE BASE DOCUMENTS ---\n${ragContext}\n`;
+  }
+  if (actionResult) {
+    fullPrompt += `\n--- EXECUTED ACTION RESULT ---\nTool: ${actionResult.toolName}\nOutput: ${JSON.stringify(actionResult.result)}\nIntegrate this action result naturally in your reply.\n`;
+  }
+  fullPrompt += `\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`;
+
+  // Initialize unified LLM service with tenant settings
+  const llm = new LLMService({
+    provider: owner.provider || 'groq',
+    model: owner.modelName || 'llama-3.3-70b-versatile',
+    apiKey: owner.provider === 'openai' ? owner.openaiApiKey : null,
+  });
+
+  const completion = await llm.generateText(fullPrompt, {
+    temperature: 0.7,
+  });
+
+  const replyText = completion.text;
+  const tokensUsed = completion.usage?.totalTokens || 0;
+
+  // Record token analytics
+  await recordTokenUsage(owner._id, tokensUsed);
+
+  // Store user message
   const userMessage = await Message.create({
     sessionId: session_id,
     message,
     role: "user",
+    sender: "user",
     chatbotId: chatbot_id,
   });
-
   session.messages.push(userMessage._id);
 
+  // Store AI response
   const chatbotMessage = await Message.create({
     sessionId: session_id,
-    message: completion.response.candidates[0].content.parts[0].text,
+    message: replyText,
     role: "chatbot",
+    sender: "ai",
+    tokensUsed,
     chatbotId: chatbot_id,
   });
-
   session.messages.push(chatbotMessage._id);
 
   await session.save();
 
   res.status(200).json({
     success: true,
-    data: completion.response.candidates[0].content.parts[0].text,
+    data: replyText,
+    action: actionResult ? actionResult.clientAction : null,
+    tokensUsed,
+  });
+});
+
+// Capture Lead (Pre-chat or Offline lead capture form)
+exports.captureLead = catchAsyncError(async (req, res, next) => {
+  const { name, email, phone, message, source, token } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({
+      success: false,
+      message: "Name and email are required to capture lead.",
+    });
+  }
+
+  let chatbotId = req.chatbot_id;
+  if (!chatbotId && token) {
+    const owner = await User.findOne({ chatbot_token: token });
+    if (owner) chatbotId = owner._id;
+  }
+  if (!chatbotId && req.user) {
+    chatbotId = req.user._id;
+  }
+
+  if (!chatbotId) {
+    return res.status(400).json({
+      success: false,
+      message: "Valid chatbot token or authentication required.",
+    });
+  }
+
+  const lead = await Lead.create({
+    name,
+    email,
+    phone: phone || "",
+    message: message || "",
+    source: source || "pre_chat",
+    chatbotId,
+  });
+
+  res.status(201).json({
+    success: true,
+    message: "Lead recorded successfully.",
+    data: lead,
+  });
+});
+
+// Update Model Settings for Chatbot Owner
+exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
+  const { provider, modelName, openaiApiKey } = req.body;
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (provider && ['groq', 'openai'].includes(provider)) {
+    user.provider = provider;
+  }
+  if (modelName) {
+    user.modelName = modelName;
+  }
+  if (openaiApiKey !== undefined) {
+    user.openaiApiKey = openaiApiKey;
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Chatbot AI model settings updated successfully.",
+    data: {
+      provider: user.provider,
+      modelName: user.modelName,
+      hasOpenAiKey: !!user.openaiApiKey,
+    },
   });
 });
 
@@ -152,44 +298,32 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  const { bussinessDetails } = owner;
-
-  if (!bussinessDetails || bussinessDetails.length < 5) {
-    return res.status(400).json({
-      success: false,
-      message: "Please add at least 5 business details to test the chatbot",
-    });
-  }
-
+  const bussinessDetails = owner.bussinessDetails || [];
   const businessDetailsText = bussinessDetails.map(detail => `Q: ${detail.question}\nA: ${detail.answer}`).join("\n");
 
   const messagesText = messages && messages.length > 0
     ? messages.map(detail => `Customer: ${detail.question}\nBot: ${detail.answer}`).join("\n")
     : "No previous messages";
 
-  const groqAI = new GroqAI();
-
-  const completion = await groqAI.generateContent({
-    contents: [
-      {
-        parts: [
-          { text: systemPrompt },
-          { text: `\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription}\n\nBusiness Details:\n${businessDetailsText}` },
-          { text: `\n\n--- CONVERSATION HISTORY ---\n${messagesText}` },
-          { text: `\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:` },
-        ],
-      },
-    ],
+  const llm = new LLMService({
+    provider: owner.provider || 'groq',
+    model: owner.modelName || 'llama-3.3-70b-versatile',
+    apiKey: owner.openaiApiKey,
   });
+
+  const completion = await llm.generateText(
+    `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription}\nBusiness Details:\n${businessDetailsText}\n\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`
+  );
 
   res.status(200).json({
     success: true,
-    data: completion.response.candidates[0].content.parts[0].text,
+    data: completion.text,
+    tokensUsed: completion.usage?.totalTokens || 0,
   });
 });
 
 exports.generateTextGeneral = catchAsyncError(async (req, res, next) => {
-  const { prompt } = req.body;
+  const { prompt, provider, model, apiKey } = req.body;
 
   if (!prompt) {
     return res.status(400).json({
@@ -198,11 +332,17 @@ exports.generateTextGeneral = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  const groqAI = new GroqAI();
-  const generatedText = await groqAI.generateText(prompt);
+  const llm = new LLMService({
+    provider: provider || 'groq',
+    model: model || 'llama-3.3-70b-versatile',
+    apiKey: apiKey || null,
+  });
+
+  const result = await llm.generateText(prompt);
 
   res.status(200).json({
     success: true,
-    data: generatedText,
+    data: result.text,
+    usage: result.usage,
   });
 });

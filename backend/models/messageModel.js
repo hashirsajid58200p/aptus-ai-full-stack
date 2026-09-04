@@ -13,6 +13,15 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    sender:{
+        type: String,
+        enum: ["user", "ai", "human_agent"],
+        default: "user",
+    },
+    tokensUsed:{
+        type: Number,
+        default: 0,
+    },
     chatbotId:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -22,7 +31,6 @@ const messageSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     }
-
 });
 
 const Message=mongoose.model("Message",messageSchema);

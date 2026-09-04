@@ -49,14 +49,25 @@ const Sessions = () => {
             Customer Chat Sessions
           </h2>
         </div>
-        <button
-          onClick={fetchSessions}
-          disabled={loading}
-          className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs sm:text-sm uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          <span>Refresh</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              window.open(`${baseurl}/session/owner/export`, "_blank");
+              toast.success("Downloading Chat Logs CSV...");
+            }}
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs sm:text-sm uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+          >
+            <span>Export CSV</span>
+          </button>
+          <button
+            onClick={fetchSessions}
+            disabled={loading}
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs sm:text-sm uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (

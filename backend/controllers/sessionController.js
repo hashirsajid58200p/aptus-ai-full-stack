@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const Message = require("../models/messageModel");
 const Session = require("../models/sessionModel");
+const Lead = require("../models/leadModel");
 const User = require("../models/userModel");
 
 exports.createSession = catchAsyncError(async (req, res, next) => {
-    const { username, email } = req.body;
+    const { username, email, phone } = req.body;
 
     if (!username || !email) {
         return res.status(400).json({
@@ -19,8 +20,24 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
     const session = await Session.create({
         username,
         email,
-        chatbotId
+        phone: phone || "",
+        chatbotId,
+        status: "active"
     });
+
+    // Automatically capture pre-chat lead
+    try {
+        await Lead.create({
+            name: username,
+            email,
+            phone: phone || "",
+            chatbotId,
+            source: "pre_chat",
+            message: "Initiated pre-chat session"
+        });
+    } catch (leadErr) {
+        console.warn("Could not save lead:", leadErr.message);
+    }
 
     res.status(200).json({
         success: true,
@@ -61,6 +78,7 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
         message: userMessage,
         sessionId,
         role: "user",
+        sender: "user",
         chatbotId
     });
 
@@ -68,6 +86,7 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
         message: botMessage,
         sessionId,
         role: "bot",
+        sender: "ai",
         chatbotId
     });
 
@@ -95,3 +114,28 @@ exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
     });
 });
 
+// Export Chat History as CSV
+exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
+    const ownerId = req.user._id;
+
+    const sessions = await Session.find({ chatbotId: ownerId })
+        .populate("messages")
+        .sort({ createdAt: -1 });
+
+    let csv = "Session ID,Visitor Name,Email,Phone,Status,Message Sender,Message Text,Timestamp\n";
+
+    for (const session of sessions) {
+        if (!session.messages || session.messages.length === 0) {
+            csv += `"${session._id}","${session.username}","${session.email}","${session.phone || ''}","${session.status}","N/A","No messages","${session.createdAt.toISOString()}"\n`;
+        } else {
+            for (const msg of session.messages) {
+                const escapedText = (msg.message || "").replace(/"/g, '""');
+                csv += `"${session._id}","${session.username}","${session.email}","${session.phone || ''}","${session.status}","${msg.sender || msg.role}","${escapedText}","${msg.createdAt ? msg.createdAt.toISOString() : ''}"\n`;
+            }
+        }
+    }
+
+    res.header("Content-Type", "text/csv");
+    res.attachment(`chat_history_${Date.now()}.csv`);
+    return res.send(csv);
+});

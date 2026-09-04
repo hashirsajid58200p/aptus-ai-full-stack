@@ -8,6 +8,7 @@ const {
   getBusinessById,
   deleteBusiness,
   updateBusiness,
+  updateTokenLimit,
 } = require("../controllers/adminController");
 const { isAdminAuthenticated } = require("../middleware/adminAuth");
 
@@ -31,6 +32,7 @@ router.get("/businesses", isAdminAuthenticated, getAllBusinesses);
 router.get("/businesses/:id", isAdminAuthenticated, getBusinessById);
 router.get("/business/:id", isAdminAuthenticated, getBusinessById);
 router.put("/businesses/:id", isAdminAuthenticated, updateBusiness);
+router.put("/businesses/:id/token-limit", isAdminAuthenticated, updateTokenLimit);
 router.delete("/businesses/:id", isAdminAuthenticated, deleteBusiness);
 
 module.exports = router;

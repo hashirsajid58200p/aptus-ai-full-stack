@@ -441,6 +441,13 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="flex items-center gap-3">
+              <Link
+                href="/admin/agency"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#FF4D00] text-white font-extrabold font-space border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Agency Master View</span>
+              </Link>
               <button
                 onClick={() => {
                   fetchAnalyticsAndAuth();

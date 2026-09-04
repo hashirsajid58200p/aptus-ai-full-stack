@@ -94,10 +94,23 @@ const getAnalytics = async (req, res, next) => {
     const totalBusinesses = await User.countDocuments().catch(() => 0);
     const totalSessions = await Session.countDocuments().catch(() => 0);
     const totalMessages = await Message.countDocuments().catch(() => 0);
+    const Lead = require("../models/leadModel");
+    const totalLeads = await Lead.countDocuments().catch(() => 0);
     const recentBusinesses7d = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
     const recentSessions7d = await Session.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
     const userMessagesCount = await Message.countDocuments({ role: "user" }).catch(() => 0);
     const botMessagesCount = await Message.countDocuments({ role: { $ne: "user" } }).catch(() => 0);
+
+    // Aggregate token consumption across all clients
+    let totalTokensConsumed = 0;
+    try {
+      const tokenAgg = await User.aggregate([
+        { $group: { _id: null, total: { $sum: "$tokenUsage.totalTokens" } } },
+      ]);
+      totalTokensConsumed = tokenAgg[0]?.total || 0;
+    } catch (tErr) {
+      totalTokensConsumed = 0;
+    }
 
     let categoryAggregation = [];
     try {
@@ -142,6 +155,8 @@ const getAnalytics = async (req, res, next) => {
         totalBusinesses,
         totalSessions,
         totalMessages,
+        totalLeads,
+        totalTokensConsumed,
         recentBusinesses7d,
         recentSessions7d,
         userMessagesCount,
@@ -206,13 +221,11 @@ const getBusinessById = async (req, res, next) => {
   }
 };
 
-
 // Delete a business and ALL its related data (messages + sessions + user)
 const deleteBusiness = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Validate id format first
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -232,19 +245,12 @@ const deleteBusiness = async (req, res, next) => {
 
     const businessName = business.bussinessName;
 
-    // Delete ALL related data in parallel — messages, sessions, then the user itself
     const [msgResult, sessionResult] = await Promise.all([
       Message.deleteMany({ chatbotId: objectId }),
       Session.deleteMany({ chatbotId: objectId }),
     ]);
 
-    // Finally delete the user/business account itself
     await User.findByIdAndDelete(objectId);
-
-    console.log(
-      `[Admin Delete] Business "${businessName}" (${id}) wiped: ` +
-      `${msgResult.deletedCount} messages, ${sessionResult.deletedCount} sessions, 1 user`
-    );
 
     return res.status(200).json({
       success: true,
@@ -260,7 +266,7 @@ const deleteBusiness = async (req, res, next) => {
   }
 };
 
-// Update Business Data
+// Update Business Data (including tokenLimit, provider, modelName)
 const updateBusiness = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -272,6 +278,9 @@ const updateBusiness = async (req, res, next) => {
       bussinessCategory,
       bussinessDescription,
       bussinessDetails,
+      tokenLimit,
+      provider,
+      modelName,
       generateNewToken
     } = req.body;
 
@@ -283,11 +292,14 @@ const updateBusiness = async (req, res, next) => {
 
     if (name) user.name = name;
     if (email) user.email = email;
-    if (password) user.password = password; // mongoose pre-save hook will hash this
+    if (password) user.password = password;
     if (bussinessName) user.bussinessName = bussinessName;
     if (bussinessCategory) user.bussinessCategory = bussinessCategory;
     if (bussinessDescription) user.bussinessDescription = bussinessDescription;
-    
+    if (tokenLimit !== undefined) user.tokenLimit = Number(tokenLimit);
+    if (provider) user.provider = provider;
+    if (modelName) user.modelName = modelName;
+
     if (bussinessDetails && Array.isArray(bussinessDetails)) {
       user.bussinessDetails = bussinessDetails;
     }
@@ -306,8 +318,42 @@ const updateBusiness = async (req, res, next) => {
         name: user.name,
         email: user.email,
         bussinessName: user.bussinessName,
-        chatbot_token: user.chatbot_token
+        chatbot_token: user.chatbot_token,
+        tokenLimit: user.tokenLimit,
+        provider: user.provider,
+        modelName: user.modelName,
+        tokenUsage: user.tokenUsage,
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Admin: Assign / Update Client Token Limit directly
+const updateTokenLimit = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { tokenLimit } = req.body;
+
+    if (tokenLimit === undefined || isNaN(Number(tokenLimit))) {
+      return res.status(400).json({ success: false, message: "Please provide a valid numeric tokenLimit" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { tokenLimit: Number(tokenLimit) },
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Business not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Token limit updated to ${tokenLimit} for ${user.bussinessName}`,
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -322,4 +368,5 @@ module.exports = {
   getBusinessById,
   deleteBusiness,
   updateBusiness,
+  updateTokenLimit,
 };

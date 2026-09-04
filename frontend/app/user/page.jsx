@@ -14,6 +14,10 @@ import BussinessDetails from "components/userPageComponents/BussinessDetails";
 import Token from "components/userPageComponents/Token";
 import TestChatbot from "components/userPageComponents/TestChatbot";
 import Sessions from "components/userPageComponents/Sessions";
+import Leads from "components/userPageComponents/Leads";
+import AnalyticsUsage from "components/userPageComponents/AnalyticsUsage";
+import KnowledgeBaseTab from "components/userPageComponents/KnowledgeBaseTab";
+import { Users, BarChart3, Database } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logout, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +46,9 @@ export default function UserDashboard() {
   const tabs = [
     { name: "business details", icon: <Briefcase /> },
     { name: "test chatbot", icon: <MessageSquare /> },
+    { name: "analytics & usage", icon: <BarChart3 /> },
+    { name: "leads", icon: <Users /> },
+    { name: "knowledge base", icon: <Database /> },
     { name: "sessions", icon: <History /> },
     { name: "token", icon: <Coins /> },
   ];
@@ -249,6 +256,11 @@ export default function UserDashboard() {
         {/* Render content based on active tab */}
         {activeTab === "business details" && <BussinessDetails />}
         {activeTab === "test chatbot" && <TestChatbot />}
+        {activeTab === "analytics & usage" && (
+          <AnalyticsUsage user={user} onUserUpdate={() => dispatch(loadUser())} />
+        )}
+        {activeTab === "leads" && <Leads />}
+        {activeTab === "knowledge base" && <KnowledgeBaseTab />}
         {activeTab === "sessions" && <Sessions />}
         {activeTab === "token" && <Token />}
       </main>

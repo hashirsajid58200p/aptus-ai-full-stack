@@ -26,6 +26,7 @@ export default function Navbar() {
               alt="Aptus"
               width={160}
               height={48}
+              style={{ width: "auto" }}
               className="h-12 w-auto object-contain hover:scale-105 transition-transform"
               priority
             />

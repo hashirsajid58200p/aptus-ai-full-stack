@@ -1,0 +1,209 @@
+const { Server } = require('socket.io');
+const Session = require('../models/sessionModel');
+const Message = require('../models/messageModel');
+const User = require('../models/userModel');
+
+// Map of active agents by chatbotId: chatbotId -> Set of socketIds
+const activeAgents = new Map();
+// Map of active sessions: sessionId -> { userSocketId, agentSocketId, chatbotId }
+const activeSessions = new Map();
+
+function initSocket(server) {
+  const io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  });
+
+  io.on('connection', (socket) => {
+    console.log(`🔌 [Socket.io] Client connected: ${socket.id}`);
+
+    // --- AGENT EVENTS ---
+    socket.on('agent_join', async ({ chatbotId, agentId }) => {
+      socket.chatbotId = chatbotId;
+      socket.agentId = agentId;
+      socket.isAgent = true;
+
+      const room = `agent_${chatbotId}`;
+      socket.join(room);
+
+      if (!activeAgents.has(chatbotId)) {
+        activeAgents.set(chatbotId, new Set());
+      }
+      activeAgents.get(chatbotId).add(socket.id);
+
+      // Mark agent available in User document
+      await User.findByIdAndUpdate(chatbotId, { liveAgentAvailable: true, isLiveAgent: true }).catch(() => {});
+
+      console.log(`👨‍💼 Agent ${agentId || socket.id} joined ${room}. Online count: ${activeAgents.get(chatbotId).size}`);
+      io.to(room).emit('agent_status_update', { onlineAgents: activeAgents.get(chatbotId).size });
+    });
+
+    // --- VISITOR / SESSION EVENTS ---
+    socket.on('join_session', ({ sessionId, chatbotId }) => {
+      socket.sessionId = sessionId;
+      socket.chatbotId = chatbotId;
+      const room = `session_${sessionId}`;
+      socket.join(room);
+
+      activeSessions.set(sessionId, {
+        userSocketId: socket.id,
+        chatbotId,
+        agentSocketId: null,
+      });
+
+      console.log(`👤 User joined ${room}`);
+    });
+
+    // User requests human handoff
+    socket.on('request_human_agent', async ({ sessionId, chatbotId, userDetails }) => {
+      console.log(`🛎️ Hand-off requested for session ${sessionId} on chatbot ${chatbotId}`);
+      const agents = activeAgents.get(chatbotId);
+      const isAgentOnline = agents && agents.size > 0;
+
+      if (!isAgentOnline) {
+        console.log(`⚠️ No live agents online for chatbot ${chatbotId}. Triggering offline lead mode.`);
+        await Session.findByIdAndUpdate(sessionId, { status: 'waiting_human' }).catch(() => {});
+        socket.emit('human_agent_offline', {
+          available: false,
+          message: 'Right now our team is offline, but please leave your message and email, and a human will get back to you shortly.',
+        });
+        return;
+      }
+
+      // Agents are online - notify them
+      await Session.findByIdAndUpdate(sessionId, { status: 'waiting_human' }).catch(() => {});
+      io.to(`agent_${chatbotId}`).emit('incoming_handoff_request', {
+        sessionId,
+        chatbotId,
+        userDetails,
+        timestamp: new Date(),
+      });
+
+      socket.emit('human_agent_pending', {
+        available: true,
+        message: 'Connecting you with an agent. Please wait a moment...',
+      });
+    });
+
+    // Agent accepts the handoff
+    socket.on('agent_accept_session', async ({ sessionId, agentName, agentId }) => {
+      const sessionData = activeSessions.get(sessionId);
+      if (sessionData) {
+        sessionData.agentSocketId = socket.id;
+      }
+
+      await Session.findByIdAndUpdate(sessionId, {
+        status: 'human_active',
+        agentSocketId: socket.id,
+        assignedAgentId: agentId || null,
+      }).catch(() => {});
+
+      socket.join(`session_${sessionId}`);
+
+      // Notify the visitor in the session
+      io.to(`session_${sessionId}`).emit('agent_joined_chat', {
+        agentName: agentName || 'Support Representative',
+        sessionId,
+        message: `${agentName || 'A support representative'} has joined the chat. How can we help?`,
+      });
+
+      console.log(`🤝 Agent ${socket.id} accepted session ${sessionId}`);
+    });
+
+    // Agent sends a message in human mode
+    socket.on('agent_send_message', async ({ sessionId, message, chatbotId, agentName }) => {
+      try {
+        const msgDoc = await Message.create({
+          sessionId,
+          message,
+          role: 'chatbot',
+          sender: 'human_agent',
+          chatbotId,
+        });
+
+        await Session.findByIdAndUpdate(sessionId, {
+          $push: { messages: msgDoc._id },
+        });
+
+        // Broadcast to everyone in the session
+        io.to(`session_${sessionId}`).emit('new_message', {
+          _id: msgDoc._id,
+          message,
+          sender: 'human_agent',
+          role: 'chatbot',
+          agentName: agentName || 'Support Agent',
+          createdAt: msgDoc.createdAt,
+        });
+      } catch (err) {
+        console.error('❌ Error saving agent message:', err);
+      }
+    });
+
+    // User sends message while in human active mode
+    socket.on('user_send_human_message', async ({ sessionId, message, chatbotId }) => {
+      try {
+        const msgDoc = await Message.create({
+          sessionId,
+          message,
+          role: 'user',
+          sender: 'user',
+          chatbotId,
+        });
+
+        await Session.findByIdAndUpdate(sessionId, {
+          $push: { messages: msgDoc._id },
+        });
+
+        io.to(`session_${sessionId}`).emit('new_message', {
+          _id: msgDoc._id,
+          message,
+          sender: 'user',
+          role: 'user',
+          createdAt: msgDoc.createdAt,
+        });
+      } catch (err) {
+        console.error('❌ Error saving human session user message:', err);
+      }
+    });
+
+    // Agent closes human session and hands back to AI
+    socket.on('agent_close_session', async ({ sessionId, message }) => {
+      await Session.findByIdAndUpdate(sessionId, {
+        status: 'active',
+        agentSocketId: null,
+      }).catch(() => {});
+
+      io.to(`session_${sessionId}`).emit('agent_left_chat', {
+        message: message || 'The live agent has left the chat. The AI assistant is back to assist you.',
+      });
+    });
+
+    // Disconnect handling
+    socket.on('disconnect', async () => {
+      if (socket.isAgent && socket.chatbotId) {
+        const agents = activeAgents.get(socket.chatbotId);
+        if (agents) {
+          agents.delete(socket.id);
+          if (agents.size === 0) {
+            activeAgents.delete(socket.chatbotId);
+            await User.findByIdAndUpdate(socket.chatbotId, { liveAgentAvailable: false }).catch(() => {});
+          }
+          io.to(`agent_${socket.chatbotId}`).emit('agent_status_update', { onlineAgents: agents.size });
+        }
+      }
+      console.log(`🔌 Client disconnected: ${socket.id}`);
+    });
+  });
+
+  return io;
+}
+
+function getActiveAgentsCount(chatbotId) {
+  const agents = activeAgents.get(chatbotId.toString());
+  return agents ? agents.size : 0;
+}
+
+module.exports = { initSocket, getActiveAgentsCount };
