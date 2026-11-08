@@ -40,6 +40,7 @@ export default function UserDashboard() {
   const dispatch = useDispatch();
   const { isLoggedOut, loading, user, isInitialized } = useSelector((state) => state.user);
 
+  const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("business details");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -55,15 +56,16 @@ export default function UserDashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    setIsMounted(true);
     document.title = "Business Dashboard — Aptus AI";
     dispatch(loadUser());
   }, [dispatch]);
 
   useEffect(() => {
-    if (isInitialized && !loading && !user) {
+    if (isMounted && isInitialized && !loading && !user) {
       router.push("/start");
     }
-  }, [user, loading, isInitialized, router]);
+  }, [isMounted, user, loading, isInitialized, router]);
 
   useEffect(() => {
     if (isLoggedOut) {
@@ -77,7 +79,7 @@ export default function UserDashboard() {
     dispatch(logout());
   };
 
-  if (!isInitialized || (loading && !user)) {
+  if (!isMounted || !isInitialized || (loading && !user)) {
     return <Loader />;
   }
 

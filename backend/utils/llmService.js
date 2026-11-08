@@ -3,8 +3,7 @@ const OpenAI = require('openai');
 
 /**
  * Unified Multi-Model LLM Service
- * Supports Open-Source (Groq/Llama3) and Paid (OpenAI GPT-4o) models,
- * with per-tenant custom API key support from database or environment.
+ * Supports Groq, OpenAI, Anthropic Claude, xAI Grok, OpenRouter, and Custom Endpoints
  */
 class LLMService {
   constructor(options = {}) {
@@ -12,6 +11,7 @@ class LLMService {
     this.defaultGroqModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
     this.model = options.model || (this.provider === 'openai' ? 'gpt-4o' : this.defaultGroqModel);
     this.customApiKey = options.apiKey || null;
+    this.customBaseUrl = options.customBaseUrl || null;
 
     // Groq client
     const groqKey = this.provider === 'groq' && this.customApiKey ? this.customApiKey : process.env.GROQ_API_KEY;
@@ -38,9 +38,9 @@ class LLMService {
   }
 
   /**
-   * List available chat models dynamically for a provider and API key
+   * List available chat models dynamically for a provider, key, and baseUrl
    */
-  static async listModels(provider = 'groq', apiKey = null) {
+  static async listModels(provider = 'groq', apiKey = null, customBaseUrl = null) {
     if (provider === 'openai') {
       const key = apiKey || process.env.OPENAI_API_KEY;
       if (!key) {
@@ -65,14 +65,65 @@ class LLMService {
       } catch (err) {
         throw new Error(`OpenAI API Key verification failed: ${err.message}`);
       }
+    } else if (provider === 'anthropic') {
+      return [
+        { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (State-of-the-Art)' },
+        { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku (Fast & Lightweight)' },
+        { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (Complex Analysis)' },
+      ];
+    } else if (provider === 'xai') {
+      return [
+        { id: 'grok-2-1212', name: 'xAI Grok 2 (Latest)' },
+        { id: 'grok-2-vision-1212', name: 'xAI Grok 2 Vision' },
+        { id: 'grok-beta', name: 'xAI Grok Beta' },
+      ];
+    } else if (provider === 'openrouter') {
+      if (apiKey) {
+        try {
+          const res = await fetch('https://openrouter.ai/api/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+          });
+          const data = await res.json();
+          if (Array.isArray(data.data)) {
+            return data.data
+              .slice(0, 30)
+              .map(m => ({ id: m.id, name: m.name || m.id }));
+          }
+        } catch (e) {
+          // fallback
+        }
+      }
+      return [
+        { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (OpenRouter)' },
+        { id: 'openai/gpt-4o', name: 'GPT-4o (OpenRouter)' },
+        { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (OpenRouter)' },
+        { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B (OpenRouter)' },
+        { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Free)' },
+      ];
+    } else if (provider === 'custom') {
+      if (customBaseUrl) {
+        try {
+          const client = new OpenAI({ apiKey: apiKey || 'dummy-key', baseURL: customBaseUrl });
+          const res = await client.models.list();
+          if (Array.isArray(res.data)) {
+            return res.data.map(m => ({ id: m.id, name: m.id }));
+          }
+        } catch (e) {
+          // fallback
+        }
+      }
+      return [
+        { id: 'default', name: 'Default Model' },
+      ];
     } else {
+      // Default: Groq
       const key = apiKey || process.env.GROQ_API_KEY;
       if (!key) {
         return [
-          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
-          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
           { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
           { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B' },
+          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
+          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
         ];
       }
       try {
@@ -82,8 +133,8 @@ class LLMService {
           .filter(m => m.active && !m.id.includes('whisper') && !m.id.includes('guard') && !m.id.includes('safeguard'))
           .map(m => ({ id: m.id, name: m.id }));
         return filtered.length > 0 ? filtered : [
-          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
-          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
+          { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
+          { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B' },
         ];
       } catch (err) {
         throw new Error(`Groq API Key verification failed: ${err.message}`);
@@ -91,9 +142,6 @@ class LLMService {
     }
   }
 
-  /**
-   * Estimate token count (rough heuristic: ~4 characters per token)
-   */
   estimateTokens(text) {
     if (!text || typeof text !== 'string') return 0;
     return Math.max(1, Math.ceil(text.length / 4));
@@ -101,9 +149,6 @@ class LLMService {
 
   /**
    * Generate text response across configured provider
-   * @param {string} prompt - Prompt or user query
-   * @param {Object} options - Override options (model, temperature, max_tokens, systemPrompt)
-   * @returns {Promise<{text: string, usage: {promptTokens: number, completionTokens: number, totalTokens: number}}>}
    */
   async generateText(prompt, options = {}) {
     const provider = options.provider || this.provider;
@@ -120,9 +165,7 @@ class LLMService {
 
     if (provider === 'openai') {
       const client = options.apiKey ? new OpenAI({ apiKey: options.apiKey }) : this.openaiClient;
-      if (!client) {
-        throw new Error('OpenAI API key is missing. Please provide an OpenAI API key in your chatbot settings or environment.');
-      }
+      if (!client) throw new Error('OpenAI API key is missing.');
 
       console.log(`🟢 Calling OpenAI API (model: ${model})...`);
       const response = await client.chat.completions.create({
@@ -137,19 +180,119 @@ class LLMService {
       const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
       const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
 
-      console.log(`✅ OpenAI responded successfully (tokens: ${totalTokens})`);
-      return {
-        text: content,
-        usage: { promptTokens, completionTokens, totalTokens },
-      };
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'anthropic') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) throw new Error('Anthropic API key is missing.');
+
+      console.log(`🟢 Calling Anthropic Claude API (model: ${model})...`);
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model || 'claude-3-5-sonnet-20241022',
+          max_tokens: maxTokens,
+          temperature,
+          system: systemPrompt || undefined,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error?.message || 'Anthropic API request failed');
+      }
+
+      const content = data.content?.[0]?.text || '';
+      const promptTokens = data.usage?.input_tokens || this.estimateTokens(prompt);
+      const completionTokens = data.usage?.output_tokens || this.estimateTokens(content);
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } };
+
+    } else if (provider === 'xai') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.XAI_API_KEY;
+      if (!apiKey) throw new Error('xAI API key is missing.');
+
+      console.log(`🟢 Calling xAI Grok API (model: ${model})...`);
+      const client = new OpenAI({ apiKey, baseURL: 'https://api.x.ai/v1' });
+      const response = await client.chat.completions.create({
+        model: model || 'grok-2-1212',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'openrouter') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.OPENROUTER_API_KEY;
+      if (!apiKey) throw new Error('OpenRouter API key is missing.');
+
+      console.log(`🟢 Calling OpenRouter API (model: ${model})...`);
+      const client = new OpenAI({
+        apiKey,
+        baseURL: 'https://openrouter.ai/api/v1',
+        defaultHeaders: {
+          'HTTP-Referer': 'https://aptus.ai',
+          'X-Title': 'Aptus AI Platform',
+        },
+      });
+
+      const response = await client.chat.completions.create({
+        model: model || 'anthropic/claude-3.5-sonnet',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'custom') {
+      const apiKey = options.apiKey || this.customApiKey || 'dummy-key';
+      const baseURL = options.customBaseUrl || this.customBaseUrl;
+      if (!baseURL) throw new Error('Custom provider Base URL is missing.');
+
+      console.log(`🟢 Calling Custom API (${baseURL}) model: ${model}...`);
+      const client = new OpenAI({ apiKey, baseURL });
+      const response = await client.chat.completions.create({
+        model: model || 'default',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
     } else {
       // Default: Groq
       const client = options.apiKey ? new Groq({ apiKey: options.apiKey }) : this.groqClient;
       if (!client) {
-        throw new Error('Groq API key is missing. Please check GROQ_API_KEY in environment or provide custom key.');
+        throw new Error('Groq API key is missing.');
       }
 
-      let groqModel = model.includes('gpt-4o') ? this.defaultGroqModel : model;
+      let groqModel = model.includes('gpt-4o') || model.includes('claude') || model.includes('grok')
+        ? this.defaultGroqModel
+        : model;
+
       console.log(`🟢 Calling Groq API (model: ${groqModel})...`);
       let response;
       try {
@@ -178,22 +321,12 @@ class LLMService {
       const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
       const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
 
-      console.log(`✅ Groq responded successfully (tokens: ${totalTokens})`);
-      return {
-        text: content,
-        usage: { promptTokens, completionTokens, totalTokens },
-      };
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
     }
   }
 
-  /**
-   * Gemini-compatible structured content generation format
-   * Supports legacy calls from existing controllers
-   */
   async generateContent(contentData, options = {}) {
     let prompt = '';
-    let systemPrompt = '';
-
     if (contentData.contents && Array.isArray(contentData.contents)) {
       for (const item of contentData.contents) {
         if (item.parts && Array.isArray(item.parts)) {
@@ -211,13 +344,7 @@ class LLMService {
       text: res.text,
       usage: res.usage,
       response: {
-        candidates: [
-          {
-            content: {
-              parts: [{ text: res.text }],
-            },
-          },
-        ],
+        candidates: [{ content: { parts: [{ text: res.text }] } }],
       },
     };
   }

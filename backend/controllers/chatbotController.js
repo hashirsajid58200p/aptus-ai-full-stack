@@ -157,11 +157,21 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   }
   fullPrompt += `\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`;
 
+  // Resolve active API key based on provider
+  let activeApiKey = null;
+  if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
+  else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
+  else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
+  else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
+  else if (owner.provider === 'custom') activeApiKey = owner.customApiKey;
+
   // Initialize unified LLM service with tenant settings
   const llm = new LLMService({
     provider: owner.provider || 'groq',
-    model: owner.modelName || 'llama-3.3-70b-versatile',
-    apiKey: owner.provider === 'openai' ? owner.openaiApiKey : owner.groqApiKey,
+    model: owner.modelName || 'openai/gpt-oss-120b',
+    apiKey: activeApiKey,
+    customBaseUrl: owner.customBaseUrl,
   });
 
   const completion = await llm.generateText(fullPrompt, {
@@ -238,14 +248,25 @@ exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
 
 // Update Model Settings for Chatbot Owner
 exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
-  const { provider, modelName, openaiApiKey, groqApiKey } = req.body;
+  const {
+    provider,
+    modelName,
+    openaiApiKey,
+    groqApiKey,
+    anthropicApiKey,
+    xaiApiKey,
+    openrouterApiKey,
+    customApiKey,
+    customBaseUrl,
+  } = req.body;
   const user = await User.findById(req.user._id);
 
   if (!user) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  if (provider && ['groq', 'openai'].includes(provider)) {
+  const validProviders = ['groq', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'];
+  if (provider && validProviders.includes(provider)) {
     user.provider = provider;
   }
   if (modelName) {
@@ -257,6 +278,21 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
   if (groqApiKey !== undefined) {
     user.groqApiKey = groqApiKey;
   }
+  if (anthropicApiKey !== undefined) {
+    user.anthropicApiKey = anthropicApiKey;
+  }
+  if (xaiApiKey !== undefined) {
+    user.xaiApiKey = xaiApiKey;
+  }
+  if (openrouterApiKey !== undefined) {
+    user.openrouterApiKey = openrouterApiKey;
+  }
+  if (customApiKey !== undefined) {
+    user.customApiKey = customApiKey;
+  }
+  if (customBaseUrl !== undefined) {
+    user.customBaseUrl = customBaseUrl;
+  }
 
   await user.save();
 
@@ -266,8 +302,13 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
     data: {
       provider: user.provider,
       modelName: user.modelName,
+      customBaseUrl: user.customBaseUrl,
       hasOpenAiKey: !!user.openaiApiKey,
       hasGroqKey: !!user.groqApiKey,
+      hasAnthropicKey: !!user.anthropicApiKey,
+      hasXaiKey: !!user.xaiApiKey,
+      hasOpenrouterKey: !!user.openrouterApiKey,
+      hasCustomKey: !!user.customApiKey,
     },
   });
 });
@@ -290,14 +331,23 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
     ? messages.map(detail => `Customer: ${detail.question}\nBot: ${detail.answer}`).join("\n")
     : "No previous messages";
 
+  let activeApiKey = null;
+  if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
+  else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
+  else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
+  else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
+  else if (owner.provider === 'custom') activeApiKey = owner.customApiKey;
+
   const llm = new LLMService({
     provider: owner.provider || 'groq',
-    model: owner.modelName || 'llama-3.3-70b-versatile',
-    apiKey: owner.openaiApiKey,
+    model: owner.modelName || 'openai/gpt-oss-120b',
+    apiKey: activeApiKey,
+    customBaseUrl: owner.customBaseUrl,
   });
 
   const completion = await llm.generateText(
-    `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription}\nBusiness Details:\n${businessDetailsText}\n\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`
+    `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\nBusiness Details:\n${businessDetailsText}\n\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`
   );
 
   res.status(200).json({

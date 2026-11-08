@@ -310,15 +310,21 @@ exports.updateAppearance = catchAsyncError(async (req, res, next) => {
 exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   const user = req.user;
   const provider = req.query.provider || req.body.provider || user.provider || 'groq';
+  const customBaseUrl = req.query.customBaseUrl || req.body.customBaseUrl || user.customBaseUrl;
   
   let apiKey = req.query.apiKey || req.body.apiKey;
   if (!apiKey) {
-    apiKey = provider === 'openai' ? user.openaiApiKey : user.groqApiKey;
+    if (provider === 'openai') apiKey = user.openaiApiKey;
+    else if (provider === 'groq') apiKey = user.groqApiKey;
+    else if (provider === 'anthropic') apiKey = user.anthropicApiKey;
+    else if (provider === 'xai') apiKey = user.xaiApiKey;
+    else if (provider === 'openrouter') apiKey = user.openrouterApiKey;
+    else if (provider === 'custom') apiKey = user.customApiKey;
   }
 
   const LLMService = require("../utils/llmService");
   try {
-    const models = await LLMService.listModels(provider, apiKey);
+    const models = await LLMService.listModels(provider, apiKey, customBaseUrl);
     res.status(200).json({
       success: true,
       provider,

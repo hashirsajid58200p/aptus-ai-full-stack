@@ -78,18 +78,38 @@ const userSchema = new mongoose.Schema({
     ],
     provider: {
         type: String,
-        enum: ['groq', 'openai'],
+        enum: ['groq', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'],
         default: 'groq',
     },
     modelName: {
         type: String,
-        default: 'llama-3.3-70b-versatile',
+        default: 'openai/gpt-oss-120b',
     },
     groqApiKey: {
         type: String,
         default: null,
     },
     openaiApiKey: {
+        type: String,
+        default: null,
+    },
+    anthropicApiKey: {
+        type: String,
+        default: null,
+    },
+    xaiApiKey: {
+        type: String,
+        default: null,
+    },
+    openrouterApiKey: {
+        type: String,
+        default: null,
+    },
+    customApiKey: {
+        type: String,
+        default: null,
+    },
+    customBaseUrl: {
         type: String,
         default: null,
     },

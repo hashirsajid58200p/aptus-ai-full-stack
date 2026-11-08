@@ -454,16 +454,16 @@ Strict Instructions:
 
   if (loading && generatedQuestions.length === 0 && qaList.length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#FDF9F0]">
+      <div className="flex justify-center items-center py-12 bg-[#FDF9F0]">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen text-[#1a1a1a]">
+    <div className="w-full flex flex-col items-center gap-6 text-[#1a1a1a] pb-12">
       {/* Neo-brutalist Company Details Card with Sharp Edges */}
-      <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg relative z-10">
+      <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg">
         <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b-3 border-[#1a1a1a] bg-white">
           <div className="flex items-center gap-2">
             <CardTitle className="text-lg sm:text-2xl font-semibold text-[#1a1a1a]">
