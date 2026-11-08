@@ -16,6 +16,8 @@ const TestChatbot = () => {
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const recognitionRef = useRef(null);
+  const hasLiveTranscribedRef = useRef(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -23,11 +25,58 @@ const TestChatbot = () => {
 
   const toggleRecording = async () => {
     if (isRecording) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
         mediaRecorderRef.current.stop();
       }
       setIsRecording(false);
     } else {
+      hasLiveTranscribedRef.current = false;
+
+      // 1. Live real-time speech recognition
+      const SpeechRec =
+        typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+      if (SpeechRec) {
+        try {
+          const recognition = new SpeechRec();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = typeof navigator !== "undefined" && navigator.language ? navigator.language : "en-US";
+
+          const initialText = messageInput.trim();
+
+          recognition.onresult = (event) => {
+            let liveTranscript = "";
+            for (let i = 0; i < event.results.length; i++) {
+              liveTranscript += event.results[i][0].transcript;
+            }
+            if (liveTranscript.trim()) {
+              hasLiveTranscribedRef.current = true;
+              setMessageInput(initialText ? `${initialText} ${liveTranscript.trim()}` : liveTranscript.trim());
+            }
+          };
+
+          recognition.onerror = (e) => {
+            console.warn("Speech recognition notice:", e?.error);
+          };
+
+          recognition.onend = () => {
+            recognitionRef.current = null;
+          };
+
+          recognition.start();
+          recognitionRef.current = recognition;
+        } catch (recErr) {
+          console.warn("Real-time speech recognition could not start:", recErr);
+        }
+      }
+
+      // 2. Concurrently record for Whisper fallback
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -58,9 +107,18 @@ const TestChatbot = () => {
 
         mediaRecorder.onstop = async () => {
           stream.getTracks().forEach((track) => track.stop());
-          const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-          if (audioBlob.size < 200) {
+
+          if (hasLiveTranscribedRef.current) {
+            setIsTranscribing(false);
             setIsRecording(false);
+            toast.success("Speech transcribed live in real-time!");
+            return;
+          }
+
+          const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+          if (audioBlob.size < 500) {
+            setIsRecording(false);
+            setIsTranscribing(false);
             return;
           }
 
@@ -69,25 +127,32 @@ const TestChatbot = () => {
             const reader = new FileReader();
             reader.readAsDataURL(audioBlob);
             reader.onloadend = async () => {
-              const base64Audio = reader.result;
-              const res = await fetch(`${baseurl}/chatbot/transcribe`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  audio: base64Audio,
-                  mimeType,
-                }),
-              });
+              try {
+                const base64Audio = reader.result;
+                const res = await fetch(`${baseurl}/chatbot/transcribe`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    audio: base64Audio,
+                    mimeType,
+                    token: user?.chatbot_token,
+                  }),
+                });
 
-              const data = await res.json();
-              if (data.success && data.text) {
-                const text = data.text.trim();
-                setMessageInput((prev) => (prev ? `${prev} ${text}` : text));
-                toast.success("Voice transcribed accurately!");
-              } else {
-                toast.error(data.message || "Could not transcribe audio");
+                const data = await res.json();
+                if (data.success && data.text) {
+                  const text = data.text.trim();
+                  setMessageInput((prev) => (prev ? `${prev} ${text}` : text));
+                  toast.success("Voice transcribed accurately!");
+                } else {
+                  toast.error(data.message || "Could not transcribe audio");
+                }
+              } catch (err) {
+                console.error("Transcription fetch error:", err);
+                toast.error("Transcription service temporarily unavailable");
+              } finally {
+                setIsTranscribing(false);
               }
-              setIsTranscribing(false);
             };
           } catch (err) {
             console.error("Transcription error:", err);
@@ -100,7 +165,11 @@ const TestChatbot = () => {
         setIsRecording(true);
       } catch (err) {
         console.error("Microphone access error:", err);
-        toast.error("Microphone permission denied");
+        if (recognitionRef.current) {
+          setIsRecording(true);
+        } else {
+          toast.error("Microphone permission denied");
+        }
       }
     }
   };

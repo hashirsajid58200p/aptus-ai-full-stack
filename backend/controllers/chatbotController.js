@@ -217,7 +217,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 
 // POST /api/v1/chatbot/transcribe — Groq Whisper STT
 exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
-  const { audio, mimeType, language, prompt } = req.body;
+  const { audio, mimeType, language, prompt, token } = req.body;
 
   if (!audio) {
     return res.status(400).json({
@@ -231,7 +231,17 @@ exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
     const base64Data = audio.includes("base64,") ? audio.split("base64,")[1] : audio;
     const buffer = Buffer.from(base64Data, "base64");
 
-    const llm = new LLMService();
+    // Check for user-provided Groq key via token or auth
+    let groqKey = null;
+    const clientToken = token || req.headers["x-chatbot-token"];
+    if (clientToken) {
+      const user = await User.findOne({ chatbot_token: clientToken });
+      if (user && user.groqApiKey) groqKey = user.groqApiKey;
+    } else if (req.user && req.user.groqApiKey) {
+      groqKey = req.user.groqApiKey;
+    }
+
+    const llm = new LLMService({ provider: "groq", apiKey: groqKey });
     const transcriptText = await llm.transcribeAudio(buffer, "audio.webm", mimeType || "audio/webm", {
       language,
       prompt: prompt || "Customer query for business assistant in English, Urdu, or Roman Urdu.",
@@ -243,9 +253,10 @@ exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
     });
   } catch (err) {
     console.error("Transcription error:", err.message);
-    res.status(500).json({
+    res.status(200).json({
       success: false,
       message: err.message || "Failed to transcribe audio",
+      text: "",
     });
   }
 });
