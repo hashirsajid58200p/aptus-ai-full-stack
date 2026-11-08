@@ -55,8 +55,12 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  // finding user in database
-  const user = await User.findOne({ email }).select("+password");
+  // finding user in database (support both business-aptus and aptusai email aliases)
+  const searchEmail = email.toLowerCase().trim();
+  let user = await User.findOne({ email: searchEmail }).select("+password");
+  if (!user && (searchEmail === "aptusai@example.com" || searchEmail === "admin@aptus.ai")) {
+    user = await User.findOne({ email: "business-aptus@example.com" }).select("+password");
+  }
 
   if (!user) {
     return res.status(401).json({
