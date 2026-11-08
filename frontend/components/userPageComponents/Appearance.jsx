@@ -1,6 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Palette, MessageSquare, Check, RefreshCw, ShieldCheck, Sparkles, Send } from "lucide-react";
+import {
+  Palette,
+  MessageSquare,
+  Check,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
+  Send,
+  Shapes,
+  Smile,
+  Type,
+} from "lucide-react";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
@@ -413,6 +424,21 @@ export const THEME_CONFIGS = {
   },
 };
 
+const PREMADE_AVATARS = [
+  { id: "bot", label: "Robot", icon: "🤖" },
+  { id: "sparkles", label: "AI Spark", icon: "✨" },
+  { id: "chat", label: "Chat", icon: "💬" },
+  { id: "agent", label: "Support", icon: "🎧" },
+  { id: "zap", label: "Lightning", icon: "⚡" },
+  { id: "brain", label: "Brain", icon: "🧠" },
+];
+
+const SHAPE_PRESETS = [
+  { id: "0px", label: "Sharp Edges", desc: "0px - Neo-Brutalist & Cyberpunk", badge: "0px" },
+  { id: "12px", label: "Mid-Rounded", desc: "12px - Modern Balanced Curves", badge: "12px" },
+  { id: "24px", label: "Full Pill", desc: "24px - Soft Organic Pill Curves", badge: "24px" },
+];
+
 const PRESET_COLORS = [
   "#FF4D00",
   "#2563EB",
@@ -423,10 +449,24 @@ const PRESET_COLORS = [
   "#1A1A1A",
 ];
 
+function getContrastColor(hexColor) {
+  if (!hexColor || hexColor.startsWith("rgba")) return "#FFFFFF";
+  const hex = hexColor.replace("#", "");
+  if (hex.length < 6) return "#FFFFFF";
+  const r = parseInt(hex.substring(0, 2), 16) || 0;
+  const g = parseInt(hex.substring(2, 4), 16) || 0;
+  const b = parseInt(hex.substring(4, 6), 16) || 0;
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 145 ? "#111827" : "#FFFFFF";
+}
+
 export default function AppearanceTab({ user, onUserUpdate }) {
   const [theme, setTheme] = useState(user?.theme || "aptus");
   const [primaryColor, setPrimaryColor] = useState(user?.primaryColor || "#FF4D00");
   const [hasCustomAccent, setHasCustomAccent] = useState(false);
+  const [textColor, setTextColor] = useState(user?.textColor || "");
+  const [borderRadius, setBorderRadius] = useState(user?.borderRadius || "");
+  const [chatbotAvatar, setChatbotAvatar] = useState(user?.chatbotAvatar || "bot");
   const [botName, setBotName] = useState(user?.botName || "Aptus AI");
   const [welcomeMessage, setWelcomeMessage] = useState(
     user?.welcomeMessage || "Hello! How can I assist you today?"
@@ -441,11 +481,13 @@ export default function AppearanceTab({ user, onUserUpdate }) {
       if (user.theme) setTheme(user.theme);
       if (user.primaryColor) {
         setPrimaryColor(user.primaryColor);
-        // If the user had saved a specific color, preserve custom accent flag
         if (user.primaryColor !== "#FF4D00" && user.primaryColor !== "#f97316") {
           setHasCustomAccent(true);
         }
       }
+      if (user.textColor) setTextColor(user.textColor);
+      if (user.borderRadius) setBorderRadius(user.borderRadius);
+      if (user.chatbotAvatar) setChatbotAvatar(user.chatbotAvatar);
       if (user.botName) setBotName(user.botName);
       if (user.welcomeMessage) setWelcomeMessage(user.welcomeMessage);
       if (user.allowedDomains) {
@@ -454,7 +496,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
     }
   }, [user]);
 
-  // When theme changes, if user hasn't locked in an explicit custom accent color, apply the theme's signature default color
   const handleThemeChange = (newThemeKey) => {
     setTheme(newThemeKey);
     const themeDef = THEME_CONFIGS[newThemeKey];
@@ -473,6 +514,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
     if (themeDef) {
       setPrimaryColor(themeDef.defaultColor);
       setHasCustomAccent(false);
+      setTextColor("");
       toast.success(`Reset accent to ${themeDef.name} default!`);
     }
   };
@@ -488,6 +530,9 @@ export default function AppearanceTab({ user, onUserUpdate }) {
         body: JSON.stringify({
           theme,
           primaryColor,
+          textColor,
+          borderRadius,
+          chatbotAvatar,
           botName,
           welcomeMessage,
           allowedDomains,
@@ -496,7 +541,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
       const data = await res.json();
       if (data.success) {
-        toast.success("Appearance saved successfully!");
+        toast.success("Appearance settings updated successfully!");
         if (onUserUpdate) onUserUpdate();
       } else {
         toast.error(data.message || "Failed to update appearance");
@@ -511,6 +556,23 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   // Resolve current active theme configuration for the live preview
   const activeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS.aptus;
   const effectiveAccent = hasCustomAccent ? primaryColor : activeConfig.defaultColor;
+  const effectiveHeaderColor = textColor || getContrastColor(effectiveAccent);
+  const effectiveRadius = borderRadius || activeConfig.wrapperRadius;
+
+  const renderAvatarPreview = (size = 18) => {
+    const found = PREMADE_AVATARS.find((a) => a.id === chatbotAvatar);
+    if (found) return <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>{found.icon}</span>;
+    if (chatbotAvatar && (chatbotAvatar.startsWith("http") || chatbotAvatar.startsWith("data:"))) {
+      return (
+        <img
+          src={chatbotAvatar}
+          alt="Avatar"
+          style={{ width: `${size}px`, height: `${size}px`, borderRadius: "50%", objectFit: "cover" }}
+        />
+      );
+    }
+    return <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>🤖</span>;
+  };
 
   return (
     <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 md:p-6">
@@ -564,6 +626,35 @@ export default function AppearanceTab({ user, onUserUpdate }) {
             </div>
           </div>
 
+          {/* Premade Chatbot Icons Selector */}
+          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
+            <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
+              <Smile className="w-4 h-4 text-[#FF4D00]" />
+              Select Chatbot Avatar Icon
+            </h3>
+
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {PREMADE_AVATARS.map((av) => {
+                const isSelected = chatbotAvatar === av.id;
+                return (
+                  <button
+                    type="button"
+                    key={av.id}
+                    onClick={() => setChatbotAvatar(av.id)}
+                    className={`p-2.5 border-2 border-[#1a1a1a] flex flex-col items-center gap-1 transition-all ${
+                      isSelected
+                        ? "bg-[#BFF000] shadow-neo-sm translate-x-0.5 font-black"
+                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                    }`}
+                  >
+                    <span className="text-xl">{av.icon}</span>
+                    <span className="text-[10px] uppercase truncate">{av.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* All 14 NPM Themes Selector */}
           <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
             <div className="flex items-center justify-between">
@@ -576,7 +667,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
               {Object.entries(THEME_CONFIGS).map(([key, t]) => {
                 const isSelected = theme === key;
                 return (
@@ -607,51 +698,133 @@ export default function AppearanceTab({ user, onUserUpdate }) {
             </div>
           </div>
 
-          {/* Accent Color Customization */}
+          {/* Shape & Corner Radius Customization */}
           <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#10b981]" />
-                Accent Color Override
+                <Shapes className="w-4 h-4 text-[#8B5CF6]" />
+                Widget Shape & Rounded Corners
               </h3>
-              {hasCustomAccent && (
+              {borderRadius && (
                 <button
                   type="button"
-                  onClick={handleResetToThemeColor}
+                  onClick={() => setBorderRadius("")}
                   className="text-[10px] font-bold text-[#2563eb] hover:underline"
                 >
-                  Reset to theme default
+                  Use Theme Default
                 </button>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
-              {PRESET_COLORS.map((c) => (
-                <button
-                  type="button"
-                  key={c}
-                  onClick={() => handleColorChange(c)}
-                  style={{ backgroundColor: c }}
-                  className={`w-7 h-7 border-2 border-[#1a1a1a] transition-transform ${
-                    effectiveAccent.toLowerCase() === c.toLowerCase()
-                      ? "scale-110 shadow-neo-sm ring-2 ring-black"
-                      : "hover:scale-105"
-                  }`}
-                />
-              ))}
-              <div className="flex items-center gap-1.5 ml-2">
+            <div className="grid grid-cols-3 gap-2.5">
+              {SHAPE_PRESETS.map((shape) => {
+                const isSelected = borderRadius === shape.id;
+                return (
+                  <button
+                    type="button"
+                    key={shape.id}
+                    onClick={() => setBorderRadius(shape.id)}
+                    className={`p-3 border-2 border-[#1a1a1a] text-center transition-all ${
+                      isSelected
+                        ? "bg-[#BFF000] shadow-neo-sm font-black translate-x-0.5"
+                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                    }`}
+                  >
+                    <div className="text-sm mb-1">{shape.icon}</div>
+                    <div className="text-xs uppercase font-extrabold">{shape.label}</div>
+                    <div className="text-[10px] text-gray-500 font-normal mt-0.5">{shape.badge}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Color Customization (Primary Accent & Text Color) */}
+          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-4">
+            {/* Primary Accent */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-[#10b981]" />
+                  Primary Accent Color
+                </h3>
+                {hasCustomAccent && (
+                  <button
+                    type="button"
+                    onClick={handleResetToThemeColor}
+                    className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                  >
+                    Reset to theme default
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                {PRESET_COLORS.map((c) => (
+                  <button
+                    type="button"
+                    key={c}
+                    onClick={() => handleColorChange(c)}
+                    style={{ backgroundColor: c }}
+                    className={`w-7 h-7 border-2 border-[#1a1a1a] transition-transform ${
+                      effectiveAccent.toLowerCase() === c.toLowerCase()
+                        ? "scale-110 shadow-neo-sm ring-2 ring-black"
+                        : "hover:scale-105"
+                    }`}
+                  />
+                ))}
+                <div className="flex items-center gap-1.5 ml-2">
+                  <input
+                    type="color"
+                    value={effectiveAccent}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent"
+                  />
+                  <input
+                    type="text"
+                    value={effectiveAccent}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="w-20 p-1 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Header Text Color */}
+            <div className="border-t border-gray-200 pt-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
+                  <Type className="w-4 h-4 text-[#2563EB]" />
+                  Header Text Color
+                </h3>
+                {textColor && (
+                  <button
+                    type="button"
+                    onClick={() => setTextColor("")}
+                    className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                  >
+                    Auto Contrast
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
                 <input
                   type="color"
-                  value={effectiveAccent}
-                  onChange={(e) => handleColorChange(e.target.value)}
+                  value={effectiveHeaderColor}
+                  onChange={(e) => setTextColor(e.target.value)}
                   className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent"
                 />
                 <input
                   type="text"
-                  value={effectiveAccent}
-                  onChange={(e) => handleColorChange(e.target.value)}
-                  className="w-20 p-1 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
+                  value={textColor || effectiveHeaderColor}
+                  onChange={(e) => setTextColor(e.target.value)}
+                  placeholder="e.g. #FFFFFF"
+                  className="w-28 p-1.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
                 />
+                <span className="text-[11px] text-gray-500">
+                  {textColor ? "Custom Text Color" : "Auto-calculated for high contrast"}
+                </span>
               </div>
             </div>
           </div>
@@ -685,139 +858,177 @@ export default function AppearanceTab({ user, onUserUpdate }) {
           </button>
         </form>
 
-        {/* Dynamic Pixel-Perfect Live Mockup Preview */}
-        <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="text-xs font-extrabold uppercase text-[#1a1a1a] mb-2 self-start flex items-center gap-2">
-            <span>Live Interactive Preview</span>
-            <span className="bg-[#BFF000] border border-[#1a1a1a] px-2 py-0.2 text-[10px] font-mono">
-              {activeConfig.name}
-            </span>
-          </div>
-
-          <div
-            className="w-full max-w-[340px] flex flex-col transition-all duration-200 overflow-hidden"
-            style={{
-              backgroundColor: activeConfig.containerBg,
-              border: activeConfig.wrapperBorder || "1px solid #e5e7eb",
-              borderRadius: activeConfig.wrapperRadius || "0px",
-              boxShadow: activeConfig.wrapperShadow || "0 10px 25px rgba(0,0,0,0.1)",
-              fontFamily: activeConfig.fontFamily,
-            }}
-          >
-            {/* Header */}
-            <div
-              className="p-3.5 flex items-center justify-between"
-              style={{
-                backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.headerBg,
-                color: activeConfig.headerColor,
-                borderBottom: activeConfig.headerBorderBottom || "none",
-              }}
-            >
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs"
-                  style={{
-                    backgroundColor: activeConfig.containerBg,
-                    color: activeConfig.botBubbleColor || "#1a1a1a",
-                  }}
-                >
-                  🤖
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-xs uppercase leading-tight tracking-wide">
-                    {botName}
-                  </h4>
-                  <span className="text-[10px] font-medium opacity-85">● Online</span>
-                </div>
+        {/* Dedicated Framed Live Mockup Preview Container */}
+        <div className="lg:col-span-5 flex flex-col">
+          <div className="bg-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg flex flex-col overflow-hidden">
+            {/* Window title bar */}
+            <div className="bg-[#262626] border-b-2 border-[#1a1a1a] px-3.5 py-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
+                <span className="text-[10px] font-mono font-bold text-gray-300 uppercase ml-2 tracking-wider">
+                  Live Preview Container
+                </span>
               </div>
-              <span
-                className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded opacity-90"
-                style={{
-                  backgroundColor: "rgba(0,0,0,0.25)",
-                  color: activeConfig.headerColor,
-                }}
-              >
-                {theme}
+              <span className="bg-[#BFF000] text-[#1a1a1a] text-[9px] font-mono font-black uppercase px-2 py-0.5 border border-[#1a1a1a]">
+                {activeConfig.name}
               </span>
             </div>
 
-            {/* Chat Body */}
-            <div
-              className="p-4 min-h-[220px] flex flex-col gap-3 justify-end text-xs transition-colors"
-              style={{ backgroundColor: activeConfig.messagesBg }}
-            >
-              {/* Bot Greeting Bubble */}
+            {/* Container canvas where the interactive chatbot widget sits */}
+            <div className="p-4 sm:p-6 bg-[#F5F2EB] flex flex-col items-center justify-center min-h-[500px]">
               <div
-                className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
+                className="w-full max-w-[320px] flex flex-col transition-all duration-200 overflow-hidden"
                 style={{
-                  backgroundColor: activeConfig.botBubbleBg,
-                  color: activeConfig.botBubbleColor,
-                  border: activeConfig.botBubbleBorder || "none",
-                  borderRadius: activeConfig.bubbleRadius || "8px",
+                  backgroundColor: activeConfig.containerBg,
+                  border: activeConfig.wrapperBorder || "1px solid #e5e7eb",
+                  borderRadius: effectiveRadius || "0px",
+                  boxShadow: activeConfig.wrapperShadow || "0 10px 25px rgba(0,0,0,0.1)",
+                  fontFamily: activeConfig.fontFamily,
                 }}
               >
-                {welcomeMessage}
+                {/* Header */}
+                <div
+                  className="p-3.5 flex items-center justify-between transition-colors"
+                  style={{
+                    backgroundColor: effectiveAccent,
+                    color: effectiveHeaderColor,
+                    borderBottom: activeConfig.headerBorderBottom || "none",
+                  }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                        color: effectiveHeaderColor,
+                      }}
+                    >
+                      {renderAvatarPreview(16)}
+                    </div>
+                    <div>
+                      <h4
+                        className="font-extrabold text-xs uppercase leading-tight tracking-wide"
+                        style={{ color: effectiveHeaderColor }}
+                      >
+                        {botName}
+                      </h4>
+                      <span
+                        className="text-[10px] font-medium"
+                        style={{ color: effectiveHeaderColor, opacity: 0.85 }}
+                      >
+                        ● Online
+                      </span>
+                    </div>
+                  </div>
+                  <span
+                    className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded opacity-90"
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.25)",
+                      color: effectiveHeaderColor,
+                    }}
+                  >
+                    {theme}
+                  </span>
+                </div>
+
+                {/* Chat Body */}
+                <div
+                  className="p-3.5 min-h-[220px] flex flex-col gap-2.5 justify-end text-xs transition-colors"
+                  style={{ backgroundColor: activeConfig.messagesBg }}
+                >
+                  {/* Bot Greeting Bubble */}
+                  <div
+                    className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
+                    style={{
+                      backgroundColor: activeConfig.botBubbleBg,
+                      color: activeConfig.botBubbleColor,
+                      border: activeConfig.botBubbleBorder || "none",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                    }}
+                  >
+                    {welcomeMessage}
+                  </div>
+
+                  {/* User Bubble */}
+                  <div
+                    className="self-end max-w-[85%] p-2.5 text-[11px] font-semibold leading-relaxed"
+                    style={{
+                      backgroundColor: effectiveAccent,
+                      color: effectiveHeaderColor,
+                      border: activeConfig.userBubbleBorder || "none",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                    }}
+                  >
+                    How do I integrate this on my website?
+                  </div>
+
+                  {/* Bot Answer Bubble */}
+                  <div
+                    className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
+                    style={{
+                      backgroundColor: activeConfig.botBubbleBg,
+                      color: activeConfig.botBubbleColor,
+                      border: activeConfig.botBubbleBorder || "none",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                    }}
+                  >
+                    Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
+                  </div>
+                </div>
+
+                {/* Input Bar */}
+                <div
+                  className="p-2.5 flex items-center gap-2"
+                  style={{
+                    backgroundColor: activeConfig.containerBg,
+                    borderTop: activeConfig.headerBorderBottom || "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <input
+                    type="text"
+                    disabled
+                    placeholder="Type a message or use voice..."
+                    className="flex-1 text-xs p-2 outline-none"
+                    style={{
+                      backgroundColor: activeConfig.inputBg,
+                      color: activeConfig.inputColor,
+                      border: activeConfig.inputBorder || "1px solid #ccc",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.inputRadius || "4px",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="p-2 text-xs font-bold flex items-center justify-center transition-opacity"
+                    style={{
+                      backgroundColor: effectiveAccent,
+                      color: effectiveHeaderColor,
+                      border: activeConfig.buttonBorder || "none",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                    }}
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              {/* User Bubble */}
-              <div
-                className="self-end max-w-[85%] p-2.5 text-[11px] font-semibold leading-relaxed"
-                style={{
-                  backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.userBubbleBg,
-                  color: activeConfig.userBubbleColor,
-                  border: activeConfig.userBubbleBorder || "none",
-                  borderRadius: activeConfig.bubbleRadius || "8px",
-                }}
-              >
-                How do I integrate this on my website?
+              {/* Floating Toggle Button Preview under the widget */}
+              <div className="mt-4 flex items-center gap-3">
+                <span className="text-[10px] font-mono font-bold uppercase text-gray-500">
+                  Toggle Button Preview:
+                </span>
+                <div
+                  className="w-11 h-11 flex items-center justify-center border-2 border-[#1a1a1a] shadow-neo-sm"
+                  style={{
+                    backgroundColor: effectiveAccent,
+                    color: effectiveHeaderColor,
+                    borderRadius: effectiveRadius || "50%",
+                  }}
+                >
+                  {renderAvatarPreview(20)}
+                </div>
               </div>
-
-              {/* Bot Answer Bubble */}
-              <div
-                className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
-                style={{
-                  backgroundColor: activeConfig.botBubbleBg,
-                  color: activeConfig.botBubbleColor,
-                  border: activeConfig.botBubbleBorder || "none",
-                  borderRadius: activeConfig.bubbleRadius || "8px",
-                }}
-              >
-                Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
-              </div>
-            </div>
-
-            {/* Input Bar */}
-            <div
-              className="p-2.5 flex items-center gap-2"
-              style={{
-                backgroundColor: activeConfig.containerBg,
-                borderTop: activeConfig.headerBorderBottom || "1px solid rgba(0,0,0,0.1)",
-              }}
-            >
-              <input
-                type="text"
-                disabled
-                placeholder="Type a message or use voice..."
-                className="flex-1 text-xs p-2 outline-none"
-                style={{
-                  backgroundColor: activeConfig.inputBg,
-                  color: activeConfig.inputColor,
-                  border: activeConfig.inputBorder || "1px solid #ccc",
-                  borderRadius: activeConfig.inputRadius || "4px",
-                }}
-              />
-              <button
-                type="button"
-                className="p-2 text-xs font-bold flex items-center justify-center transition-opacity"
-                style={{
-                  backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.buttonBg,
-                  color: activeConfig.buttonColor,
-                  border: activeConfig.buttonBorder || "none",
-                  borderRadius: activeConfig.buttonRadius || "4px",
-                }}
-              >
-                <Send className="w-3.5 h-3.5" />
-              </button>
             </div>
           </div>
         </div>

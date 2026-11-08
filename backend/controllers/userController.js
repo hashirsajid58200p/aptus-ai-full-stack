@@ -254,6 +254,8 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
     _id,
     theme,
     primaryColor,
+    textColor,
+    borderRadius,
     botName,
     welcomeMessage,
     chatbotAvatar,
@@ -269,9 +271,11 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
       id: _id,
       theme: theme || 'aptus',
       primaryColor: primaryColor || '#f97316',
+      textColor: textColor || '',
+      borderRadius: borderRadius || '',
       botName: botName || 'Aptus AI',
       welcomeMessage: welcomeMessage || 'Hello! How can I assist you today?',
-      chatbotAvatar: chatbotAvatar || '',
+      chatbotAvatar: chatbotAvatar || 'bot',
       allowedDomains: allowedDomains || [],
     },
     message: "Chatbot Details"
@@ -281,10 +285,12 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
 // Update Appearance & Domain settings
 exports.updateAppearance = catchAsyncError(async (req, res, next) => {
   const user = req.user;
-  const { theme, primaryColor, botName, welcomeMessage, chatbotAvatar, allowedDomains } = req.body;
+  const { theme, primaryColor, textColor, borderRadius, botName, welcomeMessage, chatbotAvatar, allowedDomains } = req.body;
 
   if (theme) user.theme = theme;
   if (primaryColor) user.primaryColor = primaryColor;
+  if (textColor !== undefined) user.textColor = textColor;
+  if (borderRadius !== undefined) user.borderRadius = borderRadius;
   if (botName) user.botName = botName;
   if (welcomeMessage !== undefined) user.welcomeMessage = welcomeMessage;
   if (chatbotAvatar !== undefined) user.chatbotAvatar = chatbotAvatar;

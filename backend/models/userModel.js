@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema({
     },
     chatbotAvatar: {
         type: String,
+        default: 'bot',
+    },
+    textColor: {
+        type: String,
+        default: '',
+    },
+    borderRadius: {
+        type: String,
         default: '',
     },
     bussinessName: {
