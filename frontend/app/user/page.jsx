@@ -56,11 +56,12 @@ export default function UserDashboard() {
 
   useEffect(() => {
     document.title = "Business Dashboard — Aptus AI";
-  }, []);
+    dispatch(loadUser());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isInitialized && !loading && !user) {
-      router.push("/login");
+      router.push("/start");
     }
   }, [user, loading, isInitialized, router]);
 

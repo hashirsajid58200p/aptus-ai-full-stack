@@ -8,7 +8,7 @@ export function Providers({children}) {
   const router = useRouter();
   return (
     <NextUIProvider navigate={router.push}>
-      <NextThemesProvider attribute="class" defaultTheme="dark">
+      <NextThemesProvider attribute="class" defaultTheme="light" enableSystem={false}>
         {children}
       </NextThemesProvider>
     </NextUIProvider>

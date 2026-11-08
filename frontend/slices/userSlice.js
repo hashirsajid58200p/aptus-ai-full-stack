@@ -19,13 +19,13 @@ const initialState = {
   loading: false,
   isUserRegistered: false,
   isUserLogged: false,
-  user: null,
+  user: getInitialUser(),
   isTokenGenerated: false,
   isBusinessDetailsAdded: false,
   isBusinessDetailsUpdated: false,
   isBusinessDetailsDeleted: false,
   isLoggedOut: false,
-  isInitialized: false,
+  isInitialized: !!getInitialUser(),
 };
 
 // signup user
