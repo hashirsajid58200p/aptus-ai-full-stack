@@ -1,38 +1,432 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Palette, MessageSquare, Check, RefreshCw, ShieldCheck, Sparkles } from "lucide-react";
+import { Palette, MessageSquare, Check, RefreshCw, ShieldCheck, Sparkles, Send } from "lucide-react";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
-const ALL_NPM_THEMES = [
-  { id: "aptus", name: "Aptus Official", desc: "Neo-brutalist signature theme with bold borders" },
-  { id: "boty", name: "Clean White", desc: "Minimalist modern SaaS white card" },
-  { id: "chatgpt", name: "ChatGPT Slate", desc: "Dark charcoal slate with rounded bubbles" },
-  { id: "compute", name: "Retro CRT", desc: "Monochrome terminal with green phosphor accent" },
-  { id: "crosshaven", name: "Editorial Serif", desc: "Refined luxury serif typography and warm cream" },
-  { id: "studio", name: "Studio Purple", desc: "Creative violet glassmorphism accents" },
-  { id: "energy", name: "Electric Amber", desc: "High-contrast energetic amber and dark cards" },
-  { id: "smarthome", name: "Emerald Tech", desc: "Fresh eco-tech emerald green accents" },
-  { id: "superdesign", name: "Neo Pastel", desc: "Soft pastel gradients and playful neo borders" },
-  { id: "professional", name: "Corporate Indigo", desc: "Enterprise navy and structured layout" },
-  { id: "github", name: "GitHub Dark", desc: "Primer design dark mode with code contrasts" },
-  { id: "dracula", name: "Dracula Purple", desc: "Vampire dark mode with purple contrast" },
-  { id: "nord", name: "Nord Arctic", desc: "Cool arctic blues and frosty grays" },
-  { id: "cyberpunk", name: "Cyberpunk", desc: "High-contrast neon yellow and dark cyber layout" },
-];
+export const THEME_CONFIGS = {
+  aptus: {
+    name: "Aptus Official",
+    desc: "Neo-brutalist signature theme with bold 3px borders",
+    defaultColor: "#FF4D00",
+    containerBg: "#FDF9F0",
+    headerBg: "#FF4D00",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "3px solid #1a1a1a",
+    wrapperBorder: "3px solid #1a1a1a",
+    wrapperShadow: "6px 6px 0px #1a1a1a",
+    wrapperRadius: "0px",
+    fontFamily: "'Space Grotesk', system-ui, sans-serif",
+    messagesBg: "#FDF9F0",
+    userBubbleBg: "#FF4D00",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "2px solid #1a1a1a",
+    botBubbleBg: "#FFFFFF",
+    botBubbleColor: "#1A1A1A",
+    botBubbleBorder: "2px solid #1a1a1a",
+    bubbleRadius: "0px",
+    inputBg: "#FFFFFF",
+    inputColor: "#1A1A1A",
+    inputBorder: "2px solid #1a1a1a",
+    inputRadius: "0px",
+    buttonBg: "#FF4D00",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "2px solid #1a1a1a",
+    buttonRadius: "0px",
+  },
+  boty: {
+    name: "Boty Organic",
+    desc: "Natural warm olive with soft rounded curves",
+    defaultColor: "#4F5B3A",
+    containerBg: "#F7F4EF",
+    headerBg: "#4F5B3A",
+    headerColor: "#F7F4EF",
+    headerBorderBottom: "1px solid #D8CFC4",
+    wrapperBorder: "1px solid #D8CFC4",
+    wrapperShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+    wrapperRadius: "24px",
+    fontFamily: "'Inter', system-ui, sans-serif",
+    messagesBg: "#F7F4EF",
+    userBubbleBg: "#4F5B3A",
+    userBubbleColor: "#F7F4EF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#EDE6DC",
+    botBubbleColor: "#2C2C2C",
+    botBubbleBorder: "none",
+    bubbleRadius: "18px",
+    inputBg: "#FFFFFF",
+    inputColor: "#2C2C2C",
+    inputBorder: "1px solid #D8CFC4",
+    inputRadius: "16px",
+    buttonBg: "#4F5B3A",
+    buttonColor: "#F7F4EF",
+    buttonBorder: "none",
+    buttonRadius: "16px",
+  },
+  chatgpt: {
+    name: "ChatGPT Dark",
+    desc: "Minimalist dark slate with OpenAI green",
+    defaultColor: "#10A37F",
+    containerBg: "#212121",
+    headerBg: "#2F2F2F",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "1px solid #3E3E3E",
+    wrapperBorder: "1px solid #3E3E3E",
+    wrapperShadow: "0 12px 30px rgba(0, 0, 0, 0.5)",
+    wrapperRadius: "12px",
+    fontFamily: "system-ui, -apple-system, sans-serif",
+    messagesBg: "#212121",
+    userBubbleBg: "#2F2F2F",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#171717",
+    botBubbleColor: "#ECECEC",
+    botBubbleBorder: "none",
+    bubbleRadius: "8px",
+    inputBg: "#2F2F2F",
+    inputColor: "#FFFFFF",
+    inputBorder: "1px solid #424242",
+    inputRadius: "8px",
+    buttonBg: "#10A37F",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "8px",
+  },
+  compute: {
+    name: "Retro CRT Terminal",
+    desc: "Cyber code terminal with cyan phosphor on black",
+    defaultColor: "#38BDF8",
+    containerBg: "#0C0E12",
+    headerBg: "#181C24",
+    headerColor: "#38BDF8",
+    headerBorderBottom: "1px solid #1E293B",
+    wrapperBorder: "1px solid #1E293B",
+    wrapperShadow: "0 0 20px rgba(56, 189, 248, 0.2)",
+    wrapperRadius: "6px",
+    fontFamily: "'JetBrains Mono', monospace",
+    messagesBg: "#0C0E12",
+    userBubbleBg: "#1E293B",
+    userBubbleColor: "#38BDF8",
+    userBubbleBorder: "1px solid #38BDF8",
+    botBubbleBg: "#181C24",
+    botBubbleColor: "#F1F5F9",
+    botBubbleBorder: "1px solid #334155",
+    bubbleRadius: "6px",
+    inputBg: "#111622",
+    inputColor: "#F1F5F9",
+    inputBorder: "1px solid #334155",
+    inputRadius: "4px",
+    buttonBg: "#38BDF8",
+    buttonColor: "#0C0E12",
+    buttonBorder: "none",
+    buttonRadius: "4px",
+  },
+  crosshaven: {
+    name: "Editorial Luxury",
+    desc: "Refined navy slate and clean contrast",
+    defaultColor: "#2563EB",
+    containerBg: "#F8FAFC",
+    headerBg: "#0F172A",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "1px solid #E2E8F0",
+    wrapperBorder: "1px solid #E2E8F0",
+    wrapperShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.15)",
+    wrapperRadius: "10px",
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+    messagesBg: "#F8FAFC",
+    userBubbleBg: "#2563EB",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#E2E8F0",
+    botBubbleColor: "#0F172A",
+    botBubbleBorder: "none",
+    bubbleRadius: "10px",
+    inputBg: "#FFFFFF",
+    inputColor: "#0F172A",
+    inputBorder: "1px solid #CBD5E1",
+    inputRadius: "6px",
+    buttonBg: "#2563EB",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "6px",
+  },
+  studio: {
+    name: "Dark Studio",
+    desc: "Monochrome obsidian with electric yellow",
+    defaultColor: "#FFD600",
+    containerBg: "#0A0A0A",
+    headerBg: "#1A1A1A",
+    headerColor: "#FFD600",
+    headerBorderBottom: "1px solid #2D2D2D",
+    wrapperBorder: "2px solid #2D2D2D",
+    wrapperShadow: "0 12px 30px rgba(0,0,0,0.8)",
+    wrapperRadius: "20px",
+    fontFamily: "'Space Grotesk', system-ui, sans-serif",
+    messagesBg: "#0A0A0A",
+    userBubbleBg: "#FF6B35",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#1A1A1A",
+    botBubbleColor: "#F5F5F0",
+    botBubbleBorder: "1px solid #2D2D2D",
+    bubbleRadius: "16px",
+    inputBg: "#141414",
+    inputColor: "#F5F5F0",
+    inputBorder: "1px solid #2D2D2D",
+    inputRadius: "24px",
+    buttonBg: "#FFD600",
+    buttonColor: "#0A0A0A",
+    buttonBorder: "none",
+    buttonRadius: "24px",
+  },
+  energy: {
+    name: "Neon Energy",
+    desc: "Vibrant violet and high-impact lime punch",
+    defaultColor: "#A3E635",
+    containerBg: "#3B0764",
+    headerBg: "#581C87",
+    headerColor: "#A3E635",
+    headerBorderBottom: "2px solid #581C87",
+    wrapperBorder: "2px solid #A3E635",
+    wrapperShadow: "0 10px 30px rgba(163, 230, 53, 0.2)",
+    wrapperRadius: "12px",
+    fontFamily: "'Outfit', system-ui, sans-serif",
+    messagesBg: "#3B0764",
+    userBubbleBg: "#EC4899",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#581C87",
+    botBubbleColor: "#A3E635",
+    botBubbleBorder: "none",
+    bubbleRadius: "12px",
+    inputBg: "#2E1065",
+    inputColor: "#FFFFFF",
+    inputBorder: "2px solid #EC4899",
+    inputRadius: "12px",
+    buttonBg: "#EC4899",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "12px",
+  },
+  smarthome: {
+    name: "Emerald Cyan",
+    desc: "Soft aqua cyan with modern smooth curves",
+    defaultColor: "#0EA5E9",
+    containerBg: "#F0F9FF",
+    headerBg: "#0EA5E9",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "1px solid #BAE6FD",
+    wrapperBorder: "1px solid #BAE6FD",
+    wrapperShadow: "0 10px 25px rgba(14, 165, 233, 0.1)",
+    wrapperRadius: "24px",
+    fontFamily: "'Inter', system-ui, sans-serif",
+    messagesBg: "#F0F9FF",
+    userBubbleBg: "#0EA5E9",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#E0F2FE",
+    botBubbleColor: "#0369A1",
+    botBubbleBorder: "none",
+    bubbleRadius: "20px",
+    inputBg: "#FFFFFF",
+    inputColor: "#0F172A",
+    inputBorder: "1px solid #BAE6FD",
+    inputRadius: "20px",
+    buttonBg: "#0EA5E9",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "20px",
+  },
+  superdesign: {
+    name: "Pastel Violet",
+    desc: "Deep violet header with soft purple canvas",
+    defaultColor: "#8B5CF6",
+    containerBg: "#F3E8FF",
+    headerBg: "#4C1D95",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "1px solid #DDD6FE",
+    wrapperBorder: "1px solid #DDD6FE",
+    wrapperShadow: "0 12px 28px rgba(76, 29, 149, 0.15)",
+    wrapperRadius: "12px",
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+    messagesBg: "#F3E8FF",
+    userBubbleBg: "#8B5CF6",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#E9D5FF",
+    botBubbleColor: "#4C1D95",
+    botBubbleBorder: "none",
+    bubbleRadius: "12px",
+    inputBg: "#FFFFFF",
+    inputColor: "#3B0764",
+    inputBorder: "1px solid #C4B5FD",
+    inputRadius: "8px",
+    buttonBg: "#8B5CF6",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "8px",
+  },
+  professional: {
+    name: "Corporate Blue",
+    desc: "Enterprise royal blue and crisp white card",
+    defaultColor: "#1D4ED8",
+    containerBg: "#FFFFFF",
+    headerBg: "#1D4ED8",
+    headerColor: "#FFFFFF",
+    headerBorderBottom: "1px solid #E2E8F0",
+    wrapperBorder: "1px solid #E2E8F0",
+    wrapperShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+    wrapperRadius: "6px",
+    fontFamily: "'Inter', system-ui, sans-serif",
+    messagesBg: "#F8FAFC",
+    userBubbleBg: "#1D4ED8",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#E2E8F0",
+    botBubbleColor: "#0F172A",
+    botBubbleBorder: "none",
+    bubbleRadius: "6px",
+    inputBg: "#F8FAFC",
+    inputColor: "#0F172A",
+    inputBorder: "1px solid #CBD5E1",
+    inputRadius: "4px",
+    buttonBg: "#1D4ED8",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "4px",
+  },
+  github: {
+    name: "GitHub Dark",
+    desc: "Primer dark theme with GitHub green accent",
+    defaultColor: "#238636",
+    containerBg: "#0D1117",
+    headerBg: "#161B22",
+    headerColor: "#F0F6FC",
+    headerBorderBottom: "1px solid #30363D",
+    wrapperBorder: "1px solid #30363D",
+    wrapperShadow: "0 12px 32px rgba(1, 4, 9, 0.85)",
+    wrapperRadius: "6px",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    messagesBg: "#0D1117",
+    userBubbleBg: "#238636",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "none",
+    botBubbleBg: "#161B22",
+    botBubbleColor: "#C9D1D9",
+    botBubbleBorder: "1px solid #30363D",
+    bubbleRadius: "6px",
+    inputBg: "#010409",
+    inputColor: "#C9D1D9",
+    inputBorder: "1px solid #30363D",
+    inputRadius: "6px",
+    buttonBg: "#238636",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "none",
+    buttonRadius: "6px",
+  },
+  dracula: {
+    name: "Dracula Purple",
+    desc: "Official Dracula dark mode with pink & purple",
+    defaultColor: "#BD93F9",
+    containerBg: "#282A36",
+    headerBg: "#6272A4",
+    headerColor: "#F8F8F2",
+    headerBorderBottom: "1px solid #44475A",
+    wrapperBorder: "1px solid #44475A",
+    wrapperShadow: "0 12px 32px rgba(0, 0, 0, 0.5)",
+    wrapperRadius: "16px",
+    fontFamily: "'Fira Code', monospace, sans-serif",
+    messagesBg: "#282A36",
+    userBubbleBg: "#FF79C6",
+    userBubbleColor: "#282A36",
+    userBubbleBorder: "none",
+    botBubbleBg: "#44475A",
+    botBubbleColor: "#F8F8F2",
+    botBubbleBorder: "none",
+    bubbleRadius: "14px",
+    inputBg: "#44475A",
+    inputColor: "#F8F8F2",
+    inputBorder: "1px solid #6272A4",
+    inputRadius: "10px",
+    buttonBg: "#FF79C6",
+    buttonColor: "#282A36",
+    buttonBorder: "none",
+    buttonRadius: "10px",
+  },
+  nord: {
+    name: "Nord Arctic",
+    desc: "Cool polar frost palette with arctic blues",
+    defaultColor: "#88C0D0",
+    containerBg: "#2E3440",
+    headerBg: "#3B4252",
+    headerColor: "#88C0D0",
+    headerBorderBottom: "1px solid #4C566A",
+    wrapperBorder: "1px solid #4C566A",
+    wrapperShadow: "0 10px 28px rgba(0, 0, 0, 0.4)",
+    wrapperRadius: "8px",
+    fontFamily: "'Rubik', system-ui, sans-serif",
+    messagesBg: "#2E3440",
+    userBubbleBg: "#81A1C1",
+    userBubbleColor: "#2E3440",
+    userBubbleBorder: "none",
+    botBubbleBg: "#3B4252",
+    botBubbleColor: "#ECEFF4",
+    botBubbleBorder: "none",
+    bubbleRadius: "8px",
+    inputBg: "#3B4252",
+    inputColor: "#ECEFF4",
+    inputBorder: "1px solid #4C566A",
+    inputRadius: "6px",
+    buttonBg: "#88C0D0",
+    buttonColor: "#2E3440",
+    buttonBorder: "none",
+    buttonRadius: "6px",
+  },
+  cyberpunk: {
+    name: "Cyberpunk 2077",
+    desc: "Obsidian black with neon yellow & cyan lasers",
+    defaultColor: "#FCEE09",
+    containerBg: "#050505",
+    headerBg: "#FCEE09",
+    headerColor: "#050505",
+    headerBorderBottom: "2px solid #00F0FF",
+    wrapperBorder: "2px solid #FCEE09",
+    wrapperShadow: "0 0 25px rgba(0, 240, 255, 0.35)",
+    wrapperRadius: "0px",
+    fontFamily: "'Orbitron', 'Space Grotesk', sans-serif",
+    messagesBg: "#050505",
+    userBubbleBg: "#FF0055",
+    userBubbleColor: "#FFFFFF",
+    userBubbleBorder: "1px solid #FCEE09",
+    botBubbleBg: "#121212",
+    botBubbleColor: "#00F0FF",
+    botBubbleBorder: "1px solid #00F0FF",
+    bubbleRadius: "0px",
+    inputBg: "#121212",
+    inputColor: "#FCEE09",
+    inputBorder: "1px solid #00F0FF",
+    inputRadius: "0px",
+    buttonBg: "#FF0055",
+    buttonColor: "#FFFFFF",
+    buttonBorder: "1px solid #00F0FF",
+    buttonRadius: "0px",
+  },
+};
 
 const PRESET_COLORS = [
-  "#f97316",
-  "#2563eb",
-  "#10b981",
-  "#8b5cf6",
-  "#ef4444",
-  "#1a1a1a",
+  "#FF4D00",
+  "#2563EB",
+  "#10B981",
+  "#8B5CF6",
+  "#FCEE09",
+  "#FF79C6",
+  "#1A1A1A",
 ];
 
 export default function AppearanceTab({ user, onUserUpdate }) {
   const [theme, setTheme] = useState(user?.theme || "aptus");
-  const [primaryColor, setPrimaryColor] = useState(user?.primaryColor || "#f97316");
+  const [primaryColor, setPrimaryColor] = useState(user?.primaryColor || "#FF4D00");
+  const [hasCustomAccent, setHasCustomAccent] = useState(false);
   const [botName, setBotName] = useState(user?.botName || "Aptus AI");
   const [welcomeMessage, setWelcomeMessage] = useState(
     user?.welcomeMessage || "Hello! How can I assist you today?"
@@ -45,7 +439,13 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   useEffect(() => {
     if (user) {
       if (user.theme) setTheme(user.theme);
-      if (user.primaryColor) setPrimaryColor(user.primaryColor);
+      if (user.primaryColor) {
+        setPrimaryColor(user.primaryColor);
+        // If the user had saved a specific color, preserve custom accent flag
+        if (user.primaryColor !== "#FF4D00" && user.primaryColor !== "#f97316") {
+          setHasCustomAccent(true);
+        }
+      }
       if (user.botName) setBotName(user.botName);
       if (user.welcomeMessage) setWelcomeMessage(user.welcomeMessage);
       if (user.allowedDomains) {
@@ -53,6 +453,29 @@ export default function AppearanceTab({ user, onUserUpdate }) {
       }
     }
   }, [user]);
+
+  // When theme changes, if user hasn't locked in an explicit custom accent color, apply the theme's signature default color
+  const handleThemeChange = (newThemeKey) => {
+    setTheme(newThemeKey);
+    const themeDef = THEME_CONFIGS[newThemeKey];
+    if (themeDef && !hasCustomAccent) {
+      setPrimaryColor(themeDef.defaultColor);
+    }
+  };
+
+  const handleColorChange = (newColor) => {
+    setPrimaryColor(newColor);
+    setHasCustomAccent(true);
+  };
+
+  const handleResetToThemeColor = () => {
+    const themeDef = THEME_CONFIGS[theme];
+    if (themeDef) {
+      setPrimaryColor(themeDef.defaultColor);
+      setHasCustomAccent(false);
+      toast.success(`Reset accent to ${themeDef.name} default!`);
+    }
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -73,7 +496,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
       const data = await res.json();
       if (data.success) {
-        toast.success("Appearance saved!");
+        toast.success("Appearance saved successfully!");
         if (onUserUpdate) onUserUpdate();
       } else {
         toast.error(data.message || "Failed to update appearance");
@@ -85,15 +508,19 @@ export default function AppearanceTab({ user, onUserUpdate }) {
     }
   };
 
+  // Resolve current active theme configuration for the live preview
+  const activeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS.aptus;
+  const effectiveAccent = hasCustomAccent ? primaryColor : activeConfig.defaultColor;
+
   return (
-    <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6">
+    <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 md:p-6">
       {/* Header */}
       <div className="border-b-3 border-[#1a1a1a] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <span className="bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-black text-xs uppercase inline-block mr-2">
             NPM WIDGET CUSTOMIZER
           </span>
-          <h2 className="font-syne text-2xl font-black text-[#1a1a1a] uppercase inline-block">
+          <h2 className="font-syne text-xl md:text-3xl font-black text-[#1a1a1a] uppercase inline-block">
             Chatbot Appearance
           </h2>
         </div>
@@ -141,63 +568,88 @@ export default function AppearanceTab({ user, onUserUpdate }) {
           <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                <Palette className="w-4 h-4 text-[#2563eb]" />
-                Select Theme ({ALL_NPM_THEMES.length} Available)
+                <Palette className="w-4 h-4 text-[#2563EB]" />
+                Select Theme (14 Available)
               </h3>
-              <span className="text-[11px] font-mono font-bold uppercase text-gray-500">Active: {theme}</span>
+              <span className="text-[11px] font-mono font-bold uppercase text-gray-500">
+                Active: {activeConfig.name}
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-              {ALL_NPM_THEMES.map((t) => (
-                <button
-                  type="button"
-                  key={t.id}
-                  onClick={() => setTheme(t.id)}
-                  className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all ${
-                    theme === t.id
-                      ? "bg-[#BFF000] shadow-neo-sm font-black"
-                      : "bg-[#FDF9F0] hover:bg-white font-bold"
-                  }`}
-                >
-                  <div className="text-xs uppercase flex items-center justify-between">
-                    <span className="truncate">{t.name}</span>
-                    {theme === t.id && <Check className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]" />}
-                  </div>
-                  <div className="text-[10px] text-gray-500 font-normal truncate mt-0.5">{t.desc}</div>
-                </button>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1">
+              {Object.entries(THEME_CONFIGS).map(([key, t]) => {
+                const isSelected = theme === key;
+                return (
+                  <button
+                    type="button"
+                    key={key}
+                    onClick={() => handleThemeChange(key)}
+                    className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all ${
+                      isSelected
+                        ? "bg-[#BFF000] shadow-neo-sm font-black translate-x-0.5"
+                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                    }`}
+                  >
+                    <div className="text-xs uppercase flex items-center justify-between">
+                      <span className="truncate">{t.name}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-3.5 h-3.5 rounded-full border border-[#1a1a1a] inline-block"
+                          style={{ backgroundColor: t.defaultColor }}
+                        />
+                        {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]" />}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-gray-600 font-normal truncate mt-0.5">{t.desc}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Accent Color */}
+          {/* Accent Color Customization */}
           <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
-            <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#10b981]" />
-              Accent Color
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-[#10b981]" />
+                Accent Color Override
+              </h3>
+              {hasCustomAccent && (
+                <button
+                  type="button"
+                  onClick={handleResetToThemeColor}
+                  className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                >
+                  Reset to theme default
+                </button>
+              )}
+            </div>
+
             <div className="flex flex-wrap items-center gap-2.5">
               {PRESET_COLORS.map((c) => (
                 <button
                   type="button"
                   key={c}
-                  onClick={() => setPrimaryColor(c)}
+                  onClick={() => handleColorChange(c)}
                   style={{ backgroundColor: c }}
-                  className={`w-7 h-7 rounded-none border-2 border-[#1a1a1a] transition-transform ${
-                    primaryColor.toLowerCase() === c.toLowerCase() ? "scale-110 shadow-neo-sm ring-2 ring-black" : "hover:scale-105"
+                  className={`w-7 h-7 border-2 border-[#1a1a1a] transition-transform ${
+                    effectiveAccent.toLowerCase() === c.toLowerCase()
+                      ? "scale-110 shadow-neo-sm ring-2 ring-black"
+                      : "hover:scale-105"
                   }`}
                 />
               ))}
               <div className="flex items-center gap-1.5 ml-2">
                 <input
                   type="color"
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent rounded-none"
+                  value={effectiveAccent}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent"
                 />
                 <input
                   type="text"
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  value={effectiveAccent}
+                  onChange={(e) => handleColorChange(e.target.value)}
                   className="w-20 p-1 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
                 />
               </div>
@@ -214,83 +666,160 @@ export default function AppearanceTab({ user, onUserUpdate }) {
               type="text"
               value={allowedDomains}
               onChange={(e) => setAllowedDomains(e.target.value)}
-              placeholder="e.g. clientwebsite.com, localhost:3000 (comma-separated)"
+              placeholder="e.g. mywebsite.com, localhost:3000 (comma-separated)"
               className="w-full p-2 bg-white border-2 border-[#1a1a1a] text-xs font-mono font-bold outline-none"
             />
-            <span className="text-[10px] text-gray-500 font-medium">Leave empty to allow all domains or for local development testing.</span>
+            <span className="text-[10px] text-gray-500 font-medium">
+              Leave blank to allow all domains or for local development.
+            </span>
           </div>
 
           {/* Save Button */}
           <button
             type="submit"
             disabled={saving}
-            className="self-start px-5 py-2.5 bg-[#1a1a1a] text-white font-extrabold text-xs uppercase border-2 border-[#1a1a1a] shadow-neo hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="self-start px-6 py-2.5 bg-[#1a1a1a] text-white font-extrabold text-xs uppercase border-2 border-[#1a1a1a] shadow-neo hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-            {saving ? "Saving..." : "Save Settings"}
+            {saving ? "Saving Changes..." : "Save Appearance Settings"}
           </button>
         </form>
 
-        {/* Live Mockup Preview */}
+        {/* Dynamic Pixel-Perfect Live Mockup Preview */}
         <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="w-full max-w-[320px] flex flex-col border-3 border-[#1a1a1a] shadow-neo-lg bg-white overflow-hidden">
+          <div className="text-xs font-extrabold uppercase text-[#1a1a1a] mb-2 self-start flex items-center gap-2">
+            <span>Live Interactive Preview</span>
+            <span className="bg-[#BFF000] border border-[#1a1a1a] px-2 py-0.2 text-[10px] font-mono">
+              {activeConfig.name}
+            </span>
+          </div>
+
+          <div
+            className="w-full max-w-[340px] flex flex-col transition-all duration-200 overflow-hidden"
+            style={{
+              backgroundColor: activeConfig.containerBg,
+              border: activeConfig.wrapperBorder || "1px solid #e5e7eb",
+              borderRadius: activeConfig.wrapperRadius || "0px",
+              boxShadow: activeConfig.wrapperShadow || "0 10px 25px rgba(0,0,0,0.1)",
+              fontFamily: activeConfig.fontFamily,
+            }}
+          >
             {/* Header */}
             <div
-              className="p-3 text-white flex items-center justify-between border-b-2 border-[#1a1a1a]"
-              style={{ backgroundColor: primaryColor }}
+              className="p-3.5 flex items-center justify-between"
+              style={{
+                backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.headerBg,
+                color: activeConfig.headerColor,
+                borderBottom: activeConfig.headerBorderBottom || "none",
+              }}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-white text-[#1a1a1a] font-black text-xs flex items-center justify-center border border-[#1a1a1a]">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs"
+                  style={{
+                    backgroundColor: activeConfig.containerBg,
+                    color: activeConfig.botBubbleColor || "#1a1a1a",
+                  }}
+                >
                   🤖
                 </div>
                 <div>
-                  <h4 className="font-syne font-black text-xs uppercase leading-tight">{botName}</h4>
-                  <span className="text-[9px] font-bold opacity-90">● Online</span>
+                  <h4 className="font-extrabold text-xs uppercase leading-tight tracking-wide">
+                    {botName}
+                  </h4>
+                  <span className="text-[10px] font-medium opacity-85">● Online</span>
                 </div>
               </div>
-              <span className="text-[9px] uppercase font-mono px-1 py-0.5 bg-black/40 rounded text-white">
+              <span
+                className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded opacity-90"
+                style={{
+                  backgroundColor: "rgba(0,0,0,0.25)",
+                  color: activeConfig.headerColor,
+                }}
+              >
                 {theme}
               </span>
             </div>
 
             {/* Chat Body */}
-            <div className="p-3.5 bg-[#FDF9F0] min-h-[200px] flex flex-col gap-2.5 justify-end text-xs">
-              <div className="self-start max-w-[85%] p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-medium text-gray-800 text-[11px]">
+            <div
+              className="p-4 min-h-[220px] flex flex-col gap-3 justify-end text-xs transition-colors"
+              style={{ backgroundColor: activeConfig.messagesBg }}
+            >
+              {/* Bot Greeting Bubble */}
+              <div
+                className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
+                style={{
+                  backgroundColor: activeConfig.botBubbleBg,
+                  color: activeConfig.botBubbleColor,
+                  border: activeConfig.botBubbleBorder || "none",
+                  borderRadius: activeConfig.bubbleRadius || "8px",
+                }}
+              >
                 {welcomeMessage}
               </div>
 
+              {/* User Bubble */}
               <div
-                className="self-end max-w-[85%] p-2 text-white font-bold border-2 border-[#1a1a1a] shadow-neo-sm text-[11px]"
-                style={{ backgroundColor: primaryColor }}
+                className="self-end max-w-[85%] p-2.5 text-[11px] font-semibold leading-relaxed"
+                style={{
+                  backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.userBubbleBg,
+                  color: activeConfig.userBubbleColor,
+                  border: activeConfig.userBubbleBorder || "none",
+                  borderRadius: activeConfig.bubbleRadius || "8px",
+                }}
               >
-                How do I configure this on my site?
+                How do I integrate this on my website?
               </div>
 
-              <div className="self-start max-w-[85%] p-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-medium text-gray-800 text-[11px]">
-                Install `aptus-ai-chatbot-widget` and pass your token!
+              {/* Bot Answer Bubble */}
+              <div
+                className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
+                style={{
+                  backgroundColor: activeConfig.botBubbleBg,
+                  color: activeConfig.botBubbleColor,
+                  border: activeConfig.botBubbleBorder || "none",
+                  borderRadius: activeConfig.bubbleRadius || "8px",
+                }}
+              >
+                Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
               </div>
             </div>
 
             {/* Input Bar */}
-            <div className="p-2 bg-white border-t-2 border-[#1a1a1a] flex items-center gap-2">
+            <div
+              className="p-2.5 flex items-center gap-2"
+              style={{
+                backgroundColor: activeConfig.containerBg,
+                borderTop: activeConfig.headerBorderBottom || "1px solid rgba(0,0,0,0.1)",
+              }}
+            >
               <input
                 type="text"
                 disabled
-                placeholder="Type a message..."
-                className="flex-1 text-xs p-1.5 bg-gray-100 border border-gray-300 font-medium outline-none"
+                placeholder="Type a message or use voice..."
+                className="flex-1 text-xs p-2 outline-none"
+                style={{
+                  backgroundColor: activeConfig.inputBg,
+                  color: activeConfig.inputColor,
+                  border: activeConfig.inputBorder || "1px solid #ccc",
+                  borderRadius: activeConfig.inputRadius || "4px",
+                }}
               />
               <button
                 type="button"
-                style={{ backgroundColor: primaryColor }}
-                className="px-2.5 py-1 text-white border border-[#1a1a1a] font-bold text-xs"
+                className="p-2 text-xs font-bold flex items-center justify-center transition-opacity"
+                style={{
+                  backgroundColor: hasCustomAccent ? effectiveAccent : activeConfig.buttonBg,
+                  color: activeConfig.buttonColor,
+                  border: activeConfig.buttonBorder || "none",
+                  borderRadius: activeConfig.buttonRadius || "4px",
+                }}
               >
-                Send
+                <Send className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-gray-500 uppercase mt-2">
-            Live Preview ({theme})
-          </span>
         </div>
       </div>
     </div>

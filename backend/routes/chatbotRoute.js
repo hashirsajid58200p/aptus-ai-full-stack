@@ -14,7 +14,15 @@ const { widgetCors, dashboardCors } = require("../config/cors");
 
 router.route("/getResponse").options(widgetCors).post(widgetCors, validateWidget, getResponse);
 
-router.route("/generate").options(widgetCors).post(widgetCors, validateWidget, generateTextGeneral);
+router.route("/generate").options(widgetCors, dashboardCors).post(
+  (req, res, next) => {
+    if (req.body.token || req.headers["x-chatbot-token"] || req.query.token) {
+      return validateWidget(req, res, next);
+    }
+    return isAuthenticatedUser(req, res, next);
+  },
+  generateTextGeneral
+);
 
 router.route("/test/owner").options(dashboardCors).post(dashboardCors, isAuthenticatedUser, testByOwner);
 

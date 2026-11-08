@@ -25,15 +25,25 @@ class LLMService {
   /**
    * Transcribe audio buffer using Groq Whisper (whisper-large-v3)
    */
-  async transcribeAudio(buffer, filename = 'recording.webm', mimeType = 'audio/webm') {
+  async transcribeAudio(buffer, filename = 'recording.webm', mimeType = 'audio/webm', options = {}) {
     if (!this.groqClient) {
       throw new Error('Groq API key is missing for audio transcription.');
     }
     const file = await Groq.toFile(buffer, filename, { type: mimeType });
-    const transcription = await this.groqClient.audio.transcriptions.create({
+    const payload = {
       file,
       model: 'whisper-large-v3',
-    });
+      temperature: 0.0,
+      response_format: 'json',
+    };
+    if (options.prompt) {
+      payload.prompt = options.prompt;
+    }
+    if (options.language) {
+      payload.language = options.language;
+    }
+
+    const transcription = await this.groqClient.audio.transcriptions.create(payload);
     return transcription.text;
   }
 

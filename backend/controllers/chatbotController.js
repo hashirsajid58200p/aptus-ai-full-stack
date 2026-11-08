@@ -217,7 +217,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 
 // POST /api/v1/chatbot/transcribe — Groq Whisper STT
 exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
-  const { audio, mimeType } = req.body;
+  const { audio, mimeType, language, prompt } = req.body;
 
   if (!audio) {
     return res.status(400).json({
@@ -227,11 +227,15 @@ exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
   }
 
   try {
-    const base64Data = audio.replace(/^data:audio\/\w+;base64,/, "");
+    // Robustly strip any data URL prefix (including audio/webm;codecs=opus;base64,)
+    const base64Data = audio.includes("base64,") ? audio.split("base64,")[1] : audio;
     const buffer = Buffer.from(base64Data, "base64");
 
     const llm = new LLMService();
-    const transcriptText = await llm.transcribeAudio(buffer, "audio.webm", mimeType || "audio/webm");
+    const transcriptText = await llm.transcribeAudio(buffer, "audio.webm", mimeType || "audio/webm", {
+      language,
+      prompt: prompt || "Customer query for business assistant in English, Urdu, or Roman Urdu.",
+    });
 
     res.status(200).json({
       success: true,
@@ -359,6 +363,7 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
 
 exports.generateTextGeneral = catchAsyncError(async (req, res, next) => {
   const { prompt, provider, model, apiKey } = req.body;
+  const owner = req.user || req.owner;
 
   if (!prompt) {
     return res.status(400).json({
@@ -367,10 +372,24 @@ exports.generateTextGeneral = catchAsyncError(async (req, res, next) => {
     });
   }
 
+  const effectiveProvider = provider || owner?.provider || 'groq';
+  const effectiveModel = model || owner?.modelName || 'openai/gpt-oss-120b';
+
+  let activeApiKey = apiKey || null;
+  if (!activeApiKey && owner) {
+    if (effectiveProvider === 'openai') activeApiKey = owner.openaiApiKey;
+    else if (effectiveProvider === 'groq') activeApiKey = owner.groqApiKey;
+    else if (effectiveProvider === 'anthropic') activeApiKey = owner.anthropicApiKey;
+    else if (effectiveProvider === 'xai') activeApiKey = owner.xaiApiKey;
+    else if (effectiveProvider === 'openrouter') activeApiKey = owner.openrouterApiKey;
+    else if (effectiveProvider === 'custom') activeApiKey = owner.customApiKey;
+  }
+
   const llm = new LLMService({
-    provider: provider || 'groq',
-    model: model || 'llama-3.3-70b-versatile',
-    apiKey: apiKey || null,
+    provider: effectiveProvider,
+    model: effectiveModel,
+    apiKey: activeApiKey,
+    customBaseUrl: owner?.customBaseUrl,
   });
 
   const result = await llm.generateText(prompt);

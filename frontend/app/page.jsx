@@ -45,11 +45,10 @@ export default function Home() {
         <Faq />
       </section>
 
-      {/* Live npm package ChatBot widget integration */}
+      {/* Live npm package ChatBot widget integration (dynamically powered by user dashboard settings) */}
       <ChatBotWidget
         token="A1ED-AC9D6DEE-46A3DFD8"
         apiUrl={baseurl}
-        theme="aptus"
         wantToShowSuggestions={true}
       />
 
