@@ -2,14 +2,19 @@
 import React, { useState, useEffect } from "react";
 import {
   Palette,
+  Bot,
+  Sparkles,
   MessageSquare,
+  Headphones,
+  Brain,
+  Cpu,
+  Zap,
+  Wand2,
   Check,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   Send,
   Shapes,
-  Smile,
   Type,
 } from "lucide-react";
 import baseurl from "@/store/baseurl";
@@ -425,18 +430,20 @@ export const THEME_CONFIGS = {
 };
 
 const PREMADE_AVATARS = [
-  { id: "bot", label: "Robot", icon: "🤖" },
-  { id: "sparkles", label: "AI Spark", icon: "✨" },
-  { id: "chat", label: "Chat", icon: "💬" },
-  { id: "agent", label: "Support", icon: "🎧" },
-  { id: "zap", label: "Lightning", icon: "⚡" },
-  { id: "brain", label: "Brain", icon: "🧠" },
+  { id: "bot", label: "AI Robot", Icon: Bot },
+  { id: "sparkles", label: "AI Spark", Icon: Sparkles },
+  { id: "chat", label: "Chatbot", Icon: MessageSquare },
+  { id: "agent", label: "Live Agent", Icon: Headphones },
+  { id: "brain", label: "Neural Brain", Icon: Brain },
+  { id: "cpu", label: "AI Core", Icon: Cpu },
+  { id: "zap", label: "Turbo Speed", Icon: Zap },
+  { id: "wand", label: "Magic AI", Icon: Wand2 },
 ];
 
 const SHAPE_PRESETS = [
-  { id: "0px", label: "Sharp Edges", desc: "0px - Neo-Brutalist & Cyberpunk", badge: "0px" },
-  { id: "12px", label: "Mid-Rounded", desc: "12px - Modern Balanced Curves", badge: "12px" },
-  { id: "24px", label: "Full Pill", desc: "24px - Soft Organic Pill Curves", badge: "24px" },
+  { id: "0px", label: "Sharp Box", desc: "0px - Neo-Brutalist Sharp Edge", badge: "0px", radiusPreview: "0px" },
+  { id: "12px", label: "Mid-Rounded", desc: "12px - Modern Balanced Curves", badge: "12px", radiusPreview: "8px" },
+  { id: "24px", label: "Full Pill", desc: "24px - Soft Pill Curves", badge: "24px", radiusPreview: "9999px" },
 ];
 
 const PRESET_COLORS = [
@@ -559,9 +566,14 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const effectiveHeaderColor = textColor || getContrastColor(effectiveAccent);
   const effectiveRadius = borderRadius || activeConfig.wrapperRadius;
 
-  const renderAvatarPreview = (size = 18) => {
+  const renderAvatarPreview = (size = 18, customColor = null) => {
     const found = PREMADE_AVATARS.find((a) => a.id === chatbotAvatar);
-    if (found) return <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>{found.icon}</span>;
+    const colorStyle = customColor ? { color: customColor } : {};
+
+    if (found) {
+      const IconComp = found.Icon;
+      return <IconComp style={{ width: `${size}px`, height: `${size}px`, ...colorStyle }} />;
+    }
     if (chatbotAvatar && (chatbotAvatar.startsWith("http") || chatbotAvatar.startsWith("data:"))) {
       return (
         <img
@@ -571,7 +583,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
         />
       );
     }
-    return <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>🤖</span>;
+    return <Bot style={{ width: `${size}px`, height: `${size}px`, ...colorStyle }} />;
   };
 
   return (
@@ -629,26 +641,33 @@ export default function AppearanceTab({ user, onUserUpdate }) {
           {/* Premade Chatbot Icons Selector */}
           <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
             <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-              <Smile className="w-4 h-4 text-[#FF4D00]" />
-              Select Chatbot Avatar Icon
+              <Bot className="w-4 h-4 text-[#FF4D00]" />
+              Select AI Chatbot Avatar Icon
             </h3>
 
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {PREMADE_AVATARS.map((av) => {
                 const isSelected = chatbotAvatar === av.id;
+                const IconComponent = av.Icon;
                 return (
                   <button
                     type="button"
                     key={av.id}
                     onClick={() => setChatbotAvatar(av.id)}
-                    className={`p-2.5 border-2 border-[#1a1a1a] flex flex-col items-center gap-1 transition-all ${
+                    className={`p-2.5 border-2 border-[#1a1a1a] flex flex-col items-center justify-center gap-1.5 transition-all ${
                       isSelected
                         ? "bg-[#BFF000] shadow-neo-sm translate-x-0.5 font-black"
                         : "bg-[#FDF9F0] hover:bg-white font-bold"
                     }`}
                   >
-                    <span className="text-xl">{av.icon}</span>
-                    <span className="text-[10px] uppercase truncate">{av.label}</span>
+                    <div
+                      className={`w-8 h-8 rounded-md flex items-center justify-center border-2 border-[#1a1a1a] ${
+                        isSelected ? "bg-white text-[#1a1a1a]" : "bg-white/80 text-[#1a1a1a]"
+                      }`}
+                    >
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <span className="text-[10px] uppercase font-extrabold truncate">{av.label}</span>
                   </button>
                 );
               })}
@@ -730,7 +749,12 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         : "bg-[#FDF9F0] hover:bg-white font-bold"
                     }`}
                   >
-                    <div className="text-sm mb-1">{shape.icon}</div>
+                    <div
+                      className="w-7 h-7 mx-auto mb-1.5 border-2 border-[#1a1a1a] bg-white transition-all shadow-sm"
+                      style={{
+                        borderRadius: shape.radiusPreview,
+                      }}
+                    />
                     <div className="text-xs uppercase font-extrabold">{shape.label}</div>
                     <div className="text-[10px] text-gray-500 font-normal mt-0.5">{shape.badge}</div>
                   </button>
@@ -905,7 +929,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         color: effectiveHeaderColor,
                       }}
                     >
-                      {renderAvatarPreview(16)}
+                      {renderAvatarPreview(16, effectiveHeaderColor)}
                     </div>
                     <div>
                       <h4
@@ -1026,7 +1050,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     borderRadius: effectiveRadius || "50%",
                   }}
                 >
-                  {renderAvatarPreview(20)}
+                  {renderAvatarPreview(22, effectiveHeaderColor)}
                 </div>
               </div>
             </div>
