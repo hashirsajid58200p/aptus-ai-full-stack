@@ -216,8 +216,7 @@ exports.deleteBussinessDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Return the users details  by finding through the chatbot_token
-
+// Return the users details by finding through the chatbot_token
 exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
   const { token } = req.query;
 
@@ -227,12 +226,34 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
     throw new CustomError("Invalid Token", 400);
   }
 
+  // Domain Verification (Allow localhost in dev, or check whitelist)
+  const origin = req.headers.origin || req.headers.referer || "";
+  if (user.allowedDomains && user.allowedDomains.length > 0) {
+    const isAllowed = user.allowedDomains.some(domain => {
+      const cleanDomain = domain.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+      const cleanOrigin = origin.toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+      return cleanOrigin.includes(cleanDomain) || cleanOrigin.includes("localhost") || cleanOrigin.includes("127.0.0.1");
+    });
+    if (!isAllowed) {
+      return res.status(403).json({
+        success: false,
+        message: "Domain verification failed: Origin not authorized for this chatbot token."
+      });
+    }
+  }
+
   const {
     bussinessName,
     bussinessCategory,
     bussinessDescription,
     bussinessDetails,
-    _id
+    _id,
+    theme,
+    primaryColor,
+    botName,
+    welcomeMessage,
+    chatbotAvatar,
+    allowedDomains,
   } = user;
 
   res.status(200).json({
@@ -241,14 +262,77 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
       bussinessCategory,
       bussinessDescription,
       bussinessDetails,
-      id: _id
+      id: _id,
+      theme: theme || 'aptus',
+      primaryColor: primaryColor || '#f97316',
+      botName: botName || 'Aptus AI',
+      welcomeMessage: welcomeMessage || 'Hello! How can I assist you today?',
+      chatbotAvatar: chatbotAvatar || '',
+      allowedDomains: allowedDomains || [],
     },
     message: "Chatbot Details"
-  })
+  });
 });
 
-// Generate  new token for chatbot and replace the old token
+// Update Appearance & Domain settings
+exports.updateAppearance = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
+  const { theme, primaryColor, botName, welcomeMessage, chatbotAvatar, allowedDomains } = req.body;
 
+  if (theme) user.theme = theme;
+  if (primaryColor) user.primaryColor = primaryColor;
+  if (botName) user.botName = botName;
+  if (welcomeMessage !== undefined) user.welcomeMessage = welcomeMessage;
+  if (chatbotAvatar !== undefined) user.chatbotAvatar = chatbotAvatar;
+  if (allowedDomains !== undefined) {
+    user.allowedDomains = Array.isArray(allowedDomains)
+      ? allowedDomains.map(d => d.trim()).filter(Boolean)
+      : String(allowedDomains).split(',').map(d => d.trim()).filter(Boolean);
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Appearance & Domain settings updated successfully",
+    data: {
+      theme: user.theme,
+      primaryColor: user.primaryColor,
+      botName: user.botName,
+      welcomeMessage: user.welcomeMessage,
+      chatbotAvatar: user.chatbotAvatar,
+      allowedDomains: user.allowedDomains,
+    }
+  });
+});
+
+// List models dynamically for provider and API key
+exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
+  const provider = req.query.provider || req.body.provider || user.provider || 'groq';
+  
+  let apiKey = req.query.apiKey || req.body.apiKey;
+  if (!apiKey) {
+    apiKey = provider === 'openai' ? user.openaiApiKey : user.groqApiKey;
+  }
+
+  const LLMService = require("../utils/llmService");
+  try {
+    const models = await LLMService.listModels(provider, apiKey);
+    res.status(200).json({
+      success: true,
+      provider,
+      models,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+// Generate new token for chatbot and replace the old token
 exports.generateNewToken = catchAsyncError(async (req, res, next) => {
   const user = req.user;
 

@@ -55,16 +55,12 @@ const userRoutes = require("./routes/userRoutes");
 const chatbotRoutes = require("./routes/chatbotRoute");
 const sessionRoutes = require("./routes/sessionRoute");
 const adminRoutes = require("./routes/adminRoutes");
-const knowledgeRoutes = require("./routes/knowledgeRoutes");
-const leadRoutes = require("./routes/leadRoute");
 const discordRoutes = require("./routes/discordRoutes");
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
-app.use("/api/v1/chatbot/knowledge", knowledgeRoutes);
 app.use("/api/v1/session", sessionRoutes);
 app.use("/api/v1/admin", dashboardCors, adminRoutes);
-app.use("/api/v1/lead", leadRoutes);
 app.use("/api/v1/integrations/discord", discordRoutes);
 
 app.get("/health", (req, res) => {

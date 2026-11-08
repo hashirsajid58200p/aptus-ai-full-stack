@@ -9,7 +9,9 @@ const {
   updateBussinessDetails,
   deleteBussinessDetails,
   generateNewToken,
-  findChatbotUsingToken
+  findChatbotUsingToken,
+  updateAppearance,
+  getAvailableModels
 } = require("../controllers/userController");
 
 const { isAuthenticatedUser } = require("../middleware/Auth");
@@ -27,6 +29,9 @@ router.route("/businessDetails/:id")
 
 router.route("/token").options(dashboardCors).post(dashboardCors, isAuthenticatedUser, generateNewToken);
 router.route("/token/verify").options(widgetCors).get(widgetCors, findChatbotUsingToken);
+
+router.route("/appearance").options(dashboardCors).put(dashboardCors, isAuthenticatedUser, updateAppearance);
+router.route("/models").options(dashboardCors).get(dashboardCors, isAuthenticatedUser, getAvailableModels);
 
 router
   .route("/me")

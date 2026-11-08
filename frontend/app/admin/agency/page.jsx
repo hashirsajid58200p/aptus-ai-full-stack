@@ -196,13 +196,13 @@ export default function AgencyMasterDashboard() {
 
           <div className="bg-white border-3 border-[#1a1a1a] p-5 shadow-neo">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black uppercase text-gray-500">Captured Leads</span>
+              <span className="text-xs font-black uppercase text-gray-500">Connected Chatbots</span>
               <Users className="w-5 h-5 text-green-600" />
             </div>
             <div className="font-syne text-3xl font-black text-[#1a1a1a]">
-              {(analytics?.totalLeads || 0).toLocaleString()}
+              {(analytics?.totalBusinesses || 0).toLocaleString()}
             </div>
-            <span className="text-[11px] text-gray-500 font-bold">All-time Visitor Leads</span>
+            <span className="text-[11px] text-gray-500 font-bold">Active Tenant Deployments</span>
           </div>
         </div>
 

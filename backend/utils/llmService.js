@@ -9,7 +9,7 @@ const OpenAI = require('openai');
 class LLMService {
   constructor(options = {}) {
     this.provider = options.provider || 'groq';
-    this.defaultGroqModel = process.env.GROQ_MODEL || 'groq/compound-mini';
+    this.defaultGroqModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
     this.model = options.model || (this.provider === 'openai' ? 'gpt-4o' : this.defaultGroqModel);
     this.customApiKey = options.apiKey || null;
 
@@ -20,6 +20,75 @@ class LLMService {
     // OpenAI client
     const openaiKey = this.provider === 'openai' && this.customApiKey ? this.customApiKey : process.env.OPENAI_API_KEY;
     this.openaiClient = openaiKey ? new OpenAI({ apiKey: openaiKey }) : null;
+  }
+
+  /**
+   * Transcribe audio buffer using Groq Whisper (whisper-large-v3)
+   */
+  async transcribeAudio(buffer, filename = 'recording.webm', mimeType = 'audio/webm') {
+    if (!this.groqClient) {
+      throw new Error('Groq API key is missing for audio transcription.');
+    }
+    const file = await Groq.toFile(buffer, filename, { type: mimeType });
+    const transcription = await this.groqClient.audio.transcriptions.create({
+      file,
+      model: 'whisper-large-v3',
+    });
+    return transcription.text;
+  }
+
+  /**
+   * List available chat models dynamically for a provider and API key
+   */
+  static async listModels(provider = 'groq', apiKey = null) {
+    if (provider === 'openai') {
+      const key = apiKey || process.env.OPENAI_API_KEY;
+      if (!key) {
+        return [
+          { id: 'gpt-4o', name: 'GPT-4o (Omni Flagship)' },
+          { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast & Cheap)' },
+          { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' },
+          { id: 'o1-mini', name: 'o1-mini (Reasoning)' },
+        ];
+      }
+      try {
+        const client = new OpenAI({ apiKey: key });
+        const res = await client.models.list();
+        const models = res.data
+          .filter(m => m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3'))
+          .map(m => ({ id: m.id, name: m.id }))
+          .sort((a, b) => a.id.localeCompare(b.id));
+        return models.length > 0 ? models : [
+          { id: 'gpt-4o', name: 'GPT-4o' },
+          { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
+        ];
+      } catch (err) {
+        throw new Error(`OpenAI API Key verification failed: ${err.message}`);
+      }
+    } else {
+      const key = apiKey || process.env.GROQ_API_KEY;
+      if (!key) {
+        return [
+          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
+          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
+          { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
+          { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B' },
+        ];
+      }
+      try {
+        const client = new Groq({ apiKey: key });
+        const res = await client.models.list();
+        const filtered = res.data
+          .filter(m => m.active && !m.id.includes('whisper') && !m.id.includes('guard') && !m.id.includes('safeguard'))
+          .map(m => ({ id: m.id, name: m.id }));
+        return filtered.length > 0 ? filtered : [
+          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
+          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
+        ];
+      } catch (err) {
+        throw new Error(`Groq API Key verification failed: ${err.message}`);
+      }
+    }
   }
 
   /**
@@ -91,10 +160,10 @@ class LLMService {
           max_tokens: maxTokens,
         });
       } catch (err) {
-        if (err.status === 404 && groqModel !== 'groq/compound-mini') {
-          console.warn(`⚠️ Model "${groqModel}" not found on Groq. Automatically falling back to "groq/compound-mini"...`);
+        if (err.status === 404 && groqModel !== 'openai/gpt-oss-120b') {
+          console.warn(`⚠️ Model "${groqModel}" not found on Groq. Automatically falling back to "openai/gpt-oss-120b"...`);
           response = await client.chat.completions.create({
-            model: 'groq/compound-mini',
+            model: 'openai/gpt-oss-120b',
             messages,
             temperature,
             max_tokens: maxTokens,

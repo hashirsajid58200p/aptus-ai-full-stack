@@ -34,7 +34,7 @@ const seedAccounts = async () => {
         chatbot_token: landingToken,
         tokenLimit: 1000000,
         provider: "groq",
-        modelName: "groq/compound-mini",
+        modelName: "openai/gpt-oss-120b",
         bussinessDetails: [
           {
             question: "What is Aptus AI?",
@@ -110,7 +110,7 @@ const seedAccounts = async () => {
           chatbot_token: biz.chatbot_token,
           tokenLimit: 500000,
           provider: "groq",
-          modelName: "groq/compound-mini",
+          modelName: "openai/gpt-oss-120b",
           bussinessDetails: [
             { question: "What services do you provide?", answer: biz.bussinessDescription },
             { question: "How can I contact support?", answer: `Reach out directly via ${biz.email}.` },

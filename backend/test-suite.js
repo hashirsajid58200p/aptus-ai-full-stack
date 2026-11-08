@@ -4,12 +4,9 @@ const http = require("http");
 const app = require("./index");
 const { initSocket } = require("./sockets/socketHandler");
 const LLMService = require("./utils/llmService");
-const RAGService = require("./utils/ragService");
 const FunctionCallingEngine = require("./utils/functionCalling");
 const User = require("./models/userModel");
 const Session = require("./models/sessionModel");
-const Lead = require("./models/leadModel");
-const KnowledgeBase = require("./models/knowledgeBaseModel");
 const Message = require("./models/messageModel");
 const { io: Client } = require("../frontend/node_modules/socket.io-client");
 
@@ -76,26 +73,13 @@ async function runTestSuite() {
       });
     }
 
-    const testDocTitle = `Refund Policy Test Doc ${Date.now()}`;
-    const testDocText = "Aptus AI guarantees full refunds within 30 days of purchase for all enterprise and starter subscriptions without questions asked. Contact billing@aptus.ai to initiate a refund.";
-    
-    const ingestResult = await RAGService.ingestDocument({
-      chatbotId: testUser._id,
-      sourceType: "text",
-      title: testDocTitle,
-      text: testDocText,
-    });
-    assert(ingestResult.chunksCount > 0, `RAG ingested document into ${ingestResult.chunksCount} chunks`);
-
-    const ragContext = await RAGService.searchRelevantContext(testUser._id, "How do I get a refund?", 2);
-    console.log(`   RAG Retrieved Context snippet: "${ragContext.substring(0, 100)}..."`);
+    // 3. Dynamic Model Listing
+    console.log("\n🔹 Step 3: Testing Dynamic Model Listing for Provider...");
+    const dynamicModels = await LLMService.listModels("groq");
     assert(
-      ragContext.includes("refunds within 30 days"),
-      "RAG vector semantic search successfully retrieved relevant policy chunk"
+      Array.isArray(dynamicModels) && dynamicModels.length > 0,
+      `Dynamic model listing returned ${dynamicModels.length} active models`
     );
-
-    // Clean up test RAG chunk
-    await KnowledgeBase.deleteMany({ chatbotId: testUser._id, title: testDocTitle });
 
     // 4. Function Calling Engine
     console.log("\n🔹 Step 4: Testing Generic Function Calling & Action Execution...");
@@ -111,18 +95,17 @@ async function runTestSuite() {
       "FunctionCallingEngine executed tool and created client action payload"
     );
 
-    // 5. Lead Generation & Pre-Chat Form
-    console.log("\n🔹 Step 5: Testing Pre-Chat and Offline Lead Capture...");
-    const testLead = await Lead.create({
-      name: "Alex Smith",
-      email: "alex.smith@test.com",
-      phone: "+1-555-0199",
-      chatbotId: testUser._id,
-      source: "pre_chat",
-      message: "Looking for pricing details",
-    });
-    assert(testLead && testLead._id, "Lead successfully captured with Name, Email, and Phone");
-    await Lead.findByIdAndDelete(testLead._id);
+    // 5. Appearance & Domain Whitelist Configuration
+    console.log("\n🔹 Step 5: Testing Chatbot Appearance & Domain Whitelist...");
+    testUser.theme = "dracula";
+    testUser.primaryColor = "#2563eb";
+    testUser.allowedDomains = ["localhost:3000", "mytestsite.com"];
+    await testUser.save();
+    const verifiedUser = await User.findById(testUser._id);
+    assert(
+      verifiedUser.theme === "dracula" && verifiedUser.allowedDomains.includes("mytestsite.com"),
+      "Chatbot theme and domain whitelist successfully saved"
+    );
 
     // 6. Token Tracking & Quota Enforcement
     console.log("\n🔹 Step 6: Testing Token Tracking & Daily Usage Recording...");

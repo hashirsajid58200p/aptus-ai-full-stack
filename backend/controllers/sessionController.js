@@ -2,42 +2,22 @@ const mongoose = require("mongoose");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const Message = require("../models/messageModel");
 const Session = require("../models/sessionModel");
-const Lead = require("../models/leadModel");
 const User = require("../models/userModel");
 
 exports.createSession = catchAsyncError(async (req, res, next) => {
-    const { username, email, phone } = req.body;
-
-    if (!username || !email) {
-        return res.status(400).json({
-            success: false,
-            message: "Please enter username and email"
-        });
-    }
+    const username = req.body.username || "Website Visitor";
+    const email = req.body.email || "visitor@web.local";
+    const phone = req.body.phone || "";
 
     const chatbotId = req.chatbot_id;
 
     const session = await Session.create({
         username,
         email,
-        phone: phone || "",
+        phone,
         chatbotId,
         status: "active"
     });
-
-    // Automatically capture pre-chat lead
-    try {
-        await Lead.create({
-            name: username,
-            email,
-            phone: phone || "",
-            chatbotId,
-            source: "pre_chat",
-            message: "Initiated pre-chat session"
-        });
-    } catch (leadErr) {
-        console.warn("Could not save lead:", leadErr.message);
-    }
 
     res.status(200).json({
         success: true,

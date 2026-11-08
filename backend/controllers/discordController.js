@@ -1,7 +1,6 @@
 const catchAsyncError = require('../middleware/catchAsyncError');
 const User = require('../models/userModel');
 const LLMService = require('../utils/llmService');
-const RAGService = require('../utils/ragService');
 const { recordTokenUsage } = require('../middleware/tokenTracker');
 
 // Discord Bot Interaction & Webhook Endpoint
@@ -52,19 +51,10 @@ exports.handleDiscordWebhook = catchAsyncError(async (req, res, next) => {
     .map((d) => `Q: ${d.question}\nA: ${d.answer}`)
     .join('\n');
 
-  // Search RAG context
-  let ragContext = '';
-  try {
-    ragContext = await RAGService.searchRelevantContext(owner._id, userMessage, 2, owner.openaiApiKey);
-  } catch (err) {
-    console.warn('RAG search skipped for Discord message:', err.message);
-  }
-
   const systemPrompt = `You are an AI support assistant for "${owner.bussinessName}", responding inside a Discord channel.
 Keep your response concise, polite, helpful, and formatted cleanly for Discord (using markdown like bold, bullet points).
 ${owner.bussinessDescription ? `About ${owner.bussinessName}: ${owner.bussinessDescription}` : ''}
-${businessDetailsText ? `\nBusiness FAQ:\n${businessDetailsText}` : ''}
-${ragContext ? `\n\nVerified Knowledge Base Documents:\n${ragContext}` : ''}`;
+${businessDetailsText ? `\nBusiness FAQ:\n${businessDetailsText}` : ''}`;
 
   const llm = new LLMService({
     provider: owner.provider || 'groq',

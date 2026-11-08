@@ -94,8 +94,7 @@ const getAnalytics = async (req, res, next) => {
     const totalBusinesses = await User.countDocuments().catch(() => 0);
     const totalSessions = await Session.countDocuments().catch(() => 0);
     const totalMessages = await Message.countDocuments().catch(() => 0);
-    const Lead = require("../models/leadModel");
-    const totalLeads = await Lead.countDocuments().catch(() => 0);
+    const totalLeads = 0;
     const recentBusinesses7d = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
     const recentSessions7d = await Session.countDocuments({ createdAt: { $gte: sevenDaysAgo } }).catch(() => 0);
     const userMessagesCount = await Message.countDocuments({ role: "user" }).catch(() => 0);

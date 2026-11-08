@@ -1,18 +1,57 @@
+"use client";
 import React, { useState, useEffect } from "react";
-import { Zap, Cpu, Key, CheckCircle, BarChart3, AlertCircle } from "lucide-react";
+import { Cpu, Key, CheckCircle, BarChart3, RefreshCw, AlertCircle } from "lucide-react";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
 export default function AnalyticsUsage({ user, onUserUpdate }) {
   const [provider, setProvider] = useState(user?.provider || "groq");
   const [modelName, setModelName] = useState(user?.modelName || "llama-3.3-70b-versatile");
-  const [openaiKey, setOpenaiKey] = useState("");
+  const [openaiKey, setOpenaiKey] = useState(user?.openaiApiKey || "");
+  const [groqKey, setGroqKey] = useState(user?.groqApiKey || "");
+  const [availableModels, setAvailableModels] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const totalUsed = user?.tokenUsage?.totalTokens || 0;
   const tokenLimit = user?.tokenLimit || 500000;
   const percentage = Math.min(100, Math.round((totalUsed / tokenLimit) * 100));
   const dailyStats = user?.tokenUsage?.dailyUsage || [];
+
+  // Fetch available models for provider and API key
+  const fetchModels = async (prov = provider, customKey = null) => {
+    setLoadingModels(true);
+    try {
+      const activeKey = customKey !== null ? customKey : (prov === "openai" ? openaiKey : groqKey);
+      const url = new URL(`${baseurl}/user/models`);
+      url.searchParams.set("provider", prov);
+      if (activeKey) {
+        url.searchParams.set("apiKey", activeKey);
+      }
+
+      const res = await fetch(url.toString(), {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.models)) {
+        setAvailableModels(data.models);
+        // If current modelName isn't in fetched list, set to first one
+        if (!data.models.some((m) => m.id === modelName)) {
+          if (data.models[0]) setModelName(data.models[0].id);
+        }
+      } else {
+        toast.error(data.message || "Could not fetch models for this key");
+      }
+    } catch (err) {
+      console.warn("Could not fetch models:", err.message);
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchModels(provider);
+  }, [provider]);
 
   const handleSaveModel = async (e) => {
     e.preventDefault();
@@ -26,6 +65,7 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
           provider,
           modelName,
           openaiApiKey: openaiKey || undefined,
+          groqApiKey: groqKey || undefined,
         }),
       });
       const data = await res.json();
@@ -77,9 +117,9 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
         <div className="p-4 border-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col gap-2">
           <span className="text-xs font-extrabold uppercase text-gray-600">Active AI Engine</span>
           <span className="font-syne text-xl font-black text-[#FF4D00] uppercase">
-            {provider === "openai" ? "OpenAI GPT-4o" : "Groq Llama 3"}
+            {provider === "openai" ? "OpenAI" : "Groq"}
           </span>
-          <span className="text-xs text-gray-500 font-medium">Model: {modelName}</span>
+          <span className="text-xs text-gray-700 font-bold truncate">Model: {modelName}</span>
         </div>
       </div>
 
@@ -90,10 +130,10 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
           Configure AI Intelligence Engine
         </h3>
         <p className="text-xs text-gray-600 font-medium mb-4">
-          Switch between high-speed open-source Groq inference (Llama 3) and paid OpenAI (GPT-4o) using your own API key.
+          Switch between Groq (Llama 3 / open-source models) and OpenAI (GPT-4o / GPT-4o-mini). Put your API key, and available models will list automatically below.
         </p>
 
-        <form onSubmit={handleSaveModel} className="flex flex-col gap-4 max-w-xl">
+        <form onSubmit={handleSaveModel} className="flex flex-col gap-5 max-w-xl">
           <div>
             <label className="block text-xs font-extrabold uppercase text-[#1a1a1a] mb-1">
               Select Provider
@@ -103,49 +143,119 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                 type="button"
                 onClick={() => {
                   setProvider("groq");
-                  setModelName("llama-3.3-70b-versatile");
+                  fetchModels("groq");
                 }}
                 className={`p-3 border-2 border-[#1a1a1a] text-xs font-extrabold uppercase text-left transition-all ${
                   provider === "groq" ? "bg-[#BFF000] shadow-neo-sm" : "bg-white hover:bg-gray-50"
                 }`}
               >
-                <div className="font-black text-sm">Groq (Open-Source)</div>
-                <div className="text-[10px] text-gray-600 font-normal">Llama 3.3 70B (Fast & Free)</div>
+                <div className="font-black text-sm">Groq (Ultra-Fast)</div>
+                <div className="text-[10px] text-gray-600 font-normal">Llama 3, Mixtral, Whisper STT</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => {
                   setProvider("openai");
-                  setModelName("gpt-4o");
+                  fetchModels("openai");
                 }}
                 className={`p-3 border-2 border-[#1a1a1a] text-xs font-extrabold uppercase text-left transition-all ${
                   provider === "openai" ? "bg-[#FF4D00] text-white shadow-neo-sm" : "bg-white hover:bg-gray-50"
                 }`}
               >
                 <div className="font-black text-sm">OpenAI (Paid)</div>
-                <div className="text-[10px] opacity-90 font-normal">GPT-4o (State-of-the-Art)</div>
+                <div className="text-[10px] opacity-90 font-normal">GPT-4o, GPT-4o Mini, O1</div>
               </button>
             </div>
           </div>
 
-          {provider === "openai" && (
+          {/* API Key Input */}
+          {provider === "openai" ? (
             <div>
-              <label className="block text-xs font-extrabold uppercase text-[#1a1a1a] mb-1">
-                Your OpenAI API Key
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-extrabold uppercase text-[#1a1a1a]">
+                  Your OpenAI API Key
+                </label>
+                <button
+                  type="button"
+                  onClick={() => fetchModels("openai", openaiKey)}
+                  className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                >
+                  <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                  Refresh Models
+                </button>
+              </div>
               <input
                 type="password"
                 value={openaiKey}
                 onChange={(e) => setOpenaiKey(e.target.value)}
-                placeholder="sk-..."
+                onBlur={() => fetchModels("openai", openaiKey)}
+                placeholder="sk-proj-..."
                 className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-sm font-mono outline-none"
               />
               <span className="text-[11px] text-gray-500 mt-1 block">
-                Your API key is securely encrypted and stored for your chatbot only.
+                Entering your API key dynamically fetches your accessible models below.
+              </span>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-extrabold uppercase text-[#1a1a1a]">
+                  Your Custom Groq API Key (Optional)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => fetchModels("groq", groqKey)}
+                  className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                >
+                  <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                  Refresh Models
+                </button>
+              </div>
+              <input
+                type="password"
+                value={groqKey}
+                onChange={(e) => setGroqKey(e.target.value)}
+                onBlur={() => fetchModels("groq", groqKey)}
+                placeholder="gsk_... (Leave empty to use shared system key)"
+                className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-sm font-mono outline-none"
+              />
+              <span className="text-[11px] text-gray-500 mt-1 block">
+                Leave empty to use platform default Groq key, or enter your personal Groq key.
               </span>
             </div>
           )}
+
+          {/* Dynamic Model Dropdown */}
+          <div>
+            <label className="block text-xs font-extrabold uppercase text-[#1a1a1a] mb-1">
+              Select AI Model {loadingModels && "(Fetching accessible models...)"}
+            </label>
+            {availableModels.length > 0 ? (
+              <select
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-sm font-bold outline-none cursor-pointer"
+              >
+                {availableModels.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name || m.id}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                placeholder="Enter model name (e.g. llama-3.3-70b-versatile)"
+                className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-sm font-mono font-bold outline-none"
+              />
+            )}
+            <span className="text-[11px] text-gray-500 mt-1 block">
+              The selected model will answer all conversations for your chatbot.
+            </span>
+          </div>
 
           <button
             type="submit"

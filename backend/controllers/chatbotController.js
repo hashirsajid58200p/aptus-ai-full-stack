@@ -1,12 +1,10 @@
 const catchAsyncError = require("../middleware/catchAsyncError");
 const LLMService = require("../utils/llmService");
-const RAGService = require("../utils/ragService");
 const FunctionCallingEngine = require("../utils/functionCalling");
 const { recordTokenUsage } = require("../middleware/tokenTracker");
 const User = require("../models/userModel");
 const Session = require("../models/sessionModel");
 const Message = require("../models/messageModel");
-const Lead = require("../models/leadModel");
 
 // GET /api/v1/chatbot/getDetails?token=... — validate a chatbot token and return safe business info
 exports.getDetails = catchAsyncError(async (req, res, next) => {
@@ -20,7 +18,7 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
   }
 
   const owner = await User.findOne({ chatbot_token: token }).select(
-    "bussinessName bussinessCategory email chatbot_token createdAt provider modelName isLiveAgent liveAgentAvailable"
+    "bussinessName bussinessCategory email chatbot_token createdAt provider modelName isLiveAgent liveAgentAvailable theme primaryColor botName welcomeMessage chatbotAvatar allowedDomain allowedDomains"
   );
 
   if (!owner) {
@@ -43,6 +41,12 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
       modelName: owner.modelName || 'llama-3.3-70b-versatile',
       isLiveAgent: owner.isLiveAgent || false,
       liveAgentAvailable: owner.liveAgentAvailable || false,
+      theme: owner.theme || 'aptus',
+      primaryColor: owner.primaryColor || '#f97316',
+      botName: owner.botName || 'Aptus AI',
+      welcomeMessage: owner.welcomeMessage || 'Hello! How can I assist you today?',
+      chatbotAvatar: owner.chatbotAvatar || '',
+      allowedDomains: owner.allowedDomains || [],
     },
   });
 });
@@ -143,21 +147,10 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     }
   }
 
-  // Retrieve RAG knowledge base context
-  let ragContext = "";
-  try {
-    ragContext = await RAGService.searchRelevantContext(owner._id, message, 3, owner.openaiApiKey);
-  } catch (ragErr) {
-    console.warn("RAG retrieval skipped:", ragErr.message);
-  }
-
   // Assemble full prompt
   let fullPrompt = `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\n`;
   if (businessDetailsText) {
     fullPrompt += `\nBusiness FAQ:\n${businessDetailsText}\n`;
-  }
-  if (ragContext) {
-    fullPrompt += `\n--- VERIFIED KNOWLEDGE BASE DOCUMENTS ---\n${ragContext}\n`;
   }
   if (actionResult) {
     fullPrompt += `\n--- EXECUTED ACTION RESULT ---\nTool: ${actionResult.toolName}\nOutput: ${JSON.stringify(actionResult.result)}\nIntegrate this action result naturally in your reply.\n`;
@@ -168,7 +161,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   const llm = new LLMService({
     provider: owner.provider || 'groq',
     model: owner.modelName || 'llama-3.3-70b-versatile',
-    apiKey: owner.provider === 'openai' ? owner.openaiApiKey : null,
+    apiKey: owner.provider === 'openai' ? owner.openaiApiKey : owner.groqApiKey,
   });
 
   const completion = await llm.generateText(fullPrompt, {
@@ -212,52 +205,40 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Capture Lead (Pre-chat or Offline lead capture form)
-exports.captureLead = catchAsyncError(async (req, res, next) => {
-  const { name, email, phone, message, source, token } = req.body;
+// POST /api/v1/chatbot/transcribe — Groq Whisper STT
+exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
+  const { audio, mimeType } = req.body;
 
-  if (!name || !email) {
+  if (!audio) {
     return res.status(400).json({
       success: false,
-      message: "Name and email are required to capture lead.",
+      message: "Audio data (base64) is required",
     });
   }
 
-  let chatbotId = req.chatbot_id;
-  if (!chatbotId && token) {
-    const owner = await User.findOne({ chatbot_token: token });
-    if (owner) chatbotId = owner._id;
-  }
-  if (!chatbotId && req.user) {
-    chatbotId = req.user._id;
-  }
+  try {
+    const base64Data = audio.replace(/^data:audio\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
 
-  if (!chatbotId) {
-    return res.status(400).json({
+    const llm = new LLMService();
+    const transcriptText = await llm.transcribeAudio(buffer, "audio.webm", mimeType || "audio/webm");
+
+    res.status(200).json({
+      success: true,
+      text: transcriptText,
+    });
+  } catch (err) {
+    console.error("Transcription error:", err.message);
+    res.status(500).json({
       success: false,
-      message: "Valid chatbot token or authentication required.",
+      message: err.message || "Failed to transcribe audio",
     });
   }
-
-  const lead = await Lead.create({
-    name,
-    email,
-    phone: phone || "",
-    message: message || "",
-    source: source || "pre_chat",
-    chatbotId,
-  });
-
-  res.status(201).json({
-    success: true,
-    message: "Lead recorded successfully.",
-    data: lead,
-  });
 });
 
 // Update Model Settings for Chatbot Owner
 exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
-  const { provider, modelName, openaiApiKey } = req.body;
+  const { provider, modelName, openaiApiKey, groqApiKey } = req.body;
   const user = await User.findById(req.user._id);
 
   if (!user) {
@@ -273,6 +254,9 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
   if (openaiApiKey !== undefined) {
     user.openaiApiKey = openaiApiKey;
   }
+  if (groqApiKey !== undefined) {
+    user.groqApiKey = groqApiKey;
+  }
 
   await user.save();
 
@@ -283,6 +267,7 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
       provider: user.provider,
       modelName: user.modelName,
       hasOpenAiKey: !!user.openaiApiKey,
+      hasGroqKey: !!user.groqApiKey,
     },
   });
 });

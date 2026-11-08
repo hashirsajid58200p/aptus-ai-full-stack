@@ -7,17 +7,17 @@ import {
   Coins,
   History,
   Menu,
-  Lock,
+  Palette,
+  Cpu,
+  BarChart3,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
 import Token from "components/userPageComponents/Token";
 import TestChatbot from "components/userPageComponents/TestChatbot";
 import Sessions from "components/userPageComponents/Sessions";
-import Leads from "components/userPageComponents/Leads";
 import AnalyticsUsage from "components/userPageComponents/AnalyticsUsage";
-import KnowledgeBaseTab from "components/userPageComponents/KnowledgeBaseTab";
-import { Users, BarChart3, Database } from "lucide-react";
+import AppearanceTab from "components/userPageComponents/Appearance";
 import { useRouter } from "next/navigation";
 import { logout, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,12 +45,11 @@ export default function UserDashboard() {
 
   const tabs = [
     { name: "business details", icon: <Briefcase /> },
+    { name: "appearance & theme", icon: <Palette /> },
+    { name: "ai model & analytics", icon: <Cpu /> },
     { name: "test chatbot", icon: <MessageSquare /> },
-    { name: "analytics & usage", icon: <BarChart3 /> },
-    { name: "leads", icon: <Users /> },
-    { name: "knowledge base", icon: <Database /> },
     { name: "sessions", icon: <History /> },
-    { name: "token", icon: <Coins /> },
+    { name: "token & security", icon: <Coins /> },
   ];
 
   const router = useRouter();
@@ -60,209 +59,152 @@ export default function UserDashboard() {
   }, []);
 
   useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isInitialized && !user) {
-      router.push("/start");
-      clearState();
+    if (isInitialized && !loading && !user) {
+      router.push("/login");
     }
-  }, [isInitialized, user, router]);
+  }, [user, loading, isInitialized, router]);
 
   useEffect(() => {
     if (isLoggedOut) {
-      toast.success("Logged out successfully");
       dispatch(clearState());
-      router.push("/start");
+      toast.success("Logged out successfully");
+      router.push("/");
     }
-  }, [isLoggedOut, loading, router]);
-
-  useEffect(() => {
-    if (user?.bussinessDetails && user.bussinessDetails.length < 5) {
-      if (activeTab !== "business details") {
-        setActiveTab("business details");
-      }
-    }
-  }, [user?.bussinessDetails?.length, activeTab]);
+  }, [isLoggedOut, dispatch, router]);
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  if (!isInitialized) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-[#FDF9F0]">
-        <Loader />
-      </div>
-    );
+  if (!isInitialized || (loading && !user)) {
+    return <Loader />;
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#FDF9F0] text-[#1a1a1a]">
-      {/* Mobile Sidebar Overlay Backdrop */}
+    <div className="flex h-screen bg-[#FDF9F0] overflow-hidden">
+      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`${
-          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 flex flex-col" : "hidden"
-        } md:flex md:flex-col w-64 bg-white p-5 h-screen sticky top-0 border-r-3 border-[#1a1a1a] shadow-neo shrink-0`}
+        className={`fixed md:static inset-y-0 left-0 z-30 w-72 bg-white border-r-3 border-[#1a1a1a] shadow-neo-lg transform transition-transform duration-200 ease-in-out md:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-0 -translate-x-full"
+        } flex flex-col justify-between`}
       >
-        <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
-          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
-            BUSINESS
-          </span>
-          <Link href={"/"} className="flex items-center">
-            <img
-              src="/aptus-logo.png"
-              alt="Aptus"
-              className="h-10 w-auto object-contain"
-            />
-          </Link>
+        <div>
+          {/* Logo & Category */}
+          <div className="p-6 border-b-3 border-[#1a1a1a]">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2 py-0.5 font-black text-[10px] uppercase tracking-wider">
+                BUSINESS
+              </span>
+            </div>
+            <Link href="/" className="font-syne text-2xl font-black text-[#1a1a1a] uppercase tracking-tight hover:text-[#FF4D00] transition-colors">
+              APTUS<span className="text-[#FF4D00]">AI</span>
+            </Link>
+            <p className="text-xs font-bold text-gray-500 uppercase mt-1 truncate">
+              {user?.bussinessName || "My Business"}
+            </p>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="p-4 flex flex-col gap-2">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.name;
+              return (
+                <button
+                  key={tab.name}
+                  onClick={() => {
+                    setActiveTab(tab.name);
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
+                    isActive
+                      ? "bg-[#FF4D00] text-white shadow-neo-sm translate-x-1"
+                      : "bg-white text-[#1a1a1a] hover:bg-[#FDF9F0]"
+                  }`}
+                >
+                  {React.cloneElement(tab.icon, { className: "w-4 h-4 shrink-0" })}
+                  <span className="truncate">{tab.name}</span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="space-y-3">
-          {tabs.map((tab) => {
-            const isLocked =
-              tab.name !== "business details" &&
-              (!user?.bussinessDetails || user.bussinessDetails.length < 5);
-            const isActive = activeTab === tab.name;
-
-            return (
-              <button
-                key={tab.name}
-                className={`flex items-center w-full text-left py-3 px-4 uppercase text-sm font-extrabold border-2 border-[#1a1a1a] transition-all duration-150 ${
-                  isActive && !isLocked
-                    ? "bg-[#FF4D00] text-white shadow-neo-sm"
-                    : "bg-white hover:bg-[#BFF000] text-[#1a1a1a]"
-                } ${isLocked ? "opacity-50 cursor-not-allowed bg-gray-100" : ""}`}
-                onClick={() => {
-                  if (isLocked) {
-                    toast.error(
-                      `Please add at least 5 business details to unlock this feature. Currently you have ${
-                        user?.bussinessDetails?.length || 0
-                      }/5.`
-                    );
-                    return;
-                  }
-                  setActiveTab(tab.name);
-                  setIsSidebarOpen(false);
-                }}
-              >
-                <span className={`mr-3 text-lg ${isActive && !isLocked ? "text-white" : "text-[#1a1a1a]"}`}>
-                  {tab.icon}
-                </span>
-                <span className="flex-1">
-                  {tab.name}
-                </span>
-                {isLocked && <Lock className="w-4 h-4 text-gray-500" strokeWidth={2.5} />}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Mobile Logout Button inside sidebar */}
-        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a] flex md:hidden justify-start h-full items-end">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button className="flex w-full items-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm">
-                <LogOut className="h-4 w-4" />
-                <span>LOGOUT</span>
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-[90%] mx-auto flex flex-col items-center text-center gap-0">
-              <div className="flex flex-col items-center text-center w-full mb-6">
-                <AlertDialogTitle className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
-                  CONFIRM<br />LOGOUT
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-[#1a1a1a] font-bold text-sm">
-                  Are you sure you want to log out of your account?
-                </AlertDialogDescription>
-              </div>
-              <div className="w-full flex flex-col gap-3">
-                <AlertDialogAction
-                  onClick={handleLogout}
-                  className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0"
-                >
-                  YES, LOGOUT
-                </AlertDialogAction>
-                <AlertDialogCancel className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0">
-                  CANCEL
-                </AlertDialogCancel>
-              </div>
-            </AlertDialogContent>
-          </AlertDialog>
+        {/* Footer info / Agency link */}
+        <div className="p-4 border-t-3 border-[#1a1a1a] bg-[#FDF9F0]">
+          <div className="text-[10px] font-bold text-gray-500 uppercase">Chatbot Engine Status</div>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+            <span className="text-xs font-black text-[#1a1a1a] uppercase">Active & Connected</span>
+          </div>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6 md:p-10 h-screen overflow-y-auto">
-        <header className="flex flex-row justify-between items-center gap-2 md:gap-4 border-3 border-[#1a1a1a] mb-4 md:mb-8 bg-white p-4 md:p-6 shadow-neo">
-          <h1 className="font-syne text-sm sm:text-lg md:text-3xl font-extrabold text-[#1a1a1a] uppercase flex-1">
-            {activeTab === "business details"
-              ? `WELCOME, ${user?.name || "USER"}`
-              : activeTab}
-          </h1>
-
-          <div className="flex items-center gap-2 md:space-x-4 shrink-0">
-            <div className="hidden md:block">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <button
-                    className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
-                  >
-                    <LogOut className="h-4 w-4 shrink-0" />
-                    <span>LOGOUT</span>
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-full flex flex-col items-center text-center gap-0">
-                  <div className="flex flex-col items-center text-center w-full mb-6">
-                    <AlertDialogTitle className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
-                      CONFIRM<br />LOGOUT
-                    </AlertDialogTitle>
-                    <AlertDialogDescription className="text-[#1a1a1a] font-bold text-sm">
-                      Are you sure you want to log out of your account?
-                    </AlertDialogDescription>
-                  </div>
-                  <div className="w-full flex flex-col gap-3">
-                    <AlertDialogAction
-                      onClick={handleLogout}
-                      className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0"
-                    >
-                      YES, LOGOUT
-                    </AlertDialogAction>
-                    <AlertDialogCancel className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0">
-                      CANCEL
-                    </AlertDialogCancel>
-                  </div>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-6">
+        {/* Top Header */}
+        <header className="flex items-center justify-between border-3 border-[#1a1a1a] bg-white p-4 shadow-neo-md">
+          <div className="flex items-center gap-3">
             <button
-              className="block md:hidden p-2 bg-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              onClick={() => setIsSidebarOpen(true)}
+              className="md:hidden p-2 border-2 border-[#1a1a1a] bg-[#FDF9F0]"
             >
               <Menu className="w-5 h-5 text-[#1a1a1a]" />
             </button>
+            <h1 className="font-syne text-xl md:text-2xl font-black uppercase text-[#1a1a1a]">
+              {activeTab}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="flex items-center gap-2 px-3 py-2 bg-[#E53935] hover:bg-[#D32F2F] text-white font-black text-xs uppercase border-2 border-[#1a1a1a] shadow-neo-sm">
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-6 max-w-[340px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-syne font-black text-xl uppercase">Confirm Logout</AlertDialogTitle>
+                  <AlertDialogDescription className="text-xs font-bold text-gray-600">
+                    Are you sure you want to end your current session?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-4 flex flex-col gap-2">
+                  <AlertDialogAction
+                    onClick={handleLogout}
+                    className="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] py-2 text-xs uppercase rounded-none m-0"
+                  >
+                    Yes, Logout
+                  </AlertDialogAction>
+                  <AlertDialogCancel className="w-full bg-[#F5F5F5] font-black border-2 border-[#1a1a1a] py-2 text-xs uppercase rounded-none m-0">
+                    Cancel
+                  </AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </header>
 
-        {/* Render content based on active tab */}
+        {/* Tab Content */}
         {activeTab === "business details" && <BussinessDetails />}
-        {activeTab === "test chatbot" && <TestChatbot />}
-        {activeTab === "analytics & usage" && (
+        {activeTab === "appearance & theme" && (
+          <AppearanceTab user={user} onUserUpdate={() => dispatch(loadUser())} />
+        )}
+        {activeTab === "ai model & analytics" && (
           <AnalyticsUsage user={user} onUserUpdate={() => dispatch(loadUser())} />
         )}
-        {activeTab === "leads" && <Leads />}
-        {activeTab === "knowledge base" && <KnowledgeBaseTab />}
+        {activeTab === "test chatbot" && <TestChatbot />}
         {activeTab === "sessions" && <Sessions />}
-        {activeTab === "token" && <Token />}
+        {activeTab === "token & security" && <Token />}
       </main>
     </div>
   );

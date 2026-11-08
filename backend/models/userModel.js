@@ -27,6 +27,31 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    allowedDomains: [
+        {
+            type: String,
+        }
+    ],
+    theme: {
+        type: String,
+        default: 'aptus',
+    },
+    primaryColor: {
+        type: String,
+        default: '#f97316',
+    },
+    botName: {
+        type: String,
+        default: 'Aptus AI',
+    },
+    welcomeMessage: {
+        type: String,
+        default: 'Hello! How can I assist you today?',
+    },
+    chatbotAvatar: {
+        type: String,
+        default: '',
+    },
     bussinessName: {
         type: String,
         required: true,
@@ -59,6 +84,10 @@ const userSchema = new mongoose.Schema({
     modelName: {
         type: String,
         default: 'llama-3.3-70b-versatile',
+    },
+    groqApiKey: {
+        type: String,
+        default: null,
     },
     openaiApiKey: {
         type: String,

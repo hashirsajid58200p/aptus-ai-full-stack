@@ -5,7 +5,7 @@ const {
     testByOwner,
     generateTextGeneral,
     getDetails,
-    captureLead,
+    transcribeAudio,
     updateModelSettings,
 } = require("../controllers/chatbotController");
 const { isAuthenticatedUser } = require("../middleware/Auth");
@@ -21,15 +21,10 @@ router.route("/test/owner").options(dashboardCors).post(dashboardCors, isAuthent
 // Public endpoint — validates a chatbot widget token and returns safe business info
 router.route("/getDetails").options(widgetCors).get(widgetCors, getDetails);
 
-// Lead capture endpoint (widget pre-chat or offline form)
-router.route("/lead").options(widgetCors).post(widgetCors, captureLead);
+// Voice STT Transcription endpoint (Groq Whisper)
+router.route("/transcribe").options(widgetCors).post(widgetCors, transcribeAudio);
 
 // Update model settings
 router.route("/model-settings").options(dashboardCors).put(dashboardCors, isAuthenticatedUser, updateModelSettings);
 
 module.exports = router;
-
-
-
-
-
