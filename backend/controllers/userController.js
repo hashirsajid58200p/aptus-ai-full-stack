@@ -393,10 +393,10 @@ exports.updateKnowledgeMarkdown = catchAsyncError(async (req, res, next) => {
   const content = typeof knowledgeMarkdown === "string" ? knowledgeMarkdown : "";
   const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
 
-  if (wordCount > 10000) {
+  if (wordCount > 100000) {
     return res.status(400).json({
       success: false,
-      message: `Markdown documentation cannot exceed 10,000 words (currently ${wordCount} words).`,
+      message: `Markdown documentation cannot exceed 100,000 words (currently ${wordCount} words).`,
     });
   }
 

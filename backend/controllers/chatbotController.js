@@ -59,7 +59,7 @@ const countWords = (str) => {
 const checkKnowledgeGate = (owner) => {
   const qaCount = Array.isArray(owner?.bussinessDetails) ? owner.bussinessDetails.length : 0;
   const mdWords = countWords(owner?.knowledgeMarkdown);
-  const isUnlocked = qaCount >= 10 || (mdWords >= 1000 && mdWords <= 10000);
+  const isUnlocked = qaCount >= 10 || mdWords >= 1000;
   return {
     isUnlocked,
     qaCount,

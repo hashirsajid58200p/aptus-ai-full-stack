@@ -262,8 +262,8 @@ const BusinessDetails = () => {
 
   const handleSaveMarkdown = async () => {
     const wordCount = knowledgeMarkdown?.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0;
-    if (wordCount > 10000) {
-      toast.error(`Documentation exceeds maximum limit of 10,000 words (currently ${wordCount} words).`);
+    if (wordCount > 100000) {
+      toast.error(`Documentation exceeds maximum limit of 100,000 words (currently ${wordCount} words).`);
       return;
     }
     setIsSavingMarkdown(true);
@@ -531,7 +531,7 @@ Strict Instructions:
 
   const qaCount = user?.bussinessDetails?.length || 0;
   const mdWords = knowledgeMarkdown?.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0;
-  const isKnowledgeUnlocked = qaCount >= 10 || (mdWords >= 1000 && mdWords <= 10000);
+  const isKnowledgeUnlocked = qaCount >= 10 || mdWords >= 1000;
 
   return (
     <div className="w-full flex flex-col items-center gap-6 text-[#1a1a1a] pb-12">

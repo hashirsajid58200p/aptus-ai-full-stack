@@ -122,7 +122,7 @@ const TestChatbot = () => {
   const qaCount = Array.isArray(user?.bussinessDetails) ? user.bussinessDetails.length : 0;
   const countWords = (str) => (!str || typeof str !== 'string' ? 0 : str.trim().split(/\s+/).filter(Boolean).length);
   const markdownWords = countWords(user?.knowledgeMarkdown);
-  const isUnlocked = qaCount >= 10 || (markdownWords >= 1000 && markdownWords <= 10000);
+  const isUnlocked = qaCount >= 10 || markdownWords >= 1000;
 
   const [messages, setMessages] = useState([
     { sender: "Bot", message: "Hello! How can I assist you with your business queries today?" },
