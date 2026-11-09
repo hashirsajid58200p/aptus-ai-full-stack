@@ -665,28 +665,30 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 {activeConfig.name}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto p-0.5">
-              {Object.entries(THEME_CONFIGS).map(([key, t]) => {
-                const isSelected = theme === key;
-                return (
-                  <button
-                    type="button"
-                    key={key}
-                    onClick={() => handleThemeChange(key)}
-                    className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all flex items-center justify-between text-xs font-bold uppercase ${
-                      isSelected
-                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
-                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white"
-                    }`}
-                  >
-                    <span className="truncate">{t.name}</span>
-                    <span
-                      className="w-3.5 h-3.5 rounded-full border border-[#1a1a1a] shrink-0"
-                      style={{ backgroundColor: t.defaultColor }}
-                    />
-                  </button>
-                );
-              })}
+            <div className="border-2 border-[#1a1a1a] bg-[#FDF9F0] p-2.5 max-h-[220px] overflow-y-auto">
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(THEME_CONFIGS).map(([key, t]) => {
+                  const isSelected = theme === key;
+                  return (
+                    <button
+                      type="button"
+                      key={key}
+                      onClick={() => handleThemeChange(key)}
+                      className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all flex items-center justify-between text-xs font-bold uppercase ${
+                        isSelected
+                          ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
+                          : "bg-white text-[#1a1a1a] hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className="truncate">{t.name}</span>
+                      <span
+                        className="w-3.5 h-3.5 rounded-full border border-[#1a1a1a] shrink-0"
+                        style={{ backgroundColor: t.defaultColor }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -805,6 +807,9 @@ export default function AppearanceTab({ user, onUserUpdate }) {
               placeholder="e.g. example.com, localhost:3000"
               className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold p-2.5 text-[#1a1a1a] outline-none"
             />
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wide mt-1">
+              Optional: Restricts chatbot to your website domains to prevent token theft.
+            </p>
           </div>
 
           {/* Save Button */}
