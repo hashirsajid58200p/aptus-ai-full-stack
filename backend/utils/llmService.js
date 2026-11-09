@@ -153,10 +153,9 @@ class LLMService {
     };
 
     if (provider === 'openai') {
-      const key = apiKey || process.env.OPENAI_API_KEY;
-      if (!key) return [];
+      if (!apiKey) return [];
       try {
-        const client = new OpenAI({ apiKey: key });
+        const client = new OpenAI({ apiKey });
         const res = await client.models.list();
         const raw = res.data
           .filter(m => m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3') || m.id.startsWith('chatgpt-'))
@@ -213,10 +212,9 @@ class LLMService {
       } catch (e) {}
       return [];
     } else if (provider === 'gemini') {
-      const key = apiKey || process.env.GEMINI_API_KEY;
-      if (!key) return [];
+      if (!apiKey) return [];
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
         const data = await res.json();
         if (data.models && Array.isArray(data.models)) {
           const raw = data.models
@@ -235,10 +233,9 @@ class LLMService {
       }
       return getCatalogFallback();
     } else if (provider === 'deepseek') {
-      const key = apiKey || process.env.DEEPSEEK_API_KEY;
-      if (!key) return [];
+      if (!apiKey) return [];
       try {
-        const client = new OpenAI({ apiKey: key, baseURL: 'https://api.deepseek.com' });
+        const client = new OpenAI({ apiKey, baseURL: 'https://api.deepseek.com' });
         const res = await client.models.list();
         if (Array.isArray(res.data) && res.data.length > 0) {
           const raw = res.data.map(m => ({ id: m.id, name: m.id }));
@@ -251,10 +248,9 @@ class LLMService {
         { id: 'deepseek-reasoner', name: 'DeepSeek-R1 (deepseek-reasoner)', provider: 'deepseek', reasoning: true },
       ];
     } else if (provider === 'mistral') {
-      const key = apiKey || process.env.MISTRAL_API_KEY;
-      if (!key) return [];
+      if (!apiKey) return [];
       try {
-        const client = new OpenAI({ apiKey: key, baseURL: 'https://api.mistral.ai/v1' });
+        const client = new OpenAI({ apiKey, baseURL: 'https://api.mistral.ai/v1' });
         const res = await client.models.list();
         if (Array.isArray(res.data) && res.data.length > 0) {
           const raw = res.data.map(m => ({ id: m.id, name: m.id }));
@@ -263,7 +259,7 @@ class LLMService {
       } catch (e) {}
       return getCatalogFallback();
     } else if (provider === 'perplexity') {
-      if (!apiKey && !process.env.PERPLEXITY_API_KEY) return [];
+      if (!apiKey) return [];
       const fallback = getCatalogFallback();
       return fallback.length > 0 ? fallback : [
         { id: 'sonar', name: 'Sonar (8B Online Search)', provider: 'perplexity' },
@@ -271,7 +267,7 @@ class LLMService {
         { id: 'sonar-reasoning-pro', name: 'Sonar Reasoning Pro', provider: 'perplexity', reasoning: true },
       ];
     } else if (provider === 'cohere') {
-      if (!apiKey && !process.env.COHERE_API_KEY) return [];
+      if (!apiKey) return [];
       const fallback = getCatalogFallback();
       return fallback.length > 0 ? fallback : [
         { id: 'command-r-plus-08-2024', name: 'Command R+ (Enterprise)', provider: 'cohere' },
@@ -290,10 +286,9 @@ class LLMService {
       return [];
     } else {
       // Groq
-      const key = apiKey || process.env.GROQ_API_KEY;
-      if (!key) return [];
+      if (!apiKey) return [];
       try {
-        const client = new Groq({ apiKey: key });
+        const client = new Groq({ apiKey });
         const res = await client.models.list();
         const raw = res.data
           .filter(m => m.active)
@@ -310,16 +305,16 @@ class LLMService {
    */
   static async listAllConnectedModels(user) {
     const providerKeyMap = {
-      groq: user?.groqApiKey || process.env.GROQ_API_KEY,
-      gemini: user?.geminiApiKey || process.env.GEMINI_API_KEY,
-      deepseek: user?.deepseekApiKey || process.env.DEEPSEEK_API_KEY,
-      openai: user?.openaiApiKey || process.env.OPENAI_API_KEY,
-      anthropic: user?.anthropicApiKey || process.env.ANTHROPIC_API_KEY,
-      mistral: user?.mistralApiKey || process.env.MISTRAL_API_KEY,
-      perplexity: user?.perplexityApiKey || process.env.PERPLEXITY_API_KEY,
-      cohere: user?.cohereApiKey || process.env.COHERE_API_KEY,
-      xai: user?.xaiApiKey || process.env.XAI_API_KEY,
-      openrouter: user?.openrouterApiKey || process.env.OPENROUTER_API_KEY,
+      groq: user?.groqApiKey,
+      gemini: user?.geminiApiKey,
+      deepseek: user?.deepseekApiKey,
+      openai: user?.openaiApiKey,
+      anthropic: user?.anthropicApiKey,
+      mistral: user?.mistralApiKey,
+      perplexity: user?.perplexityApiKey,
+      cohere: user?.cohereApiKey,
+      xai: user?.xaiApiKey,
+      openrouter: user?.openrouterApiKey,
       custom: user?.customBaseUrl ? (user?.customApiKey || 'dummy-key') : null,
     };
 

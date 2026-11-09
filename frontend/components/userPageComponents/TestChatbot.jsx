@@ -387,18 +387,10 @@ const TestChatbot = () => {
 
   return (
     <div className="flex flex-col h-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4 gap-2">
-        <div className="flex items-center gap-2">
-          <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2.5 sm:px-3 py-0.5 sm:py-1 font-extrabold text-[10px] sm:text-xs uppercase inline-block">
-            Live Sandbox
-          </span>
-          <h3 className="font-syne text-base sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-            Test Aptus AI Chatbot
-          </h3>
-        </div>
-        <span className="text-[11px] font-bold text-gray-500 uppercase">
-          Groq Whisper Voice Enabled
-        </span>
+      <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4">
+        <h3 className="font-syne text-base sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
+          Test Chatbot
+        </h3>
       </div>
 
       <ScrollArea className="flex-1 overflow-y-auto mb-4 p-3 sm:p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] min-h-[55vh] max-h-[60vh]">
