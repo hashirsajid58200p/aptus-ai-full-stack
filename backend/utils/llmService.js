@@ -47,20 +47,121 @@ class LLMService {
     return transcription.text;
   }
 
+  static catalogCache = null;
+  static catalogLastFetched = 0;
+
+  static PROVIDER_CATALOG_MAP = {
+    groq: 'groq',
+    gemini: 'google',
+    openai: 'openai',
+    anthropic: 'anthropic',
+    deepseek: 'deepseek',
+    mistral: 'mistral',
+    xai: 'xai',
+    cohere: 'cohere',
+    perplexity: 'perplexity',
+    openrouter: 'openrouter',
+  };
+
   /**
-   * List available chat models dynamically for a provider, key, and baseUrl
+   * Fetch and cache the universal models.dev capability registry (1 hour TTL)
+   */
+  static async getModelCatalog() {
+    const now = Date.now();
+    if (this.catalogCache && (now - this.catalogLastFetched < 3600000)) {
+      return this.catalogCache;
+    }
+    try {
+      const res = await fetch('https://models.dev/api.json', {
+        signal: AbortSignal.timeout(4000),
+      });
+      if (res.ok) {
+        this.catalogCache = await res.json();
+        this.catalogLastFetched = now;
+        return this.catalogCache;
+      }
+    } catch (e) {
+      console.warn('⚠️ models.dev catalog fetch warning:', e.message);
+    }
+    return this.catalogCache || {};
+  }
+
+  /**
+   * Universal capability predicate: determines if a model is a pure conversational Chat LLM
+   */
+  static isPureChatModel(modelId, rawName = '', catalogEntry = null) {
+    // 1. Authoritative structured capability schema from models.dev
+    if (catalogEntry) {
+      if (catalogEntry.type && catalogEntry.type !== 'chat') return false;
+      if (catalogEntry.temperature === false) return false;
+      const out = catalogEntry.modalities?.output || [];
+      if (out.length !== 1 || out[0] !== 'text') return false;
+      const inp = catalogEntry.modalities?.input || [];
+      if (!inp.includes('text')) return false;
+    }
+
+    // 2. Universal heuristic safety net for unlisted/preview endpoints
+    const combined = `${modelId} ${rawName}`.toLowerCase();
+    const nonChatPatterns = [
+      'tts', 'whisper', 'orpheus', 'guard', 'safeguard', 'embed',
+      'lyria', 'banana', 'image', 'imagen', 'audio', 'transcribe',
+      'robotics', 'computer-use', 'moderation', 'realtime', 'dall-e',
+      'clip', 'rerank', 'aqa', 'customtools', 'antigravity', 'deep-research',
+      'argon', 'vision-only', 'babbage', 'davinci', 'ocr', 'codex-mini'
+    ];
+    return !nonChatPatterns.some(p => combined.includes(p));
+  }
+
+  /**
+   * Normalize, filter, and enrich raw provider models using models.dev capability metadata
+   */
+  static enrichAndFilterModels(rawModels, providerCatalog = {}, provider = 'groq') {
+    const seen = new Set();
+    const result = [];
+    for (const item of rawModels) {
+      const cleanId = (item.id || '').replace(/^models\//, '');
+      if (!cleanId || seen.has(cleanId)) continue;
+      const meta = providerCatalog[cleanId] || null;
+      if (!this.isPureChatModel(cleanId, item.name || '', meta)) continue;
+      seen.add(cleanId);
+      result.push({
+        id: cleanId,
+        name: meta?.name || item.name || cleanId,
+        provider,
+        contextWindow: meta?.limit?.context || item.contextWindow || null,
+        reasoning: !!meta?.reasoning,
+      });
+    }
+    return result.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /**
+   * List available pure chat models dynamically for a provider, key, and baseUrl
    */
   static async listModels(provider = 'groq', apiKey = null, customBaseUrl = null) {
+    const catalog = await this.getModelCatalog();
+    const catalogKey = this.PROVIDER_CATALOG_MAP[provider] || provider;
+    const providerCatalog = catalog[catalogKey]?.models || {};
+
+    const getCatalogFallback = () => {
+      const entries = Object.values(providerCatalog);
+      return this.enrichAndFilterModels(
+        entries.map(m => ({ id: m.id, name: m.name })),
+        providerCatalog,
+        provider
+      );
+    };
+
     if (provider === 'openai') {
       const key = apiKey || process.env.OPENAI_API_KEY;
       if (!key) return [];
       try {
         const client = new OpenAI({ apiKey: key });
         const res = await client.models.list();
-        return res.data
-          .filter(m => (m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3')) && !m.id.includes('audio') && !m.id.includes('realtime') && !m.id.includes('tts') && !m.id.includes('transcribe') && !m.id.includes('dall-e'))
-          .map(m => ({ id: m.id, name: m.id }))
-          .sort((a, b) => a.id.localeCompare(b.id));
+        const raw = res.data
+          .filter(m => m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3') || m.id.startsWith('chatgpt-'))
+          .map(m => ({ id: m.id, name: m.id }));
+        return this.enrichAndFilterModels(raw, providerCatalog, provider);
       } catch (err) {
         throw new Error(`OpenAI API Key verification failed: ${err.message}`);
       }
@@ -75,31 +176,39 @@ class LLMService {
         });
         const data = await res.json();
         if (Array.isArray(data.data)) {
-          return data.data.map(m => ({ id: m.id, name: m.display_name || m.id }));
+          const raw = data.data.map(m => ({ id: m.id, name: m.display_name || m.id }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         }
       } catch (e) {}
-      return [];
+      return getCatalogFallback();
     } else if (provider === 'xai') {
       if (!apiKey) return [];
       try {
         const client = new OpenAI({ apiKey: apiKey, baseURL: 'https://api.x.ai/v1' });
         const res = await client.models.list();
         if (Array.isArray(res.data)) {
-          return res.data.map(m => ({ id: m.id, name: m.id }));
+          const raw = res.data.map(m => ({ id: m.id, name: m.id }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         }
       } catch (e) {}
-      return [];
+      return getCatalogFallback();
     } else if (provider === 'openrouter') {
       if (!apiKey) return [];
       try {
-        const res = await fetch('https://openrouter.ai/api/v1/models', {
+        const res = await fetch('https://openrouter.ai/api/v1/models?output_modalities=text', {
           headers: { Authorization: `Bearer ${apiKey}` },
         });
         const data = await res.json();
         if (Array.isArray(data.data)) {
-          return data.data
-            .slice(0, 50)
-            .map(m => ({ id: m.id, name: m.name || m.id }));
+          const raw = data.data
+            .filter(m => {
+              const out = m.architecture?.output_modalities || [];
+              if (out.length > 0 && (out.length !== 1 || out[0] !== 'text')) return false;
+              return true;
+            })
+            .slice(0, 60)
+            .map(m => ({ id: m.id, name: m.name || m.id, contextWindow: m.context_length }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         }
       } catch (e) {}
       return [];
@@ -110,34 +219,21 @@ class LLMService {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
         const data = await res.json();
         if (data.models && Array.isArray(data.models)) {
-          const nonChatKeywords = [
-            'tts', 'audio', 'lyria', 'music', 'image', 'imagen', 'banana',
-            'transcribe', 'robotics', 'computer-use', 'embedding', 'aqa',
-            'clip', 'customtools', 'antigravity', 'deep-research', 'argon'
-          ];
-          return data.models
-            .filter(m => {
-              if (!m.supportedGenerationMethods?.includes('generateContent')) return false;
-              const id = m.name.toLowerCase();
-              const display = (m.displayName || '').toLowerCase();
-              return !nonChatKeywords.some(k => id.includes(k) || display.includes(k));
-            })
-            .map(m => {
-              const id = m.name.replace('models/', '');
-              return { id, name: m.displayName || id };
-            })
-            .sort((a, b) => a.id.localeCompare(b.id));
+          const raw = data.models
+            .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+            .map(m => ({
+              id: m.name.replace('models/', ''),
+              name: m.displayName || m.name.replace('models/', ''),
+              contextWindow: m.inputTokenLimit,
+            }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         } else if (data.error) {
           throw new Error(data.error.message);
         }
       } catch (err) {
         throw new Error(`Google Gemini API verification failed: ${err.message}`);
       }
-      return [
-        { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash' },
-        { id: 'gemini-flash-latest', name: 'Gemini Flash Latest' },
-        { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview' },
-      ];
+      return getCatalogFallback();
     } else if (provider === 'deepseek') {
       const key = apiKey || process.env.DEEPSEEK_API_KEY;
       if (!key) return [];
@@ -145,12 +241,14 @@ class LLMService {
         const client = new OpenAI({ apiKey: key, baseURL: 'https://api.deepseek.com' });
         const res = await client.models.list();
         if (Array.isArray(res.data) && res.data.length > 0) {
-          return res.data.map(m => ({ id: m.id, name: m.id }));
+          const raw = res.data.map(m => ({ id: m.id, name: m.id }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         }
       } catch (e) {}
-      return [
-        { id: 'deepseek-chat', name: 'DeepSeek-V3 (deepseek-chat)' },
-        { id: 'deepseek-reasoner', name: 'DeepSeek-R1 (deepseek-reasoner)' },
+      const fallback = getCatalogFallback();
+      return fallback.length > 0 ? fallback : [
+        { id: 'deepseek-chat', name: 'DeepSeek-V3 (deepseek-chat)', provider: 'deepseek' },
+        { id: 'deepseek-reasoner', name: 'DeepSeek-R1 (deepseek-reasoner)', provider: 'deepseek', reasoning: true },
       ];
     } else if (provider === 'mistral') {
       const key = apiKey || process.env.MISTRAL_API_KEY;
@@ -159,27 +257,25 @@ class LLMService {
         const client = new OpenAI({ apiKey: key, baseURL: 'https://api.mistral.ai/v1' });
         const res = await client.models.list();
         if (Array.isArray(res.data) && res.data.length > 0) {
-          return res.data
-            .filter(m => !m.id.includes('embed') && !m.id.includes('moderation'))
-            .map(m => ({ id: m.id, name: m.id }));
+          const raw = res.data.map(m => ({ id: m.id, name: m.id }));
+          return this.enrichAndFilterModels(raw, providerCatalog, provider);
         }
       } catch (e) {}
-      return [
-        { id: 'mistral-large-latest', name: 'Mistral Large' },
-        { id: 'mistral-small-latest', name: 'Mistral Small' },
-        { id: 'codestral-latest', name: 'Codestral' },
-      ];
+      return getCatalogFallback();
     } else if (provider === 'perplexity') {
-      return [
-        { id: 'sonar', name: 'Sonar (8B Online Search)' },
-        { id: 'sonar-pro', name: 'Sonar Pro (70B Online Search)' },
-        { id: 'sonar-reasoning', name: 'Sonar Reasoning (Deep Research)' },
+      if (!apiKey && !process.env.PERPLEXITY_API_KEY) return [];
+      const fallback = getCatalogFallback();
+      return fallback.length > 0 ? fallback : [
+        { id: 'sonar', name: 'Sonar (8B Online Search)', provider: 'perplexity' },
+        { id: 'sonar-pro', name: 'Sonar Pro (70B Online Search)', provider: 'perplexity' },
+        { id: 'sonar-reasoning-pro', name: 'Sonar Reasoning Pro', provider: 'perplexity', reasoning: true },
       ];
     } else if (provider === 'cohere') {
-      return [
-        { id: 'command-r-plus', name: 'Command R+ (Enterprise)' },
-        { id: 'command-r', name: 'Command R' },
-        { id: 'command-light', name: 'Command Light' },
+      if (!apiKey && !process.env.COHERE_API_KEY) return [];
+      const fallback = getCatalogFallback();
+      return fallback.length > 0 ? fallback : [
+        { id: 'command-r-plus-08-2024', name: 'Command R+ (Enterprise)', provider: 'cohere' },
+        { id: 'command-a-03-2025', name: 'Command A', provider: 'cohere' },
       ];
     } else if (provider === 'custom') {
       if (!customBaseUrl) return [];
@@ -187,7 +283,8 @@ class LLMService {
         const client = new OpenAI({ apiKey: apiKey || 'dummy-key', baseURL: customBaseUrl });
         const res = await client.models.list();
         if (Array.isArray(res.data)) {
-          return res.data.map(m => ({ id: m.id, name: m.id }));
+          const raw = res.data.map(m => ({ id: m.id, name: m.id }));
+          return this.enrichAndFilterModels(raw, {}, provider);
         }
       } catch (e) {}
       return [];
@@ -198,19 +295,61 @@ class LLMService {
       try {
         const client = new Groq({ apiKey: key });
         const res = await client.models.list();
-        const nonChatKeywords = ['whisper', 'orpheus', 'guard', 'safeguard', 'embed', 'tts', 'moderation', 'vision', 'audio', 'distil', 'rerank'];
-        return res.data
-          .filter(m => {
-            if (!m.active) return false;
-            const lower = m.id.toLowerCase();
-            return !nonChatKeywords.some(k => lower.includes(k));
-          })
-          .map(m => ({ id: m.id, name: m.id }))
-          .sort((a, b) => a.id.localeCompare(b.id));
+        const raw = res.data
+          .filter(m => m.active)
+          .map(m => ({ id: m.id, name: m.id, contextWindow: m.context_window }));
+        return this.enrichAndFilterModels(raw, providerCatalog, 'groq');
       } catch (err) {
         throw new Error(`Groq API Key verification failed: ${err.message}`);
       }
     }
+  }
+
+  /**
+   * Fetch all available pure-chat models across ALL providers configured by the user in parallel
+   */
+  static async listAllConnectedModels(user) {
+    const providerKeyMap = {
+      groq: user?.groqApiKey || process.env.GROQ_API_KEY,
+      gemini: user?.geminiApiKey || process.env.GEMINI_API_KEY,
+      deepseek: user?.deepseekApiKey || process.env.DEEPSEEK_API_KEY,
+      openai: user?.openaiApiKey || process.env.OPENAI_API_KEY,
+      anthropic: user?.anthropicApiKey || process.env.ANTHROPIC_API_KEY,
+      mistral: user?.mistralApiKey || process.env.MISTRAL_API_KEY,
+      perplexity: user?.perplexityApiKey || process.env.PERPLEXITY_API_KEY,
+      cohere: user?.cohereApiKey || process.env.COHERE_API_KEY,
+      xai: user?.xaiApiKey || process.env.XAI_API_KEY,
+      openrouter: user?.openrouterApiKey || process.env.OPENROUTER_API_KEY,
+      custom: user?.customBaseUrl ? (user?.customApiKey || 'dummy-key') : null,
+    };
+
+    const connectedProviders = Object.entries(providerKeyMap)
+      .filter(([, key]) => !!key)
+      .map(([prov]) => prov);
+
+    const tasks = connectedProviders.map(async (prov) => {
+      try {
+        const models = await this.listModels(prov, providerKeyMap[prov], user?.customBaseUrl);
+        return { provider: prov, models };
+      } catch (e) {
+        return { provider: prov, models: [], error: e.message };
+      }
+    });
+
+    const results = await Promise.all(tasks);
+    const allModels = [];
+    const modelsByProvider = {};
+
+    for (const r of results) {
+      modelsByProvider[r.provider] = r.models;
+      allModels.push(...r.models);
+    }
+
+    return {
+      connectedProviders,
+      modelsByProvider,
+      models: allModels,
+    };
   }
 
   estimateTokens(text) {
