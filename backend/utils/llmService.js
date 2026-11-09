@@ -53,99 +53,77 @@ class LLMService {
   static async listModels(provider = 'groq', apiKey = null, customBaseUrl = null) {
     if (provider === 'openai') {
       const key = apiKey || process.env.OPENAI_API_KEY;
-      if (!key) {
-        return [
-          { id: 'gpt-4o', name: 'GPT-4o (Omni Flagship)' },
-          { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast & Cheap)' },
-          { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' },
-          { id: 'o1-mini', name: 'o1-mini (Reasoning)' },
-        ];
-      }
+      if (!key) return [];
       try {
         const client = new OpenAI({ apiKey: key });
         const res = await client.models.list();
-        const models = res.data
+        return res.data
           .filter(m => m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3'))
           .map(m => ({ id: m.id, name: m.id }))
           .sort((a, b) => a.id.localeCompare(b.id));
-        return models.length > 0 ? models : [
-          { id: 'gpt-4o', name: 'GPT-4o' },
-          { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
-        ];
       } catch (err) {
         throw new Error(`OpenAI API Key verification failed: ${err.message}`);
       }
     } else if (provider === 'anthropic') {
-      return [
-        { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (State-of-the-Art)' },
-        { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku (Fast & Lightweight)' },
-        { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (Complex Analysis)' },
-      ];
+      if (!apiKey) return [];
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/models', {
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data.data)) {
+          return data.data.map(m => ({ id: m.id, name: m.display_name || m.id }));
+        }
+      } catch (e) {}
+      return [];
     } else if (provider === 'xai') {
-      return [
-        { id: 'grok-2-1212', name: 'xAI Grok 2 (Latest)' },
-        { id: 'grok-2-vision-1212', name: 'xAI Grok 2 Vision' },
-        { id: 'grok-beta', name: 'xAI Grok Beta' },
-      ];
+      if (!apiKey) return [];
+      try {
+        const client = new OpenAI({ apiKey: apiKey, baseURL: 'https://api.x.ai/v1' });
+        const res = await client.models.list();
+        if (Array.isArray(res.data)) {
+          return res.data.map(m => ({ id: m.id, name: m.id }));
+        }
+      } catch (e) {}
+      return [];
     } else if (provider === 'openrouter') {
-      if (apiKey) {
-        try {
-          const res = await fetch('https://openrouter.ai/api/v1/models', {
-            headers: { Authorization: `Bearer ${apiKey}` },
-          });
-          const data = await res.json();
-          if (Array.isArray(data.data)) {
-            return data.data
-              .slice(0, 30)
-              .map(m => ({ id: m.id, name: m.name || m.id }));
-          }
-        } catch (e) {
-          // fallback
+      if (!apiKey) return [];
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/models', {
+          headers: { Authorization: `Bearer ${apiKey}` },
+        });
+        const data = await res.json();
+        if (Array.isArray(data.data)) {
+          return data.data
+            .slice(0, 50)
+            .map(m => ({ id: m.id, name: m.name || m.id }));
         }
-      }
-      return [
-        { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (OpenRouter)' },
-        { id: 'openai/gpt-4o', name: 'GPT-4o (OpenRouter)' },
-        { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (OpenRouter)' },
-        { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B (OpenRouter)' },
-        { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Free)' },
-      ];
+      } catch (e) {}
+      return [];
     } else if (provider === 'custom') {
-      if (customBaseUrl) {
-        try {
-          const client = new OpenAI({ apiKey: apiKey || 'dummy-key', baseURL: customBaseUrl });
-          const res = await client.models.list();
-          if (Array.isArray(res.data)) {
-            return res.data.map(m => ({ id: m.id, name: m.id }));
-          }
-        } catch (e) {
-          // fallback
+      if (!customBaseUrl) return [];
+      try {
+        const client = new OpenAI({ apiKey: apiKey || 'dummy-key', baseURL: customBaseUrl });
+        const res = await client.models.list();
+        if (Array.isArray(res.data)) {
+          return res.data.map(m => ({ id: m.id, name: m.id }));
         }
-      }
-      return [
-        { id: 'default', name: 'Default Model' },
-      ];
+      } catch (e) {}
+      return [];
     } else {
-      // Default: Groq
+      // Groq
       const key = apiKey || process.env.GROQ_API_KEY;
-      if (!key) {
-        return [
-          { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
-          { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B' },
-          { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
-          { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
-        ];
-      }
+      if (!key) return [];
       try {
         const client = new Groq({ apiKey: key });
         const res = await client.models.list();
-        const filtered = res.data
+        return res.data
           .filter(m => m.active && !m.id.includes('whisper') && !m.id.includes('guard') && !m.id.includes('safeguard'))
-          .map(m => ({ id: m.id, name: m.id }));
-        return filtered.length > 0 ? filtered : [
-          { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
-          { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B' },
-        ];
+          .map(m => ({ id: m.id, name: m.id }))
+          .sort((a, b) => a.id.localeCompare(b.id));
       } catch (err) {
         throw new Error(`Groq API Key verification failed: ${err.message}`);
       }

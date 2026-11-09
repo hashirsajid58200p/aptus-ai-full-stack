@@ -13,39 +13,6 @@ const PROVIDERS = [
   { id: "custom", name: "Custom API", desc: "Self-hosted vLLM, Ollama, or OpenAI proxy" },
 ];
 
-export const CURATED_MODELS = {
-  groq: [
-    { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile" },
-    { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant" },
-    { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B" },
-    { id: "gemma2-9b-it", name: "Gemma 2 9B" },
-  ],
-  openai: [
-    { id: "gpt-4o", name: "GPT-4o" },
-    { id: "gpt-4o-mini", name: "GPT-4o Mini" },
-    { id: "o1-mini", name: "o1-mini" },
-    { id: "gpt-4-turbo", name: "GPT-4 Turbo" },
-  ],
-  anthropic: [
-    { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet" },
-    { id: "claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku" },
-    { id: "claude-3-opus-20240229", name: "Claude 3 Opus" },
-  ],
-  xai: [
-    { id: "grok-2-1212", name: "Grok 2" },
-    { id: "grok-beta", name: "Grok Beta" },
-  ],
-  openrouter: [
-    { id: "deepseek/deepseek-r1", name: "DeepSeek R1" },
-    { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B" },
-    { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet" },
-    { id: "openai/gpt-4o-mini", name: "GPT-4o Mini" },
-  ],
-  custom: [
-    { id: "default", name: "Default Model" },
-  ],
-};
-
 export default function AnalyticsUsage({ user, onUserUpdate }) {
   const [provider, setProvider] = useState(user?.provider || "groq");
   const [modelName, setModelName] = useState(user?.modelName || "llama-3.3-70b-versatile");
@@ -75,11 +42,20 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
   };
 
   const fetchModels = async (prov = provider, keyOverride = null, urlOverride = null) => {
+    const activeKey = keyOverride !== null ? keyOverride : getKeyForProvider(prov);
+    const activeUrl = urlOverride !== null ? urlOverride : customBaseUrl;
+
+    if (!activeKey && prov !== "custom") {
+      setAvailableModels([]);
+      return;
+    }
+    if (prov === "custom" && !activeUrl) {
+      setAvailableModels([]);
+      return;
+    }
+
     setLoadingModels(true);
     try {
-      const activeKey = keyOverride !== null ? keyOverride : getKeyForProvider(prov);
-      const activeUrl = urlOverride !== null ? urlOverride : customBaseUrl;
-
       const url = new URL(`${baseurl}/user/models`);
       url.searchParams.set("provider", prov);
       if (activeKey) url.searchParams.set("apiKey", activeKey);
@@ -90,30 +66,37 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
       if (data.success && Array.isArray(data.models) && data.models.length > 0) {
         setAvailableModels(data.models);
+        if (!data.models.some((m) => m.id === modelName)) {
+          setModelName(data.models[0].id);
+        }
       } else {
-        // Fallback to rich curated list
-        setAvailableModels(CURATED_MODELS[prov] || []);
+        setAvailableModels([]);
+        if (data.message) toast.error(data.message);
       }
     } catch (err) {
       console.warn("Could not fetch models:", err.message);
-      setAvailableModels(CURATED_MODELS[prov] || []);
+      setAvailableModels([]);
     } finally {
       setLoadingModels(false);
     }
   };
 
   useEffect(() => {
-    fetchModels(provider);
+    const key = getKeyForProvider(provider);
+    if (key || (provider === "custom" && customBaseUrl)) {
+      fetchModels(provider, key);
+    } else {
+      setAvailableModels([]);
+    }
   }, [provider]);
 
   const handleProviderSelect = (newProv) => {
     setProvider(newProv);
-    const curated = CURATED_MODELS[newProv] || [];
-    setAvailableModels(curated);
-    if (curated.length > 0) {
-      setModelName(curated[0].id);
+    setAvailableModels([]);
+    const key = getKeyForProvider(newProv);
+    if (key || (newProv === "custom" && customBaseUrl)) {
+      fetchModels(newProv, key);
     }
-    fetchModels(newProv, getKeyForProvider(newProv));
   };
 
   const handleSaveModel = async (e) => {
@@ -138,7 +121,8 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("AI Model configuration updated successfully!");
+        toast.success("Settings saved! Fetching available models...");
+        await fetchModels(provider);
         if (onUserUpdate) onUserUpdate();
       } else {
         toast.error(data.message || "Failed to update settings");
@@ -149,8 +133,6 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
       setSaving(false);
     }
   };
-
-  const currentModels = availableModels.length > 0 ? availableModels : (CURATED_MODELS[provider] || []);
 
   return (
     <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 md:p-6">
@@ -399,19 +381,22 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                   required
                 />
                 <span className="text-[11px] text-gray-500 mt-1 block">
-                  Type any custom fine-tuned or newly released model ID supported by {provider}.
+                  Enter any custom model ID supported by {provider}.
                 </span>
               </div>
-            ) : provider !== "groq" && !getKeyForProvider(provider) && availableModels.length === 0 ? (
-              <div className="p-4 border-2 border-dashed border-[#1a1a1a] bg-[#FDF9F0] text-center">
+            ) : availableModels.length === 0 ? (
+              <div className="p-6 border-2 border-dashed border-[#1a1a1a] bg-[#FDF9F0] text-center flex flex-col items-center justify-center gap-2">
+                <AlertCircle className="w-5 h-5 text-gray-500" />
                 <p className="text-xs font-bold text-gray-700">
-                  Enter your {PROVIDERS.find((p) => p.id === provider)?.name} API key above to load available models.
+                  {loadingModels
+                    ? `Fetching available models from ${PROVIDERS.find((p) => p.id === provider)?.name} API...`
+                    : `No models loaded. Please enter your ${PROVIDERS.find((p) => p.id === provider)?.name} API key above and click "Save & Fetch Live Models" below.`}
                 </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-                  {currentModels.map((m) => {
+                  {availableModels.map((m) => {
                     const isSelected = modelName === m.id;
                     return (
                       <div
@@ -450,11 +435,15 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:w-auto px-6 py-3 bg-[#FF4D00] hover:bg-[#E04400] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+            className="w-full sm:w-auto px-6 py-3 bg-[#FF4D00] hover:bg-[#E04400] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase flex items-center justify-center gap-2 disabled:opacity-50 mt-2 cursor-pointer"
           >
             {saving ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" /> Saving Configuration...
+                <RefreshCw className="w-4 h-4 animate-spin" /> Saving & Fetching Models...
+              </>
+            ) : availableModels.length === 0 ? (
+              <>
+                <RefreshCw className="w-4 h-4" /> Save Key & Fetch Live Models
               </>
             ) : (
               <>
