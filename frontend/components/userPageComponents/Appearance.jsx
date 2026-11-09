@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from "react";
 import {
   Bot,
-  Sparkles,
-  MessageSquare,
   Headphones,
-  MessageCircle,
   Check,
   RefreshCw,
   Send,
   Mic,
   X,
 } from "lucide-react";
+import { FaRobot } from "react-icons/fa";
+import { TbRobot, TbRobotFace, TbMessageChatbot } from "react-icons/tb";
+import { RiRobot2Line, RiRobot3Line, RiRobotLine } from "react-icons/ri";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
@@ -425,11 +425,14 @@ export const THEME_CONFIGS = {
 };
 
 const PREMADE_AVATARS = [
-  { id: "bot", label: "AI Robot", Icon: Bot },
-  { id: "agent", label: "Live Support", Icon: Headphones },
-  { id: "chat", label: "Chat Messenger", Icon: MessageSquare },
-  { id: "sparkles", label: "Smart Assistant", Icon: Sparkles },
-  { id: "message", label: "Speech Bubble", Icon: MessageCircle },
+  { id: "bot", label: "Classic Bot", Icon: Bot },
+  { id: "cyber", label: "Cyber Robot", Icon: FaRobot },
+  { id: "android", label: "Android", Icon: TbRobot },
+  { id: "mecha", label: "Mecha Face", Icon: TbRobotFace },
+  { id: "chat", label: "Chatbot", Icon: TbMessageChatbot },
+  { id: "friendly", label: "Friendly Bot", Icon: RiRobot2Line },
+  { id: "futuristic", label: "Future Bot", Icon: RiRobot3Line },
+  { id: "smart", label: "Smart Bot", Icon: RiRobotLine },
 ];
 
 const SHAPE_PRESETS = [
@@ -632,7 +635,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
             <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-2">
               Avatar Icon
             </label>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PREMADE_AVATARS.map((av) => {
                 const isSelected = chatbotAvatar === av.id;
                 const IconComponent = av.Icon;
@@ -643,11 +646,11 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     onClick={() => setChatbotAvatar(av.id)}
                     className={`p-2.5 border-2 border-[#1a1a1a] flex flex-col items-center justify-center gap-1.5 transition-all ${
                       isSelected
-                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
-                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white"
+                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm font-black"
+                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white font-bold"
                     }`}
                   >
-                    <IconComponent className="w-4 h-4" />
+                    <IconComponent className="w-5 h-5" />
                     <span className="text-[10px] uppercase font-bold truncate">{av.label}</span>
                   </button>
                 );
