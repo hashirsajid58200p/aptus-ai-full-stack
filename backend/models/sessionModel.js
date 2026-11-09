@@ -32,6 +32,15 @@ const sessionSchema = new mongoose.Schema({
         required: true,  // currently  used as the owner id  of the chatbot
         ref:"User"
     },
+    visitorId: {
+        type: String,
+        default: null,
+        index: true,
+    },
+    ipAddress: {
+        type: String,
+        default: null,
+    },
     messages:[
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -39,6 +48,10 @@ const sessionSchema = new mongoose.Schema({
         }
     ],
     createdAt:{
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt:{
         type: Date,
         default: Date.now,
     }

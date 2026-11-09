@@ -146,6 +146,11 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
     fetchAnalyticsAndAuth();
     fetchBusinesses();
   }, []);
@@ -451,7 +456,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() => {
                   fetchAnalyticsAndAuth();
-                  fetchBusinesses(page);
+                  fetchBusinesses();
                   toast.success("Metrics updated!");
                 }}
                 className="flex items-center gap-1.5 px-4 py-2 bg-[#BFF000] text-[#1a1a1a] font-extrabold font-space border-2 border-[#1a1a1a] rounded-none shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] text-xs uppercase tracking-wider transition-all cursor-pointer"

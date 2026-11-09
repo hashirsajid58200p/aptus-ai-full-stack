@@ -14,6 +14,177 @@ import {
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
+function FormattedText({ content }) {
+  if (!content) return null;
+
+  const parseInline = (text) => {
+    const tokenRegex = /(\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*([^*]+)\*|_([^_]+)_)/g;
+    const elements = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        elements.push(text.slice(lastIndex, match.index));
+      }
+
+      if (match[2] || match[3]) {
+        elements.push(
+          <strong key={match.index} className="font-bold">
+            {match[2] || match[3]}
+          </strong>
+        );
+      } else if (match[4]) {
+        elements.push(
+          <code
+            key={match.index}
+            className="bg-black/10 px-1 py-0.5 rounded text-xs font-mono"
+          >
+            {match[4]}
+          </code>
+        );
+      } else if (match[5] && match[6]) {
+        elements.push(
+          <a
+            key={match.index}
+            href={match[6]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-bold text-blue-600 hover:text-blue-800"
+          >
+            {match[5]}
+          </a>
+        );
+      } else if (match[7] || match[8]) {
+        elements.push(
+          <em key={match.index} className="italic">
+            {match[7] || match[8]}
+          </em>
+        );
+      }
+
+      lastIndex = tokenRegex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      elements.push(text.slice(lastIndex));
+    }
+
+    return elements;
+  };
+
+  const lines = content.split("\n");
+  const blocks = [];
+  let currentList = null;
+
+  const flushList = () => {
+    if (currentList) {
+      if (currentList.type === "ul") {
+        blocks.push(
+          <ul
+            key={`list-${blocks.length}`}
+            className="list-disc pl-5 my-1.5 space-y-1"
+          >
+            {currentList.items.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+        );
+      } else {
+        blocks.push(
+          <ol
+            key={`list-${blocks.length}`}
+            className="list-decimal pl-5 my-1.5 space-y-1"
+          >
+            {currentList.items.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ol>
+        );
+      }
+      currentList = null;
+    }
+  };
+
+  lines.forEach((rawLine, index) => {
+    const line = rawLine.trim();
+    if (!line) {
+      flushList();
+      return;
+    }
+
+    const bulletMatch = line.match(/^[\*\-]\s+(.*)$/);
+    const numberedMatch = line.match(/^\d+[\.\)]\s+(.*)$/);
+
+    if (bulletMatch) {
+      if (!currentList || currentList.type !== "ul") {
+        flushList();
+        currentList = { type: "ul", items: [] };
+      }
+      currentList.items.push(parseInline(bulletMatch[1]));
+    } else if (numberedMatch) {
+      if (!currentList || currentList.type !== "ol") {
+        flushList();
+        currentList = { type: "ol", items: [] };
+      }
+      currentList.items.push(parseInline(numberedMatch[1]));
+    } else {
+      flushList();
+      blocks.push(
+        <p key={`p-${index}`} className="my-1 leading-relaxed">
+          {parseInline(line)}
+        </p>
+      );
+    }
+  });
+
+  flushList();
+
+  return <div className="space-y-1">{blocks}</div>;
+}
+
+const formatMessageTime = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+};
+
+const getMessageDateKey = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+};
+
+const formatDateDivider = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  const now = new Date();
+
+  const isToday =
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday =
+    d.getDate() === yesterday.getDate() &&
+    d.getMonth() === yesterday.getMonth() &&
+    d.getFullYear() === yesterday.getFullYear();
+
+  if (isToday) return "Today";
+  if (isYesterday) return "Yesterday";
+
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: d.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+  });
+};
+
 export default function Sessions() {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -154,8 +325,9 @@ export default function Sessions() {
                 const isSelected = activeSession?._id === session._id;
                 const messagesList = session.messages || [];
                 const lastMessage = messagesList.length > 0 ? messagesList[messagesList.length - 1].message : "No messages";
-                const dateStr = session.createdAt ? new Date(session.createdAt).toLocaleDateString([], { month: "short", day: "numeric" }) : "";
-                const timeStr = session.createdAt ? new Date(session.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+                const lastTime = (messagesList.length > 0 && messagesList[messagesList.length - 1].createdAt) || session.updatedAt || session.createdAt;
+                const dateStr = lastTime ? new Date(lastTime).toLocaleDateString([], { month: "short", day: "numeric" }) : "";
+                const timeStr = lastTime ? new Date(lastTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
 
                 return (
                   <div
@@ -215,6 +387,11 @@ export default function Sessions() {
                       <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a]">
                         {activeSession.username || "Website Visitor"}
                       </h4>
+                      {activeSession.ipAddress && (
+                        <span className="font-mono text-[10px] text-gray-500 bg-white px-2 py-0.5 border border-[#1a1a1a] shadow-neo-sm font-bold">
+                          IP: {activeSession.ipAddress}
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs font-semibold text-gray-600 flex items-center gap-3 mt-1">
                       <span>{activeSession.email || "No email provided"}</span>
@@ -240,42 +417,72 @@ export default function Sessions() {
                   ) : (
                     activeSession.messages.map((msg, idx) => {
                       const isUser = msg.role === "user" || msg.sender === "user";
+                      const msgTime = msg.createdAt || activeSession.createdAt;
+                      const currentDateKey = getMessageDateKey(msgTime);
+                      const prevDateKey =
+                        idx > 0
+                          ? getMessageDateKey(
+                              activeSession.messages[idx - 1].createdAt || activeSession.createdAt
+                            )
+                          : null;
+                      const showDateDivider = currentDateKey && currentDateKey !== prevDateKey;
+
                       return (
-                        <div
-                          key={msg._id || idx}
-                          className={`flex flex-col max-w-[85%] ${
-                            isUser ? "ml-auto items-end" : "mr-auto items-start"
-                          }`}
-                        >
-                          <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase text-gray-500 mb-1">
-                            {isUser ? (
-                              <>
-                                <span>{activeSession.username || "Visitor"}</span>
-                                <User className="w-3 h-3 text-[#FF4D00]" />
-                              </>
-                            ) : msg.sender === "human_agent" ? (
-                              <>
-                                <Headphones className="w-3 h-3 text-[#2563EB]" />
-                                <span className="text-[#2563EB]">Live Support Agent</span>
-                              </>
-                            ) : (
-                              <>
-                                <Bot className="w-3 h-3 text-[#10b981]" />
-                                <span>Aptus AI Assistant</span>
-                              </>
-                            )}
-                          </div>
+                        <React.Fragment key={msg._id || idx}>
+                          {showDateDivider && (
+                            <div className="flex justify-center my-2">
+                              <span className="px-3 py-1 bg-white border-2 border-[#1a1a1a] shadow-neo-sm text-[10px] font-mono font-bold uppercase text-gray-700">
+                                {formatDateDivider(msgTime)}
+                              </span>
+                            </div>
+                          )}
 
                           <div
-                            className={`p-3 text-xs md:text-sm font-medium border-2 border-[#1a1a1a] shadow-neo-sm leading-relaxed ${
-                              isUser
-                                ? "bg-[#FF4D00] text-white"
-                                : "bg-white text-[#1a1a1a]"
+                            className={`flex flex-col max-w-[85%] ${
+                              isUser ? "ml-auto items-end" : "mr-auto items-start"
                             }`}
                           >
-                            {msg.message}
+                            <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase text-gray-500 mb-1">
+                              {isUser ? (
+                                <>
+                                  <span>{activeSession.username || "Visitor"}</span>
+                                  <User className="w-3 h-3 text-[#FF4D00]" />
+                                </>
+                              ) : msg.sender === "human_agent" ? (
+                                <>
+                                  <Headphones className="w-3 h-3 text-[#2563EB]" />
+                                  <span className="text-[#2563EB]">Live Support Agent</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Bot className="w-3 h-3 text-[#10b981]" />
+                                  <span>Aptus AI Assistant</span>
+                                </>
+                              )}
+                            </div>
+
+                            <div
+                              className={`p-3 text-xs md:text-sm font-medium border-2 border-[#1a1a1a] shadow-neo-sm leading-relaxed ${
+                                isUser
+                                  ? "bg-[#FF4D00] text-white"
+                                  : "bg-white text-[#1a1a1a]"
+                              }`}
+                            >
+                              {isUser ? (
+                                <span className="whitespace-pre-wrap">{msg.message}</span>
+                              ) : (
+                                <FormattedText content={msg.message} />
+                              )}
+                              <span
+                                className={`text-[9px] font-mono mt-1.5 block text-right font-bold ${
+                                  isUser ? "text-orange-200" : "text-gray-400"
+                                }`}
+                              >
+                                {formatMessageTime(msgTime)}
+                              </span>
+                            </div>
                           </div>
-                        </div>
+                        </React.Fragment>
                       );
                     })
                   )}

@@ -8,14 +8,48 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
     const username = req.body.username || "Website Visitor";
     const email = req.body.email || "visitor@web.local";
     const phone = req.body.phone || "";
+    const visitorId = req.body.visitorId || null;
+    const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || req.ip || "";
+    const ipAddress = rawIp.replace(/^.*:/, '') || "127.0.0.1";
 
     const chatbotId = req.chatbot_id;
+
+    // Check if an existing session exists for this visitorId on this chatbot
+    if (visitorId) {
+        let existingSession = await Session.findOne({ chatbotId, visitorId }).populate("messages");
+        if (existingSession) {
+            let updated = false;
+            if (req.body.username && req.body.username !== "Website Visitor" && existingSession.username !== req.body.username) {
+                existingSession.username = req.body.username;
+                updated = true;
+            }
+            if (req.body.email && req.body.email !== "visitor@web.local" && existingSession.email !== req.body.email) {
+                existingSession.email = req.body.email;
+                updated = true;
+            }
+            if (ipAddress && !existingSession.ipAddress) {
+                existingSession.ipAddress = ipAddress;
+                updated = true;
+            }
+            if (updated) {
+                await existingSession.save();
+            }
+
+            return res.status(200).json({
+                success: true,
+                session: existingSession,
+                message: "Existing session resumed"
+            });
+        }
+    }
 
     const session = await Session.create({
         username,
         email,
         phone,
         chatbotId,
+        visitorId,
+        ipAddress,
         status: "active"
     });
 
@@ -72,6 +106,7 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
 
     session.messages.push(user_message);
     session.messages.push(bot_message);
+    session.updatedAt = new Date();
 
     await session.save();
 
@@ -84,9 +119,13 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
 exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
     const ownerId = req.user._id;
 
-    const sessions = await Session.find({ chatbotId: ownerId })
+    // Filter out abandoned empty sessions (0 messages) and sort by latest activity
+    const sessions = await Session.find({
+        chatbotId: ownerId,
+        "messages.0": { $exists: true }
+    })
         .populate("messages")
-        .sort({ createdAt: -1 });
+        .sort({ updatedAt: -1, createdAt: -1 });
 
     res.status(200).json({
         success: true,
