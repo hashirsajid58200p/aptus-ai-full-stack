@@ -262,8 +262,8 @@ const BusinessDetails = () => {
 
   const handleSaveMarkdown = async () => {
     const wordCount = knowledgeMarkdown?.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0;
-    if (wordCount > 100000) {
-      toast.error(`Documentation exceeds maximum limit of 100,000 words (currently ${wordCount} words).`);
+    if (wordCount > 5000) {
+      toast.error(`Documentation exceeds maximum limit of 5,000 words (currently ${wordCount} words).`);
       return;
     }
     setIsSavingMarkdown(true);
@@ -678,7 +678,7 @@ Strict Instructions:
                   className="w-full p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-[#1a1a1a] font-mono text-xs sm:text-sm placeholder-gray-500 focus:outline-none focus:bg-white shadow-neo-sm resize-y leading-relaxed"
                 />
                 <div className="flex items-center justify-between text-[11px] font-mono font-bold text-gray-500">
-                  <span>Characters: {knowledgeMarkdown.length} | Words: {knowledgeMarkdown.trim() ? knowledgeMarkdown.trim().split(/\s+/).length : 0}</span>
+                  <span>Words: {knowledgeMarkdown.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0} / 5,000 (Min: 1,000)</span>
                   <span>Markdown formatting supported (#, ##, **, -, etc.)</span>
                 </div>
               </div>
