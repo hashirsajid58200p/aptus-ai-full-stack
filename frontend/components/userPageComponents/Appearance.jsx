@@ -1,20 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  Palette,
   Bot,
   Sparkles,
   MessageSquare,
   Headphones,
-  ShieldCheck,
   MessageCircle,
   Check,
   RefreshCw,
   Send,
   Mic,
   X,
-  Shapes,
-  Type,
 } from "lucide-react";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
@@ -590,24 +586,19 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   };
 
   return (
-    <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 md:p-6">
+    <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="border-b-3 border-[#1a1a1a] pb-4 flex items-center justify-between">
-        <h2 className="font-syne text-xl md:text-2xl font-black text-[#1a1a1a] uppercase">
+      <div className="border-b-2 border-[#1a1a1a] pb-4">
+        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
           Appearance & Theme
-        </h2>
+        </h3>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Settings Form */}
         <form onSubmit={handleSave} className="lg:col-span-7 flex flex-col gap-5">
-          {/* Identity & Welcome */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-[#FDF9F0] flex flex-col gap-3">
-            <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-              <MessageSquare className="w-4 h-4 text-[#FF4D00]" />
-              Chatbot Identity
-            </h3>
-
+          {/* Identity */}
+          <div className="space-y-4">
             <div>
               <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
                 Bot Name
@@ -617,7 +608,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 value={botName}
                 onChange={(e) => setBotName(e.target.value)}
                 placeholder="Aptus Assistant"
-                className="w-full p-2 bg-white border-2 border-[#1a1a1a] text-xs font-bold outline-none"
+                className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-bold p-2.5 text-[#1a1a1a] outline-none"
                 required
               />
             </div>
@@ -630,20 +621,18 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 value={welcomeMessage}
                 onChange={(e) => setWelcomeMessage(e.target.value)}
                 rows={2}
-                className="w-full p-2 bg-white border-2 border-[#1a1a1a] text-xs font-medium outline-none resize-none"
+                className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-medium p-2.5 text-[#1a1a1a] outline-none resize-none"
                 required
               />
             </div>
           </div>
 
-          {/* Premade Chatbot Icons Selector */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
-            <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-              <Bot className="w-4 h-4 text-[#FF4D00]" />
-              Select AI Chatbot Avatar Icon
-            </h3>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {/* Avatar Icon */}
+          <div>
+            <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-2">
+              Avatar Icon
+            </label>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {PREMADE_AVATARS.map((av) => {
                 const isSelected = chatbotAvatar === av.id;
                 const IconComponent = av.Icon;
@@ -654,37 +643,29 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     onClick={() => setChatbotAvatar(av.id)}
                     className={`p-2.5 border-2 border-[#1a1a1a] flex flex-col items-center justify-center gap-1.5 transition-all ${
                       isSelected
-                        ? "bg-[#BFF000] shadow-neo-sm translate-x-0.5 font-black"
-                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
+                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white"
                     }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-md flex items-center justify-center border-2 border-[#1a1a1a] ${
-                        isSelected ? "bg-white text-[#1a1a1a]" : "bg-white/80 text-[#1a1a1a]"
-                      }`}
-                    >
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                    <span className="text-[10px] uppercase font-extrabold truncate">{av.label}</span>
+                    <IconComponent className="w-4 h-4" />
+                    <span className="text-[10px] uppercase font-bold truncate">{av.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* All 14 NPM Themes Selector */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                <Palette className="w-4 h-4 text-[#2563EB]" />
-                Select Theme (14 Available)
-              </h3>
-              <span className="text-[11px] font-mono font-bold uppercase text-gray-500">
-                Active: {activeConfig.name}
+          {/* Theme Selector */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                Theme
+              </label>
+              <span className="text-xs font-mono font-bold uppercase text-gray-500">
+                {activeConfig.name}
               </span>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto p-0.5">
               {Object.entries(THEME_CONFIGS).map(([key, t]) => {
                 const isSelected = theme === key;
                 return (
@@ -692,47 +673,40 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     type="button"
                     key={key}
                     onClick={() => handleThemeChange(key)}
-                    className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all ${
+                    className={`p-2.5 border-2 border-[#1a1a1a] text-left transition-all flex items-center justify-between text-xs font-bold uppercase ${
                       isSelected
-                        ? "bg-[#BFF000] shadow-neo-sm font-black translate-x-0.5"
-                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
+                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white"
                     }`}
                   >
-                    <div className="text-xs uppercase flex items-center justify-between">
-                      <span className="truncate">{t.name}</span>
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className="w-3.5 h-3.5 rounded-full border border-[#1a1a1a] inline-block"
-                          style={{ backgroundColor: t.defaultColor }}
-                        />
-                        {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]" />}
-                      </div>
-                    </div>
+                    <span className="truncate">{t.name}</span>
+                    <span
+                      className="w-3.5 h-3.5 rounded-full border border-[#1a1a1a] shrink-0"
+                      style={{ backgroundColor: t.defaultColor }}
+                    />
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Shape & Corner Radius Customization */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                <Shapes className="w-4 h-4 text-[#8B5CF6]" />
-                Widget Shape & Rounded Corners
-              </h3>
+          {/* Corner Radius */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                Corner Radius
+              </label>
               {borderRadius && (
                 <button
                   type="button"
                   onClick={() => setBorderRadius("")}
-                  className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                  className="text-xs font-bold text-[#FF4D00] hover:underline uppercase"
                 >
-                  Use Theme Default
+                  Reset
                 </button>
               )}
             </div>
-
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               {SHAPE_PRESETS.map((shape) => {
                 const isSelected = borderRadius === shape.id;
                 return (
@@ -740,164 +714,123 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     type="button"
                     key={shape.id}
                     onClick={() => setBorderRadius(shape.id)}
-                    className={`p-3 border-2 border-[#1a1a1a] text-center transition-all ${
+                    className={`p-2.5 border-2 border-[#1a1a1a] text-center text-xs font-bold uppercase transition-all ${
                       isSelected
-                        ? "bg-[#BFF000] shadow-neo-sm font-black translate-x-0.5"
-                        : "bg-[#FDF9F0] hover:bg-white font-bold"
+                        ? "bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm"
+                        : "bg-[#FDF9F0] text-[#1a1a1a] hover:bg-white"
                     }`}
                   >
-                    <div
-                      className="w-7 h-7 mx-auto mb-1.5 border-2 border-[#1a1a1a] bg-white transition-all shadow-sm"
-                      style={{
-                        borderRadius: shape.radiusPreview,
-                      }}
-                    />
-                    <div className="text-xs uppercase font-extrabold">{shape.label}</div>
+                    {shape.label}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Color Customization (Primary Accent & Text Color) */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-white flex flex-col gap-4">
-            {/* Primary Accent */}
+          {/* Colors */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-[#10b981]" />
-                  Primary Accent Color
-                </h3>
+                <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                  Accent Color
+                </label>
                 {hasCustomAccent && (
                   <button
                     type="button"
                     onClick={handleResetToThemeColor}
-                    className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                    className="text-xs font-bold text-[#FF4D00] hover:underline uppercase"
                   >
-                    Reset to theme default
+                    Reset
                   </button>
                 )}
               </div>
-
-              <div className="flex flex-wrap items-center gap-2.5">
-                {PRESET_COLORS.map((c) => (
-                  <button
-                    type="button"
-                    key={c}
-                    onClick={() => handleColorChange(c)}
-                    style={{ backgroundColor: c }}
-                    className={`w-7 h-7 border-2 border-[#1a1a1a] transition-transform ${
-                      effectiveAccent.toLowerCase() === c.toLowerCase()
-                        ? "scale-110 shadow-neo-sm ring-2 ring-black"
-                        : "hover:scale-105"
-                    }`}
-                  />
-                ))}
-                <div className="flex items-center gap-1.5 ml-2">
-                  <input
-                    type="color"
-                    value={effectiveAccent}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent"
-                  />
-                  <input
-                    type="text"
-                    value={effectiveAccent}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="w-20 p-1 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
-                  />
-                </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={effectiveAccent}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="w-9 h-9 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent shrink-0"
+                />
+                <input
+                  type="text"
+                  value={effectiveAccent}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase p-2"
+                />
               </div>
             </div>
 
-            {/* Header Text Color */}
-            <div className="border-t border-gray-200 pt-3">
+            <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-                  <Type className="w-4 h-4 text-[#2563EB]" />
+                <label className="block text-xs font-black uppercase text-[#1a1a1a]">
                   Header Text Color
-                </h3>
+                </label>
                 {textColor && (
                   <button
                     type="button"
                     onClick={() => setTextColor("")}
-                    className="text-[10px] font-bold text-[#2563eb] hover:underline"
+                    className="text-xs font-bold text-[#FF4D00] hover:underline uppercase"
                   >
-                    Auto Contrast
+                    Auto
                   </button>
                 )}
               </div>
-
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={effectiveHeaderColor}
                   onChange={(e) => setTextColor(e.target.value)}
-                  className="w-7 h-7 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent"
+                  className="w-9 h-9 cursor-pointer border-2 border-[#1a1a1a] p-0 bg-transparent shrink-0"
                 />
                 <input
                   type="text"
                   value={textColor || effectiveHeaderColor}
                   onChange={(e) => setTextColor(e.target.value)}
-                  placeholder="e.g. #FFFFFF"
-                  className="w-28 p-1.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase"
+                  placeholder="#FFFFFF"
+                  className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold uppercase p-2"
                 />
-                <span className="text-[11px] text-gray-500">
-                  {textColor ? "Custom Text Color" : "Auto-calculated for high contrast"}
-                </span>
               </div>
             </div>
           </div>
 
-          {/* Whitelisted Domains */}
-          <div className="border-2 border-[#1a1a1a] p-4 bg-[#FDF9F0] flex flex-col gap-2">
-            <h3 className="font-syne text-xs font-black uppercase text-[#1a1a1a] flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#ef4444]" />
-              Allowed Domains (Whitelist)
-            </h3>
+          {/* Allowed Domains */}
+          <div>
+            <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-1">
+              Allowed Domains
+            </label>
             <input
               type="text"
               value={allowedDomains}
               onChange={(e) => setAllowedDomains(e.target.value)}
-              placeholder="e.g. mywebsite.com, localhost:3000 (comma-separated)"
-              className="w-full p-2 bg-white border-2 border-[#1a1a1a] text-xs font-mono font-bold outline-none"
+              placeholder="e.g. example.com, localhost:3000"
+              className="w-full bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs font-mono font-bold p-2.5 text-[#1a1a1a] outline-none"
             />
-            <span className="text-[10px] text-gray-500 font-medium">
-              Leave blank to allow all domains or for local development.
-            </span>
           </div>
 
           {/* Save Button */}
           <button
             type="submit"
             disabled={saving}
-            className="self-start px-6 py-2.5 bg-[#1a1a1a] text-white font-extrabold text-xs uppercase border-2 border-[#1a1a1a] shadow-neo hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="btn-neo-primary self-start px-6 py-2.5 text-xs font-extrabold uppercase flex items-center gap-2"
           >
             {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-            {saving ? "Saving Changes..." : "Save Appearance Settings"}
+            <span>{saving ? "Saving Changes..." : "Save Appearance Settings"}</span>
           </button>
         </form>
 
-        {/* Dedicated Framed Live Mockup Preview Container */}
+        {/* Live Preview Container */}
         <div className="lg:col-span-5 flex flex-col">
-          <div className="bg-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg flex flex-col overflow-hidden">
-            {/* Window title bar */}
-            <div className="bg-[#262626] border-b-2 border-[#1a1a1a] px-3.5 py-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
-                <span className="text-[10px] font-mono font-bold text-gray-300 uppercase ml-2 tracking-wider">
-                  Live Preview Container
-                </span>
-              </div>
-              <span className="bg-[#BFF000] text-[#1a1a1a] text-[9px] font-mono font-black uppercase px-2 py-0.5 border border-[#1a1a1a]">
+          <div className="border-2 border-[#1a1a1a] bg-white shadow-neo-lg flex flex-col overflow-hidden">
+            <div className="border-b-2 border-[#1a1a1a] px-4 py-2.5 bg-[#FDF9F0] flex items-center justify-between">
+              <span className="font-syne font-black text-xs uppercase text-[#1a1a1a]">
+                Live Preview
+              </span>
+              <span className="text-[10px] font-mono font-bold uppercase text-gray-600">
                 {activeConfig.name}
               </span>
             </div>
 
-            {/* Container canvas where the interactive chatbot widget sits */}
-            <div className="p-4 sm:p-6 bg-[#F5F2EB] flex flex-col items-center justify-center min-h-[500px]">
+            <div className="p-4 sm:p-6 bg-[#F5F2EB] flex flex-col items-center justify-center min-h-[460px]">
               <div
                 className="w-full max-w-[320px] flex flex-col transition-all duration-200 overflow-hidden"
                 style={{
@@ -951,7 +884,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
                         color: effectiveHeaderColor,
                       }}
-                      title="Request Live Agent"
                     >
                       <Headphones className="w-3.5 h-3.5" />
                     </div>
@@ -963,7 +895,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
                         color: effectiveHeaderColor,
                       }}
-                      title="Close Chat"
                     >
                       <X className="w-3.5 h-3.5" />
                     </div>
@@ -972,7 +903,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
                 {/* Chat Body */}
                 <div
-                  className="p-3.5 min-h-[220px] flex flex-col gap-2.5 justify-end text-xs transition-colors"
+                  className="p-3.5 min-h-[200px] flex flex-col gap-2.5 justify-end text-xs transition-colors"
                   style={{ backgroundColor: activeConfig.messagesBg }}
                 >
                   {/* Bot Greeting Bubble */}
@@ -1015,7 +946,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                   </div>
                 </div>
 
-                {/* Input Bar with Input, Voice Mic on Right, and Send */}
+                {/* Input Bar */}
                 <div
                   className="p-2.5 flex items-center gap-2"
                   style={{
@@ -1043,7 +974,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       border: activeConfig.inputBorder || "1px solid #1a1a1a",
                       borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
                     }}
-                    title="Voice Input (Whisper STT)"
                   >
                     <Mic className="w-3.5 h-3.5" />
                   </div>
@@ -1062,20 +992,20 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 </div>
               </div>
 
-              {/* Floating Toggle Button Preview under the widget */}
+              {/* Launcher preview */}
               <div className="mt-4 flex items-center gap-3">
                 <span className="text-[10px] font-mono font-bold uppercase text-gray-500">
-                  Toggle Button Preview:
+                  Launcher:
                 </span>
                 <div
-                  className="w-11 h-11 flex items-center justify-center border-2 border-[#1a1a1a] shadow-neo-sm"
+                  className="w-10 h-10 flex items-center justify-center border-2 border-[#1a1a1a] shadow-neo-sm"
                   style={{
                     backgroundColor: effectiveAccent,
                     color: effectiveHeaderColor,
                     borderRadius: effectiveRadius || "50%",
                   }}
                 >
-                  {renderAvatarPreview(22, effectiveHeaderColor)}
+                  {renderAvatarPreview(20, effectiveHeaderColor)}
                 </div>
               </div>
             </div>
