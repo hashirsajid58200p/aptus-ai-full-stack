@@ -56,12 +56,12 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
     setLoadingModels(true);
     try {
-      const url = new URL(`${baseurl}/user/models`);
-      url.searchParams.set("provider", prov);
-      if (activeKey) url.searchParams.set("apiKey", activeKey);
-      if (prov === "custom" && activeUrl) url.searchParams.set("customBaseUrl", activeUrl);
+      const params = new URLSearchParams();
+      params.set("provider", prov);
+      if (activeKey) params.set("apiKey", activeKey);
+      if (prov === "custom" && activeUrl) params.set("customBaseUrl", activeUrl);
 
-      const res = await fetch(url.toString(), { credentials: "include" });
+      const res = await fetch(`${baseurl}/user/models?${params.toString()}`, { credentials: "include" });
       const data = await res.json();
 
       if (data.success && Array.isArray(data.models) && data.models.length > 0) {
