@@ -481,11 +481,15 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
   useEffect(() => {
     if (user) {
+      const activeThemeKey = user.theme || "aptus";
       if (user.theme) setTheme(user.theme);
       if (user.primaryColor) {
         setPrimaryColor(user.primaryColor);
-        if (user.primaryColor !== "#FF4D00" && user.primaryColor !== "#f97316") {
+        const themeDef = THEME_CONFIGS[activeThemeKey];
+        if (themeDef && user.primaryColor.toLowerCase() !== themeDef.defaultColor.toLowerCase()) {
           setHasCustomAccent(true);
+        } else {
+          setHasCustomAccent(false);
         }
       }
       if (user.textColor) setTextColor(user.textColor);
@@ -502,8 +506,11 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const handleThemeChange = (newThemeKey) => {
     setTheme(newThemeKey);
     const themeDef = THEME_CONFIGS[newThemeKey];
-    if (themeDef && !hasCustomAccent) {
+    if (themeDef) {
       setPrimaryColor(themeDef.defaultColor);
+      setHasCustomAccent(false);
+      setTextColor(themeDef.headerColor || "");
+      setBorderRadius("");
     }
   };
 
@@ -585,15 +592,10 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   return (
     <div className="flex flex-col gap-6 bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 md:p-6">
       {/* Header */}
-      <div className="border-b-3 border-[#1a1a1a] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <span className="bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-black text-xs uppercase inline-block mr-2">
-            NPM WIDGET CUSTOMIZER
-          </span>
-          <h2 className="font-syne text-xl md:text-3xl font-black text-[#1a1a1a] uppercase inline-block">
-            Chatbot Appearance
-          </h2>
-        </div>
+      <div className="border-b-3 border-[#1a1a1a] pb-4 flex items-center justify-between">
+        <h2 className="font-syne text-xl md:text-2xl font-black text-[#1a1a1a] uppercase">
+          Appearance & Theme
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -706,7 +708,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]" />}
                       </div>
                     </div>
-                    <div className="text-[10px] text-gray-600 font-normal truncate mt-0.5">{t.desc}</div>
                   </button>
                 );
               })}
@@ -752,7 +753,6 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       }}
                     />
                     <div className="text-xs uppercase font-extrabold">{shape.label}</div>
-                    <div className="text-[10px] text-gray-500 font-normal mt-0.5">{shape.badge}</div>
                   </button>
                 );
               })}

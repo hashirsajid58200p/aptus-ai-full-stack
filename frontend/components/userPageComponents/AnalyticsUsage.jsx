@@ -5,45 +5,44 @@ import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
 const PROVIDERS = [
-  { id: "groq", name: "Groq", desc: "Ultra-fast Llama & open models (Fastest Latency)", badge: "Free/Fast" },
-  { id: "openai", name: "OpenAI", desc: "GPT-4o, GPT-4o Mini, o1 reasoning", badge: "Industry Std" },
-  { id: "anthropic", name: "Anthropic Claude", desc: "Claude 3.5 Sonnet & Haiku", badge: "High Nuance" },
-  { id: "xai", name: "xAI Grok", desc: "Grok 2 & Grok Beta real-time AI", badge: "xAI" },
-  { id: "openrouter", name: "OpenRouter", desc: "Unified multi-provider AI gateway", badge: "Multi-Model" },
-  { id: "custom", name: "Custom API", desc: "Self-hosted vLLM, Ollama, or OpenAI proxy", badge: "Self-Hosted" },
+  { id: "groq", name: "Groq", desc: "Ultra-fast open models (Llama 3, Gemma, Mixtral)" },
+  { id: "openai", name: "OpenAI", desc: "GPT-4o, GPT-4o Mini, and reasoning models" },
+  { id: "anthropic", name: "Anthropic Claude", desc: "Claude 3.5 Sonnet and Haiku" },
+  { id: "xai", name: "xAI Grok", desc: "Grok 2 and Grok Beta models" },
+  { id: "openrouter", name: "OpenRouter", desc: "Unified multi-provider AI gateway" },
+  { id: "custom", name: "Custom API", desc: "Self-hosted vLLM, Ollama, or OpenAI proxy" },
 ];
 
 export const CURATED_MODELS = {
   groq: [
-    { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile", badge: "Recommended", desc: "128k context, top conversational intelligence & ultra fast" },
-    { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant", badge: "Ultra Fast", desc: "Lowest latency response for quick customer FAQs" },
-    { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B (32k)", badge: "Balanced", desc: "High throughput reasoning with extended memory" },
-    { id: "gemma2-9b-it", name: "Gemma 2 9B", badge: "Google", desc: "Compact Google instruction model" },
-    { id: "openai/gpt-oss-120b", name: "GPT OSS 120B", badge: "Platform Default", desc: "Aptus default high-capacity open-weight system" },
+    { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile" },
+    { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant" },
+    { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B" },
+    { id: "gemma2-9b-it", name: "Gemma 2 9B" },
   ],
   openai: [
-    { id: "gpt-4o", name: "GPT-4o", badge: "Flagship", desc: "Omni model for complex customer conversations" },
-    { id: "gpt-4o-mini", name: "GPT-4o Mini", badge: "Cost Efficient", desc: "Fast, smart, near-zero token cost" },
-    { id: "o1-mini", name: "o1-mini", badge: "Deep Reasoning", desc: "STEM and technical troubleshooting multi-step reasoning" },
-    { id: "gpt-4-turbo", name: "GPT-4 Turbo", badge: "128k Context", desc: "Large context window for extensive docs" },
+    { id: "gpt-4o", name: "GPT-4o" },
+    { id: "gpt-4o-mini", name: "GPT-4o Mini" },
+    { id: "o1-mini", name: "o1-mini" },
+    { id: "gpt-4-turbo", name: "GPT-4 Turbo" },
   ],
   anthropic: [
-    { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet", badge: "Top Quality", desc: "Industry benchmark for natural, highly persuasive conversations" },
-    { id: "claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku", badge: "Speed", desc: "Instant response times with excellent instruction following" },
-    { id: "claude-3-opus-20240229", name: "Claude 3 Opus", badge: "Analysis", desc: "Deep multi-domain complex customer synthesis" },
+    { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet" },
+    { id: "claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku" },
+    { id: "claude-3-opus-20240229", name: "Claude 3 Opus" },
   ],
   xai: [
-    { id: "grok-2-1212", name: "Grok 2", badge: "Flagship", desc: "State-of-the-art conversational model by xAI" },
-    { id: "grok-beta", name: "Grok Beta", badge: "Speed", desc: "Fast preview model for interactive responses" },
+    { id: "grok-2-1212", name: "Grok 2" },
+    { id: "grok-beta", name: "Grok Beta" },
   ],
   openrouter: [
-    { id: "deepseek/deepseek-r1", name: "DeepSeek R1", badge: "Reasoning", desc: "State of the art open reasoning model" },
-    { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B", badge: "Versatile", desc: "Meta flagship weights hosted via OpenRouter" },
-    { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet", badge: "Top Tier", desc: "High nuance customer service" },
-    { id: "openai/gpt-4o-mini", name: "GPT-4o Mini", badge: "Economy", desc: "Low cost routed intelligence" },
+    { id: "deepseek/deepseek-r1", name: "DeepSeek R1" },
+    { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B" },
+    { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet" },
+    { id: "openai/gpt-4o-mini", name: "GPT-4o Mini" },
   ],
   custom: [
-    { id: "default", name: "Default Self-Hosted Model", badge: "Custom", desc: "Custom model provided by your base URL endpoint" },
+    { id: "default", name: "Default Model" },
   ],
 };
 
@@ -197,9 +196,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-syne font-black text-sm uppercase">{p.name}</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 border border-[#1a1a1a] bg-white">
-                      {p.badge}
-                    </span>
+                    {isSelected && (
+                      <span className="text-[10px] font-black px-1.5 py-0.5 border border-[#1a1a1a] bg-black text-white">
+                        ACTIVE
+                      </span>
+                    )}
                   </div>
                   <div className="text-[11px] text-gray-600 leading-tight">{p.desc}</div>
                 </div>
@@ -401,9 +402,15 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                   Type any custom fine-tuned or newly released model ID supported by {provider}.
                 </span>
               </div>
+            ) : provider !== "groq" && !getKeyForProvider(provider) && availableModels.length === 0 ? (
+              <div className="p-4 border-2 border-dashed border-[#1a1a1a] bg-[#FDF9F0] text-center">
+                <p className="text-xs font-bold text-gray-700">
+                  Enter your {PROVIDERS.find((p) => p.id === provider)?.name} API key above to load available models.
+                </p>
+              </div>
             ) : (
               <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
                   {currentModels.map((m) => {
                     const isSelected = modelName === m.id;
                     return (
@@ -417,27 +424,20 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-syne font-black text-xs uppercase truncate">
-                            {m.name || m.id}
+                          <span className="font-mono font-bold text-xs truncate">
+                            {m.id}
                           </span>
-                          {m.badge && (
-                            <span
-                              className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 border ${
-                                isSelected ? "border-white bg-white/20 text-white" : "border-[#1a1a1a] bg-[#BFF000] text-[#1a1a1a]"
-                              }`}
-                            >
-                              {m.badge}
+                          {isSelected && (
+                            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 border border-white bg-white/20 text-white">
+                              Active
                             </span>
                           )}
                         </div>
-                        {m.desc && (
-                          <div className={`text-[10px] mt-1.5 ${isSelected ? "text-white/80" : "text-gray-600"}`}>
-                            {m.desc}
+                        {m.name && m.name !== m.id && (
+                          <div className={`text-[11px] mt-1 truncate ${isSelected ? "text-white/80" : "text-gray-600"}`}>
+                            {m.name}
                           </div>
                         )}
-                        <div className={`text-[10px] font-mono mt-1 ${isSelected ? "text-white/60" : "text-gray-400"}`}>
-                          ID: {m.id}
-                        </div>
                       </div>
                     );
                   })}

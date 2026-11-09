@@ -174,7 +174,7 @@ const TestChatbot = () => {
     } else {
       hasLiveTranscribedRef.current = false;
 
-      // 1. Live real-time speech recognition
+      // 1. Live real-time speech recognition (word-by-word streaming)
       const SpeechRec =
         typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition);
 
@@ -191,32 +191,43 @@ const TestChatbot = () => {
           const initialText = messageInput.trim();
 
           recognition.onresult = (event) => {
-            let liveTranscript = "";
+            let interimTranscript = "";
+            let finalTranscript = "";
             for (let i = 0; i < event.results.length; i++) {
-              liveTranscript += event.results[i][0].transcript;
+              const res = event.results[i];
+              if (res.isFinal) {
+                finalTranscript += res[0].transcript + " ";
+              } else {
+                interimTranscript += res[0].transcript;
+              }
             }
-            if (liveTranscript.trim()) {
+            const liveWords = (finalTranscript + interimTranscript).trim();
+            if (liveWords) {
               hasLiveTranscribedRef.current = true;
-              setMessageInput(initialText ? `${initialText} ${liveTranscript.trim()}` : liveTranscript.trim());
+              setMessageInput(initialText ? `${initialText} ${liveWords}` : liveWords);
             }
           };
 
           recognition.onerror = (e) => {
             console.warn("Speech recognition notice:", e?.error);
+            setIsRecording(false);
           };
 
           recognition.onend = () => {
             recognitionRef.current = null;
+            setIsRecording(false);
           };
 
           recognition.start();
           recognitionRef.current = recognition;
+          setIsRecording(true);
+          return;
         } catch (recErr) {
-          console.warn("Real-time speech recognition could not start:", recErr);
+          console.warn("Real-time speech recognition could not start, falling back to audio recording:", recErr);
         }
       }
 
-      // 2. Concurrently record for high-accuracy Whisper multilingual fallback
+      // 2. Fallback to MediaRecorder + Whisper only if Web Speech is unavailable
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {

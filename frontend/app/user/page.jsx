@@ -9,7 +9,8 @@ import {
   Menu,
   Palette,
   Cpu,
-  BarChart3,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
@@ -18,7 +19,6 @@ import TestChatbot from "components/userPageComponents/TestChatbot";
 import Sessions from "components/userPageComponents/Sessions";
 import AnalyticsUsage from "components/userPageComponents/AnalyticsUsage";
 import AppearanceTab from "components/userPageComponents/Appearance";
-import OverviewTab from "components/userPageComponents/OverviewTab";
 import { useRouter } from "next/navigation";
 import { logout, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,11 +42,11 @@ export default function UserDashboard() {
   const { isLoggedOut, loading, user, isInitialized } = useSelector((state) => state.user);
 
   const [isMounted, setIsMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview & analytics");
+  const [activeTab, setActiveTab] = useState("business details");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const tabs = [
-    { name: "overview & analytics", icon: <BarChart3 /> },
     { name: "business details", icon: <Briefcase /> },
     { name: "appearance & theme", icon: <Palette /> },
     { name: "ai model & keys", icon: <Cpu /> },
@@ -97,25 +97,42 @@ export default function UserDashboard() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-30 w-72 bg-white border-r-3 border-[#1a1a1a] shadow-neo-lg transform transition-transform duration-200 ease-in-out md:translate-x-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-0 -translate-x-full"
+        className={`fixed md:static inset-y-0 left-0 z-30 ${
+          isCollapsed ? "md:w-20" : "md:w-64"
+        } w-72 bg-white border-r-3 border-[#1a1a1a] shadow-neo-lg transition-all duration-200 ease-in-out md:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } flex flex-col justify-between`}
       >
         <div>
-          {/* Logo */}
-          <div className="p-6 border-b-3 border-[#1a1a1a]">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2 py-0.5 font-black text-[10px] uppercase tracking-wider">
-                BUSINESS
-              </span>
-            </div>
-            <Link href="/" className="inline-block group">
-              <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-8 w-auto object-contain" />
-            </Link>
+          {/* Logo & Collapse Header */}
+          <div className="p-4 sm:p-5 border-b-3 border-[#1a1a1a] flex items-center justify-between gap-2">
+            {!isCollapsed ? (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2 py-0.5 font-black text-[10px] uppercase tracking-wider">
+                    BUSINESS
+                  </span>
+                </div>
+                <Link href="/" className="inline-block group">
+                  <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-7 w-auto object-contain" />
+                </Link>
+              </div>
+            ) : (
+              <Link href="/" className="mx-auto block" title="Aptus AI">
+                <span className="font-syne font-black text-xl text-[#FF4D00]">⚡</span>
+              </Link>
+            )}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden md:flex p-1.5 border-2 border-[#1a1a1a] bg-[#FDF9F0] hover:bg-[#FF4D00] hover:text-white transition-colors cursor-pointer"
+              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
           </div>
 
           {/* Navigation Links */}
-          <nav className="p-4 flex flex-col gap-2">
+          <nav className="p-3 sm:p-4 flex flex-col gap-2">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.name;
               return (
@@ -125,27 +142,21 @@ export default function UserDashboard() {
                     setActiveTab(tab.name);
                     setIsSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
+                  title={isCollapsed ? tab.name : undefined}
+                  className={`w-full flex items-center ${
+                    isCollapsed ? "justify-center px-2" : "gap-3 px-4"
+                  } py-3 border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
                     isActive
                       ? "bg-[#FF4D00] text-white shadow-neo-sm translate-x-1"
                       : "bg-white text-[#1a1a1a] hover:bg-[#FDF9F0]"
                   }`}
                 >
                   {React.cloneElement(tab.icon, { className: "w-4 h-4 shrink-0" })}
-                  <span className="truncate">{tab.name}</span>
+                  {!isCollapsed && <span className="truncate">{tab.name}</span>}
                 </button>
               );
             })}
           </nav>
-        </div>
-
-        {/* Footer info / Agency link */}
-        <div className="p-4 border-t-3 border-[#1a1a1a] bg-[#FDF9F0]">
-          <div className="text-[10px] font-bold text-gray-500 uppercase">Chatbot Engine Status</div>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
-            <span className="text-xs font-black text-[#1a1a1a] uppercase">Active & Connected</span>
-          </div>
         </div>
       </aside>
 
@@ -197,15 +208,6 @@ export default function UserDashboard() {
         </header>
 
         {/* Tab Content */}
-        {activeTab === "overview & analytics" && (
-          <OverviewTab
-            user={user}
-            onNavigateTab={(tab) => {
-              setActiveTab(tab);
-              setIsSidebarOpen(false);
-            }}
-          />
-        )}
         {activeTab === "business details" && <BussinessDetails />}
         {activeTab === "appearance & theme" && (
           <AppearanceTab user={user} onUserUpdate={() => dispatch(loadUser())} />

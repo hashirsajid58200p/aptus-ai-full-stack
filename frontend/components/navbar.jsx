@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Button } from "components/ui/button";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
@@ -21,14 +20,10 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => router.push("/")}>
-            <Image
+            <img
               src="/aptus-logo.png"
               alt="Aptus"
-              width={160}
-              height={48}
-              style={{ width: "auto" }}
-              className="h-12 w-auto object-contain hover:scale-105 transition-transform"
-              priority
+              className="h-10 sm:h-12 w-auto object-contain hover:scale-105 transition-transform"
             />
           </div>
 
