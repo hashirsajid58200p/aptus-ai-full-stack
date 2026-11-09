@@ -105,7 +105,13 @@ export default function UserDashboard() {
       >
         <div>
           {/* Logo & Collapse Header */}
-          <div className="p-4 sm:p-5 border-b-3 border-[#1a1a1a] flex items-center justify-between gap-2">
+          <div
+            className={`border-b-3 border-[#1a1a1a] flex ${
+              isCollapsed
+                ? "flex-col items-center justify-center p-3 gap-3"
+                : "items-center justify-between p-4 sm:p-5 gap-2"
+            }`}
+          >
             {!isCollapsed ? (
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -118,13 +124,13 @@ export default function UserDashboard() {
                 </Link>
               </div>
             ) : (
-              <Link href="/" className="mx-auto block" title="Aptus AI">
-                <span className="font-syne font-black text-xl text-[#FF4D00]">⚡</span>
+              <Link href="/" className="block" title="Aptus AI">
+                <img src="/favicon-32x32.png" alt="Aptus Logo" className="w-7 h-7 object-contain hover:scale-105 transition-transform" />
               </Link>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden md:flex p-1.5 border-2 border-[#1a1a1a] bg-[#FDF9F0] hover:bg-[#FF4D00] hover:text-white transition-colors cursor-pointer"
+              className="hidden md:flex p-1.5 border-2 border-[#1a1a1a] bg-[#FDF9F0] hover:bg-[#FF4D00] hover:text-white transition-colors cursor-pointer shrink-0"
               title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -144,10 +150,10 @@ export default function UserDashboard() {
                   }}
                   title={isCollapsed ? tab.name : undefined}
                   className={`w-full flex items-center ${
-                    isCollapsed ? "justify-center px-2" : "gap-3 px-4"
-                  } py-3 border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
+                    isCollapsed ? "justify-center px-2 py-2.5" : "gap-3 px-4 py-3"
+                  } border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
                     isActive
-                      ? "bg-[#FF4D00] text-white shadow-neo-sm translate-x-1"
+                      ? `bg-[#FF4D00] text-white shadow-neo-sm ${isCollapsed ? "" : "translate-x-1"}`
                       : "bg-white text-[#1a1a1a] hover:bg-[#FDF9F0]"
                   }`}
                 >
