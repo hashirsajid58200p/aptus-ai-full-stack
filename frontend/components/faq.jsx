@@ -7,27 +7,32 @@ export default function Faq() {
     {
       question: "Do I need to set up or host my own backend?",
       answer:
-        "No. Aptus AI handles all AI server infrastructure, database storage, and Groq Llama 3.3 model inference. You only install the aptus-ai-chatbot-widget npm package and pass your API token.",
+        "No. Aptus AI handles all AI server infrastructure, database storage, and multi-model inference. You simply install the aptus-ai-chatbot-widget package (or paste the script tag) and pass your unique API token.",
     },
     {
-      question: "Which frameworks are supported by the widget?",
+      question: "Which LLM models and inference providers can I use?",
       answer:
-        "The aptus-ai-chatbot-widget package natively supports React 17+ and Next.js (both App Router and Pages Router).",
+        "Aptus AI connects to 11 leading AI providers: Groq (ultra-fast LPU inference), OpenAI (GPT-4o), Google Gemini, DeepSeek (V3/R1), Anthropic Claude, Mistral, Perplexity, Cohere, xAI Grok, OpenRouter, and custom OpenAI-compatible endpoints.",
     },
     {
-      question: "How do I train the chatbot on my business data?",
+      question: "How do I train the chatbot to prevent false answers and hallucinations?",
       answer:
-        "Simply create an account, navigate to your dashboard, and add your business description and custom Q&As. Your chatbot automatically learns from your inputs in real time without requiring any code redeployments.",
+        "In your dashboard, add structured FAQs or write/paste up to 5,000 words of comprehensive Markdown documentation. The chatbot activates once minimum knowledge criteria is met, answering strictly from your verified content without fabricating prices.",
     },
     {
-      question: "Is the chatbot widget customizable to match my website design?",
+      question: "Can human support agents take over live conversations?",
       answer:
-        "Yes! You can choose built-in theme presets like 'aptus', enable or disable quick-reply question suggestions, and configure widget positioning to seamlessly fit your brand aesthetics.",
+        "Yes! Business owners can inspect live conversations in the Sessions inbox and click 'Take Over Chat' anytime. AI replies are paused, and direct agent replies stream to the customer's widget in real time.",
     },
     {
-      question: "How does token authorization and usage tracking work?",
+      question: "Does the widget support voice typing and speech-to-text?",
       answer:
-        "Each registered account generates a unique business token (e.g. A1ED-BACD7C30...). The widget passes this token to fetch your specific business intelligence while your owner dashboard tracks session analytics in real time.",
+        "Yes. Customers can speak naturally using real-time browser Web Speech streaming paired with Groq Whisper Large v3 Turbo server-side fallback, supporting English, Urdu, and Roman Urdu.",
+    },
+    {
+      question: "How do I secure my token and prevent unauthorized hotlinking?",
+      answer:
+        "Configure your website's domain in the Token & Security tab. All widget requests from unauthorized external domains are automatically rejected with HTTP 403 Forbidden.",
     },
   ];
 

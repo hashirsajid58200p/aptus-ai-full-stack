@@ -14,35 +14,8 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
 
     const chatbotId = req.chatbot_id;
 
-    // Check if an existing session exists for this visitorId on this chatbot
-    if (visitorId) {
-        let existingSession = await Session.findOne({ chatbotId, visitorId }).populate("messages");
-        if (existingSession) {
-            let updated = false;
-            if (req.body.username && req.body.username !== "Website Visitor" && existingSession.username !== req.body.username) {
-                existingSession.username = req.body.username;
-                updated = true;
-            }
-            if (req.body.email && req.body.email !== "visitor@web.local" && existingSession.email !== req.body.email) {
-                existingSession.email = req.body.email;
-                updated = true;
-            }
-            if (ipAddress && !existingSession.ipAddress) {
-                existingSession.ipAddress = ipAddress;
-                updated = true;
-            }
-            if (updated) {
-                await existingSession.save();
-            }
-
-            return res.status(200).json({
-                success: true,
-                session: existingSession,
-                message: "Existing session resumed"
-            });
-        }
-    }
-
+    // Create a fresh session for each page visit/refresh so the widget starts a clean new chat,
+    // while all historical sessions are preserved in the business dashboard.
     const session = await Session.create({
         username,
         email,

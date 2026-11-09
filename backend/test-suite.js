@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "test";
 require("dotenv").config({ path: "./config/.env" });
 const { connectDB } = require("./database/database");
 const http = require("http");

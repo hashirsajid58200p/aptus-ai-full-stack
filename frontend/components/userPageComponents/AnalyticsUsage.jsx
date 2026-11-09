@@ -192,21 +192,6 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
-      {/* Header */}
-      <div className="border-b-2 border-[#1a1a1a] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-[#1a1a1a]">
-            ACTIVE PROVIDER: {provider.toUpperCase()}
-          </span>
-          <span className="text-xs font-bold text-gray-600 truncate">
-            Model: <strong className="text-[#1a1a1a]">{modelName || "Default"}</strong>
-          </span>
-        </div>
-        <div className="text-[11px] font-mono font-bold text-gray-500">
-          Configure API credentials & choose AI intelligence engine
-        </div>
-      </div>
-
       {/* Providers */}
       <div>
         <label className="block text-xs font-black uppercase text-[#1a1a1a] mb-2">

@@ -1,369 +1,425 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, BookOpen, Terminal, Code, Palette, Settings, Check, Copy } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Terminal,
+  Code,
+  Palette,
+  Settings,
+  Check,
+  Copy,
+  Cpu,
+  Headphones,
+  Mic,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import baseurl from "@/store/baseurl";
 
 export default function DocsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("intro");
   const [copiedNpm, setCopiedNpm] = useState(false);
-  const [copiedYarn, setCopiedYarn] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
   const [copiedUsage, setCopiedUsage] = useState(false);
 
   useEffect(() => {
     document.title = "Documentation — Aptus AI";
   }, []);
 
-  const usageCode = `import React from 'react';
+  const reactUsageCode = `import React from 'react';
 import { ChatBot } from 'aptus-ai-chatbot-widget';
 
-export default function App() {
+export default function RootLayout({ children }) {
   return (
-    <div>
-      <h1>My Awesome Website</h1>
+    <html lang="en">
+      <body>
+        {children}
 
-      {/* Drop the widget anywhere in your root layout */}
-      <ChatBot 
-        token="YOUR_BUSINESS_TOKEN" 
-        apiUrl="https://aptus-ai-full-stack.vercel.app/api/v1" 
-        theme="aptus"
-        wantToShowSuggestions={true}
-      />
-    </div>
+        {/* Drop the widget anywhere in your layout */}
+        <ChatBot 
+          token="YOUR_BUSINESS_TOKEN"
+          apiUrl="${baseurl}"
+          theme="aptus"
+          position="right"
+          wantToShowSuggestions={true}
+        />
+      </body>
+    </html>
   );
 }`;
 
+  const scriptUsageCode = `<!-- Paste before the closing </body> tag of any HTML page -->
+<script
+  src="https://unpkg.com/aptus-ai-chatbot-widget@latest/dist/index.js"
+  data-token="YOUR_BUSINESS_TOKEN"
+  data-api-url="${baseurl}"
+  defer>
+</script>`;
+
   const copyToClipboard = (text, type) => {
     navigator.clipboard.writeText(text);
-    if (type === 'npm') {
+    if (type === "npm") {
       setCopiedNpm(true);
       setTimeout(() => setCopiedNpm(false), 2000);
-    } else if (type === 'yarn') {
-      setCopiedYarn(true);
-      setTimeout(() => setCopiedYarn(false), 2000);
-    } else if (type === 'usage') {
+    } else if (type === "script") {
+      setCopiedScript(true);
+      setTimeout(() => setCopiedScript(false), 2000);
+    } else if (type === "usage") {
       setCopiedUsage(true);
       setTimeout(() => setCopiedUsage(false), 2000);
     }
   };
 
   const sections = [
-    { id: "intro", label: "Introduction", icon: BookOpen },
+    { id: "intro", label: "Overview", icon: BookOpen },
     { id: "install", label: "Installation", icon: Terminal },
     { id: "usage", label: "Quick Start", icon: Code },
     { id: "props", label: "Props API", icon: Settings },
-    { id: "themes", label: "Themes", icon: Palette },
+    { id: "features", label: "Core Engine", icon: Cpu },
+    { id: "themes", label: "Theming", icon: Palette },
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDF9F0] text-[#1a1a1a] font-inter pb-10 md:pb-20">
+    <div className="min-h-screen bg-[#FDF9F0] text-[#1a1a1a] font-inter pb-12">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-[#FDF9F0] border-b-4 border-[#1a1a1a] px-4 md:px-6 py-4 flex items-center justify-between shadow-neo-sm">
-        <div className="flex items-center gap-3 md:gap-4">
+      <nav className="sticky top-0 z-50 bg-[#FDF9F0] border-b-3 border-[#1a1a1a] px-4 md:px-8 py-3.5 flex items-center justify-between shadow-neo-sm">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase text-xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-[#1a1a1a] font-extrabold border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all uppercase text-xs cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back</span>
+            <ArrowLeft className="w-3.5 h-3.5" /> <span>Back</span>
           </button>
-          <h1 className="font-syne text-lg md:text-xl font-extrabold uppercase tracking-tight">
-            Aptus AI <span className="text-[#FF4D00]">Docs</span>
+          <div className="h-5 w-0.5 bg-[#1a1a1a]/20 mx-1"></div>
+          <h1 className="font-syne text-base md:text-lg font-extrabold uppercase tracking-tight">
+            Aptus AI <span className="text-[#FF4D00]">Documentation</span>
           </h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href="https://www.npmjs.com/package/aptus-ai-chatbot-widget"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+          >
+            npm v1.0.11
+          </a>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 md:gap-8 p-4 md:p-10 mt-2 md:mt-4">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 p-4 md:p-8 mt-2">
         {/* Sidebar */}
-        <aside className="w-full md:w-64 shrink-0">
-          <div className="bg-white border-3 border-[#1a1a1a] p-4 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:sticky md:top-28 flex flex-col gap-2">
+        <aside className="w-full md:w-60 shrink-0">
+          <div className="bg-white border-3 border-[#1a1a1a] p-3 shadow-neo-sm md:sticky md:top-24 flex flex-col gap-1.5">
             {sections.map((sec) => (
               <button
                 key={sec.id}
                 onClick={() => setActiveTab(sec.id)}
-                className={`flex items-center gap-3 px-4 py-3 font-extrabold text-sm uppercase border-2 transition-all ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 font-bold text-xs uppercase border-2 transition-all cursor-pointer ${
                   activeTab === sec.id
-                    ? "bg-[#FF4D00] text-white border-[#1a1a1a] translate-x-1 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
+                    ? "bg-[#FF4D00] text-white border-[#1a1a1a] shadow-neo-sm"
                     : "bg-[#FDF9F0] text-[#1a1a1a] border-transparent hover:border-[#1a1a1a]"
                 }`}
               >
-                <sec.icon className="w-4 h-4" />
-                {sec.label}
+                <sec.icon className="w-4 h-4 shrink-0" />
+                <span>{sec.label}</span>
               </button>
             ))}
           </div>
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 bg-white border-4 border-[#1a1a1a] p-4 md:p-10 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] min-h-[400px] overflow-hidden">
+        <main className="flex-1 bg-white border-3 border-[#1a1a1a] p-5 md:p-8 shadow-neo-lg min-h-[500px]">
+          {/* Overview */}
           {activeTab === "intro" && (
-            <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
-                Introduction
-              </h2>
-              
-              <div className="pt-2 space-y-6">
-                <p className="text-base md:text-lg font-medium leading-relaxed text-gray-800">
-                  Welcome to the official documentation for the <strong className="text-[#FF4D00]">Aptus AI Chatbot Widget</strong>. 
-                  Our npm package <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">aptus-ai-chatbot-widget</code> allows you to drop a fully trained, intelligent AI assistant into any React or Next.js application in minutes.
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Platform Overview
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-2 leading-relaxed">
+                  Aptus AI is a conversational customer support automation platform. It turns your business knowledge base, FAQs, and documentation into a live, on-brand chatbot widget with zero hallucinations and sub-second inference speeds.
                 </p>
-                
-                <div className="bg-[#FDF9F0] border-3 border-[#1a1a1a] p-5 md:p-6 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6">
-                  <h3 className="font-syne font-extrabold text-xl md:text-2xl mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 uppercase">
-                    <span className="bg-[#BFF000] border-2 border-[#1a1a1a] text-[#1a1a1a] w-8 h-8 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">✓</span>
-                    Why use Aptus?
-                  </h3>
-                  <ul className="space-y-3 font-medium text-base md:text-lg ml-1 md:ml-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#FF4D00] font-bold mt-1">→</span>
-                      <span><strong>Zero backend setup</strong> required on your end.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#FF4D00] font-bold mt-1">→</span>
-                      <span><strong>Fully customizable</strong> with 14 built-in premium themes.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#FF4D00] font-bold mt-1">→</span>
-                      <span><strong>Lightweight</strong> and perfectly optimized for React & Next.js.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#FF4D00] font-bold mt-1">→</span>
-                      <span><strong>Secure authentication</strong> via unique business tokens.</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {activeTab === "install" && (
-            <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
-                Installation
-              </h2>
-              
-              <p className="text-base md:text-lg font-medium text-gray-800">
-                Install the widget package via your favorite package manager. It is bundled with zero Tailwind dependencies, meaning it absolutely will not conflict with your existing styles.
-              </p>
-              
-              <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-4 md:p-6 relative group shadow-[4px_4px_0px_0px_rgba(255,77,0,1)] mt-6">
-                <div className="absolute top-0 left-0 bg-[#FF4D00] text-white text-xs font-extrabold px-3 py-1.5 border-b-2 border-r-2 border-[#1a1a1a] uppercase tracking-wider">NPM</div>
-                <pre className="text-[#BFF000] font-mono text-sm md:text-base pt-6 pb-2 pr-12 md:pr-14 overflow-x-auto whitespace-pre-wrap word-break">
-                  <code>npm install aptus-ai-chatbot-widget</code>
-                </pre>
-                <button 
-                  onClick={() => copyToClipboard("npm install aptus-ai-chatbot-widget", "npm")}
-                  className="absolute top-3 right-3 bg-white p-1.5 md:p-2 border-2 border-[#1a1a1a] hover:bg-[#BFF000] transition-colors shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
-                >
-                  {copiedNpm ? <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1a1a1a]" /> : <Copy className="w-4 h-4 md:w-5 md:h-5 text-[#1a1a1a]" />}
-                </button>
               </div>
 
-              <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-4 md:p-6 relative group shadow-[4px_4px_0px_0px_rgba(191,240,0,1)] mt-6">
-                <div className="absolute top-0 left-0 bg-[#BFF000] text-[#1a1a1a] text-xs font-extrabold px-3 py-1.5 border-b-2 border-r-2 border-[#1a1a1a] uppercase tracking-wider">YARN</div>
-                <pre className="text-[#FF4D00] font-mono text-sm md:text-base pt-6 pb-2 pr-12 md:pr-14 overflow-x-auto whitespace-pre-wrap word-break">
-                  <code>yarn add aptus-ai-chatbot-widget</code>
-                </pre>
-                <button 
-                  onClick={() => copyToClipboard("yarn add aptus-ai-chatbot-widget", "yarn")}
-                  className="absolute top-3 right-3 bg-white p-1.5 md:p-2 border-2 border-[#1a1a1a] hover:bg-[#FF4D00] hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
-                >
-                  {copiedYarn ? <Check className="w-4 h-4 md:w-5 md:h-5 text-current" /> : <Copy className="w-4 h-4 md:w-5 md:h-5 text-current" />}
-                </button>
-              </div>
-            </section>
-          )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+                  <span className="font-black text-xs uppercase text-[#FF4D00] block mb-1">
+                    Zero Hallucination Grounding
+                  </span>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Chatbot replies are strictly grounded in your verified FAQs and Markdown documentation. It never invents fake prices or rates.
+                  </p>
+                </div>
 
-          {activeTab === "usage" && (
-            <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
-                Quick Start
-              </h2>
-              
-              <p className="text-base md:text-lg font-medium text-gray-800">
-                Import the <code className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2 py-1 font-mono font-bold text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-sm">ChatBot</code> component and pass your unique business token to immediately render the floating widget.
-              </p>
-              
-              <div className="bg-[#1a1a1a] rounded-none border-4 border-[#1a1a1a] p-0 relative shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] mt-6 overflow-hidden">
-                <div className="bg-white border-b-4 border-[#1a1a1a] px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500 border border-black"></div>
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-400 border border-black"></div>
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500 border border-black"></div>
-                    <span className="ml-2 md:ml-4 font-mono text-xs md:text-sm font-extrabold uppercase tracking-wider text-gray-600">App.jsx</span>
-                  </div>
-                  <button 
-                    onClick={() => copyToClipboard(usageCode, "usage")}
-                    className="bg-[#FDF9F0] p-1.5 md:p-2 border-2 border-[#1a1a1a] hover:bg-[#BFF000] transition-colors shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center gap-1 md:gap-2"
-                  >
-                    {copiedUsage ? <Check className="w-3 h-3 md:w-4 md:h-4 text-[#1a1a1a]" /> : <Copy className="w-3 h-3 md:w-4 md:h-4 text-[#1a1a1a]" />}
-                    <span className="text-[10px] md:text-xs font-bold uppercase hidden sm:inline">{copiedUsage ? 'Copied' : 'Copy'}</span>
-                  </button>
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+                  <span className="font-black text-xs uppercase text-[#1a1a1a] block mb-1">
+                    11 AI Inference Providers
+                  </span>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Connect directly to Groq (Llama 3.3 70B), OpenAI GPT-4o, Google Gemini, DeepSeek, Claude 3.5, Mistral, Perplexity, or Custom APIs.
+                  </p>
                 </div>
-                <div className="p-4 md:p-6 pr-16 md:pr-24 overflow-x-auto">
-                  <pre className="font-mono text-xs md:text-sm leading-relaxed">
-<code className="text-[#FF4D00]">import</code><code className="text-white"> React </code><code className="text-[#FF4D00]">from</code><code className="text-[#BFF000]"> 'react'</code><code className="text-white">;</code>
-<br/>
-<code className="text-[#FF4D00]">import</code><code className="text-white"> &#123; ChatBot &#125; </code><code className="text-[#FF4D00]">from</code><code className="text-[#BFF000]"> 'aptus-ai-chatbot-widget'</code><code className="text-white">;</code>
-<br/><br/>
-<code className="text-[#FF4D00]">export default function</code><code className="text-[#BFF000]"> App</code><code className="text-white">() &#123;</code>
-<br/>
-<code className="text-white">  return (</code>
-<br/>
-<code className="text-gray-400">    &lt;div&gt;</code>
-<br/>
-<code className="text-gray-400">      &lt;h1&gt;</code><code className="text-white">My Awesome Website</code><code className="text-gray-400">&lt;/h1&gt;</code>
-<br/><br/>
-<code className="text-gray-500">      &#123;/* Drop the widget anywhere in your root layout */&#125;</code>
-<br/>
-<code className="text-[#BFF000]">      &lt;ChatBot </code>
-<br/>
-<code className="text-[#FF4D00]">        token=</code><code className="text-[#BFF000]">"YOUR_BUSINESS_TOKEN"</code> 
-<br/>
-<code className="text-[#FF4D00]">        apiUrl=</code><code className="text-[#BFF000]">"https://aptus-ai-full-stack.vercel.app/api/v1"</code> 
-<br/>
-<code className="text-[#FF4D00]">        theme=</code><code className="text-[#BFF000]">"aptus"</code>
-<br/>
-<code className="text-[#FF4D00]">        wantToShowSuggestions=</code><code className="text-[#FF4D00]">&#123;true&#125;</code>
-<br/>
-<code className="text-[#BFF000]">      /&gt;</code>
-<br/>
-<code className="text-gray-400">    &lt;/div&gt;</code>
-<br/>
-<code className="text-white">  );</code>
-<br/>
-<code className="text-white">&#125;</code>
-                  </pre>
+
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+                  <span className="font-black text-xs uppercase text-[#1a1a1a] block mb-1">
+                    Live Human Agent Takeover
+                  </span>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Take over live chats instantly from the business dashboard with direct agent replies and real-time widget polling.
+                  </p>
                 </div>
-              </div>
-              
-              <div className="p-4 md:p-5 bg-[#FDF9F0] border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex items-start gap-3 md:gap-4 mt-6">
-                <div className="bg-[#FF4D00] text-white p-1.5 md:p-2 border-2 border-[#1a1a1a] flex-shrink-0">
-                  <Settings className="w-5 h-5 md:w-6 md:h-6" />
-                </div>
-                <div>
-                  <h4 className="font-syne font-extrabold text-base md:text-lg uppercase mb-1">Important Note</h4>
-                  <p className="font-medium text-gray-800 text-sm md:text-base">
-                    Replace <span className="text-[#FF4D00] font-mono font-extrabold">YOUR_BUSINESS_TOKEN</span> with the token found in your Aptus AI dashboard under the "Token" tab.
+
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+                  <span className="font-black text-xs uppercase text-[#FF4D00] block mb-1">
+                    Real-Time Voice AI (STT)
+                  </span>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Live speech-to-text powered by browser Web Speech streaming paired with Groq Whisper Large v3 Turbo server-side fallback.
                   </p>
                 </div>
               </div>
-            </section>
+            </div>
           )}
 
+          {/* Installation */}
+          {activeTab === "install" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Installation
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">
+                  Install via npm for modern React/Next.js stacks, or drop the compiled script tag onto any website.
+                </p>
+              </div>
+
+              {/* NPM / Yarn */}
+              <div className="space-y-2">
+                <span className="text-xs font-black uppercase text-[#1a1a1a]">Option 1: NPM Package (React / Next.js)</span>
+                <div className="bg-[#1a1a1a] p-4 border-2 border-[#1a1a1a] relative shadow-neo-sm">
+                  <pre className="text-[#BFF000] font-mono text-xs overflow-x-auto pr-10">
+                    <code>npm install aptus-ai-chatbot-widget</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard("npm install aptus-ai-chatbot-widget", "npm")}
+                    className="absolute top-2.5 right-2.5 bg-white p-1.5 border border-[#1a1a1a] hover:bg-[#BFF000] transition-colors cursor-pointer"
+                  >
+                    {copiedNpm ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-[#1a1a1a]" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Script Tag */}
+              <div className="space-y-2">
+                <span className="text-xs font-black uppercase text-[#1a1a1a]">Option 2: Standalone Script Tag (HTML, WordPress, Shopify)</span>
+                <div className="bg-[#1a1a1a] p-4 border-2 border-[#1a1a1a] relative shadow-neo-sm">
+                  <pre className="text-white font-mono text-xs overflow-x-auto pr-10 whitespace-pre-wrap">
+                    <code>{scriptUsageCode}</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard(scriptUsageCode, "script")}
+                    className="absolute top-2.5 right-2.5 bg-white p-1.5 border border-[#1a1a1a] hover:bg-[#BFF000] transition-colors cursor-pointer"
+                  >
+                    {copiedScript ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-[#1a1a1a]" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Start */}
+          {activeTab === "usage" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Quick Start (React / Next.js)
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">
+                  Import the widget into your application root and provide your unique token from the dashboard.
+                </p>
+              </div>
+
+              <div className="bg-[#1a1a1a] border-2 border-[#1a1a1a] relative shadow-neo-sm">
+                <div className="bg-[#FAF8F5] border-b-2 border-[#1a1a1a] px-3 py-2 flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-gray-600">layout.jsx</span>
+                  <button
+                    onClick={() => copyToClipboard(reactUsageCode, "usage")}
+                    className="px-2.5 py-1 bg-white border border-[#1a1a1a] text-xs font-bold uppercase hover:bg-[#BFF000] transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    {copiedUsage ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedUsage ? "Copied" : "Copy Code"}</span>
+                  </button>
+                </div>
+                <pre className="p-4 text-xs font-mono text-white overflow-x-auto leading-relaxed">
+                  <code>{reactUsageCode}</code>
+                </pre>
+              </div>
+            </div>
+          )}
+
+          {/* Props API */}
           {activeTab === "props" && (
-            <section className="space-y-6 animate-in fade-in duration-500 w-full overflow-hidden">
-              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
-                Props API Reference
-              </h2>
-              
-              <p className="text-sm md:text-base font-medium text-gray-800 pb-2">
-                Configure the widget's behavior, colors, and layout directly via these robust props.
-              </p>
-              
-              <div className="overflow-x-auto border-3 md:border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] bg-white w-full">
-                <table className="w-full text-left border-collapse min-w-[500px]">
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Props API Reference
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">
+                  Available properties for configuring the ChatBot component:
+                </p>
+              </div>
+
+              <div className="overflow-x-auto border-2 border-[#1a1a1a]">
+                <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-[#1a1a1a] text-white font-syne text-[10px] md:text-xs tracking-widest">
-                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Prop Name</th>
-                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Type</th>
-                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase whitespace-nowrap">Default</th>
-                      <th className="p-2 md:p-3 border-b-4 border-[#1a1a1a] font-extrabold uppercase">Description</th>
+                    <tr className="bg-[#1a1a1a] text-white font-mono uppercase tracking-wider text-[11px]">
+                      <th className="p-2.5 border-b-2 border-[#1a1a1a]">Prop</th>
+                      <th className="p-2.5 border-b-2 border-[#1a1a1a]">Type</th>
+                      <th className="p-2.5 border-b-2 border-[#1a1a1a]">Default</th>
+                      <th className="p-2.5 border-b-2 border-[#1a1a1a]">Description</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white font-medium text-[11px] md:text-xs">
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-extrabold text-[#FF4D00]">token *</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
-                      <td className="p-2 md:p-3 text-gray-400 font-bold">-</td>
-                      <td className="p-2 md:p-3 text-gray-800">Required. Your unique business chatbot token to authenticate API calls.</td>
+                  <tbody className="font-medium divide-y divide-gray-200">
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#FF4D00]">token *</td>
+                      <td className="p-2.5 font-mono text-gray-600">string</td>
+                      <td className="p-2.5 text-gray-400">-</td>
+                      <td className="p-2.5">Your unique business token generated in the dashboard.</td>
                     </tr>
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-extrabold text-[#FF4D00]">apiUrl *</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
-                      <td className="p-2 md:p-3 text-gray-400 font-bold">-</td>
-                      <td className="p-2 md:p-3 text-gray-800">Required. The base URL to your Aptus API backend.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#FF4D00]">apiUrl *</td>
+                      <td className="p-2.5 font-mono text-gray-600">string</td>
+                      <td className="p-2.5 text-gray-400">-</td>
+                      <td className="p-2.5">Base URL of your Aptus AI backend instance.</td>
                     </tr>
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">theme</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
-                      <td className="p-2 md:p-3 font-mono">"aptus"</td>
-                      <td className="p-2 md:p-3 text-gray-800">Select one of the 14 available design themes. See the Themes tab.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#1a1a1a]">theme</td>
+                      <td className="p-2.5 font-mono text-gray-600">string</td>
+                      <td className="p-2.5 font-mono">"aptus"</td>
+                      <td className="p-2.5">Visual theme ("aptus", "boty", "chatgpt", "compute").</td>
                     </tr>
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">position</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">"left" | "right"</td>
-                      <td className="p-2 md:p-3 font-mono">"right"</td>
-                      <td className="p-2 md:p-3 text-gray-800">Determines which side of the screen bottom the widget button anchors to.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#1a1a1a]">position</td>
+                      <td className="p-2.5 font-mono text-gray-600">"left" | "right"</td>
+                      <td className="p-2.5 font-mono">"right"</td>
+                      <td className="p-2.5">Screen positioning for the floating trigger button.</td>
                     </tr>
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">wantToShowSuggestions</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">boolean</td>
-                      <td className="p-2 md:p-3 font-mono text-[#FF4D00]">false</td>
-                      <td className="p-2 md:p-3 text-gray-800">Show AI quick-action suggestion chips inside the chat after replies.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#1a1a1a]">botName</td>
+                      <td className="p-2.5 font-mono text-gray-600">string</td>
+                      <td className="p-2.5 font-mono">"Aptus AI"</td>
+                      <td className="p-2.5">Custom display name shown in the chat header.</td>
                     </tr>
-                    <tr className="border-b-2 border-gray-200 hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">toggleBtnBgColor</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">string</td>
-                      <td className="p-2 md:p-3 text-gray-500 italic">Theme spec</td>
-                      <td className="p-2 md:p-3 text-gray-800">Overrides the default background color of the floating launcher button.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#1a1a1a]">welcomeMessage</td>
+                      <td className="p-2.5 font-mono text-gray-600">string</td>
+                      <td className="p-2.5 text-gray-500">Default greeting</td>
+                      <td className="p-2.5">Initial message presented when the chat opens.</td>
                     </tr>
-                    <tr className="hover:bg-[#FDF9F0] transition-colors">
-                      <td className="p-2 md:p-3 font-mono font-bold text-[#1a1a1a]">icon</td>
-                      <td className="p-2 md:p-3 text-gray-600 font-mono">ReactNode</td>
-                      <td className="p-2 md:p-3 text-gray-500 italic">MsgIcon</td>
-                      <td className="p-2 md:p-3 text-gray-800">Pass a custom SVG or React Icon component for the toggle button.</td>
+                    <tr className="hover:bg-[#FDF9F0]">
+                      <td className="p-2.5 font-mono font-bold text-[#1a1a1a]">wantToShowSuggestions</td>
+                      <td className="p-2.5 font-mono text-gray-600">boolean</td>
+                      <td className="p-2.5 font-mono">false</td>
+                      <td className="p-2.5">Displays interactive suggestion chips below bot messages.</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-            </section>
+            </div>
           )}
 
+          {/* Core Engine */}
+          {activeTab === "features" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Core Engine & Features
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">
+                  Built-in capabilities that power every Aptus AI installation:
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
+                  <h3 className="font-syne font-black text-xs uppercase text-[#1a1a1a] flex items-center gap-2 mb-1">
+                    <BookOpen className="w-4 h-4 text-[#FF4D00]" />
+                    <span>Knowledge Ingestion & Gate</span>
+                  </h3>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    The chatbot activates once your business provides at least 10 FAQs or 1,000 words of Markdown documentation (up to 5,000 words maximum). This ensures the AI is grounded before serving live visitors.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
+                  <h3 className="font-syne font-black text-xs uppercase text-[#1a1a1a] flex items-center gap-2 mb-1">
+                    <Headphones className="w-4 h-4 text-[#2563EB]" />
+                    <span>Live Human Takeover</span>
+                  </h3>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Business owners can click "Take Over Chat" on any session in the dashboard. Incoming AI auto-replies pause, and the agent types live responses delivered to the visitor via real-time polling.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
+                  <h3 className="font-syne font-black text-xs uppercase text-[#1a1a1a] flex items-center gap-2 mb-1">
+                    <Mic className="w-4 h-4 text-[#FF4D00]" />
+                    <span>Real-Time Voice AI</span>
+                  </h3>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Streaming speech-to-text uses the browser's native Web Speech API with interim results for instant transcription, falling back to Groq Whisper Large v3 Turbo if speech APIs are unavailable.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
+                  <h3 className="font-syne font-black text-xs uppercase text-[#1a1a1a] flex items-center gap-2 mb-1">
+                    <ShieldCheck className="w-4 h-4 text-green-600" />
+                    <span>Domain Whitelisting & Origin Security</span>
+                  </h3>
+                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                    Specify an Allowed Domain in the dashboard to protect your token allowance from unauthorized hotlinking. Unmatched origins receive HTTP 403 Forbidden automatically.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Theming */}
           {activeTab === "themes" && (
-            <section className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="font-syne text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#1a1a1a] mb-2 break-words">
-                Theming System
-              </h2>
-              
-              <p className="text-base md:text-lg font-medium text-gray-800">
-                Pass the <span className="text-[#FF4D00] font-mono font-extrabold">theme</span> prop to instantly apply a comprehensive design system across the entire widget interface.
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-6">
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
+                  Design Themes
+                </h2>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">
+                  Pass the theme prop to apply a complete aesthetic out of the box:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { id: "aptus", name: "Aptus Official", desc: "Neo-Brutalist Signature", color: "bg-[#FF4D00]", text: "text-white" },
-                  { id: "chatgpt", name: "ChatGPT", desc: "Minimal Dark Mode", color: "bg-[#10a37f]", text: "text-white" },
-                  { id: "dracula", name: "Dracula", desc: "Official Dracula Palette", color: "bg-[#bd93f9]", text: "text-[#282a36]" },
-                  { id: "cyberpunk", name: "Cyberpunk", desc: "2077 Neon Yellow/Cyan", color: "bg-[#fcee0a]", text: "text-black" },
-                  { id: "nord", name: "Nord", desc: "Arctic Polar Frost", color: "bg-[#88c0d0]", text: "text-[#2e3440]" },
-                  { id: "boty", name: "Boty", desc: "Natural Warm Olive", color: "bg-[#8da36f]", text: "text-white" },
-                  { id: "compute", name: "Compute", desc: "Cyber Code Terminal", color: "bg-[#00ff41]", text: "text-black" },
-                  { id: "energy", name: "Energy", desc: "Gen-Z Neon Punch", color: "bg-[#ff00ff]", text: "text-white" },
-                  { id: "professional", name: "Professional", desc: "Classic Blue Business", color: "bg-[#0f52ba]", text: "text-white" },
-                  { id: "github", name: "GitHub", desc: "GitHub Dark Mode", color: "bg-[#24292e]", text: "text-white" },
-                  { id: "studio", name: "Studio", desc: "Modern Dark Tool", color: "bg-[#18181a]", text: "text-white" },
-                  { id: "crosshaven", name: "Crosshaven", desc: "Corporate Luxury Navy", color: "bg-[#1c2e4a]", text: "text-[#d4af37]" },
-                  { id: "smarthome", name: "Smart Home", desc: "Clean Soft Cyan", color: "bg-[#48d1cc]", text: "text-black" },
-                  { id: "superdesign", name: "Superdesign", desc: "Creative Purple Violet", color: "bg-[#8a2be2]", text: "text-white" },
-                ].map(theme => (
-                  <div key={theme.id} className="border-3 md:border-4 border-[#1a1a1a] flex flex-col hover:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] transition-all bg-white group hover:-translate-y-1">
-                    <div className={`h-14 md:h-16 border-b-3 md:border-b-4 border-[#1a1a1a] ${theme.color} flex items-center justify-between px-3 md:px-4`}>
-                      <span className={`font-syne font-extrabold uppercase tracking-wider text-sm md:text-base ${theme.text}`}>{theme.name}</span>
-                      <Palette className={`w-4 h-4 md:w-5 md:h-5 ${theme.text}`} />
+                  { id: "aptus", name: "Aptus Official", desc: "Signature neo-brutalist theme with bold 3px black borders and orange accents.", color: "bg-[#FF4D00]" },
+                  { id: "boty", name: "Boty Organic", desc: "Earthy nature-inspired green palette with soft, minimal styling.", color: "bg-[#2D5A27]" },
+                  { id: "chatgpt", name: "ChatGPT Dark", desc: "Sleek charcoal dark mode designed for modern software applications.", color: "bg-[#202123]" },
+                  { id: "compute", name: "Retro CRT Terminal", desc: "High-contrast monospace cyber-terminal aesthetic.", color: "bg-[#1a1a1a]" },
+                ].map((t) => (
+                  <div key={t.id} className="p-4 bg-white border-2 border-[#1a1a1a] shadow-neo-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-syne font-black text-xs uppercase text-[#1a1a1a]">{t.name}</span>
+                      <span className={`w-3.5 h-3.5 border border-[#1a1a1a] ${t.color}`}></span>
                     </div>
-                    <div className="p-3 md:p-4 bg-[#FDF9F0] flex-1">
-                      <p className="font-medium text-gray-800 text-xs md:text-sm mb-2 md:mb-3">{theme.desc}</p>
-                      <div className="font-mono text-xs font-bold text-[#FF4D00]">
-                        theme="{theme.id}"
-                      </div>
-                    </div>
+                    <p className="text-xs font-medium text-gray-600 mb-2">{t.desc}</p>
+                    <code className="text-[11px] font-mono font-bold text-[#FF4D00]">theme="{t.id}"</code>
                   </div>
                 ))}
               </div>
-            </section>
+            </div>
           )}
-
         </main>
       </div>
     </div>

@@ -398,41 +398,25 @@ const TestChatbot = () => {
 
   return (
     <div className="flex flex-col h-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4 gap-2">
+      <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4">
         <div className="flex items-center gap-2">
           <span
-            className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] text-[10px] sm:text-xs font-black uppercase tracking-wider ${
-              isUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-amber-400 text-[#1a1a1a]"
+            className={`px-2 py-0.5 border-2 border-[#1a1a1a] text-[10px] font-black uppercase tracking-wider ${
+              isUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-[#FF4D00] text-white"
             }`}
           >
-            {isUnlocked ? "READY & ACTIVE" : "LOCKED (NEEDS KNOWLEDGE)"}
+            {isUnlocked ? "ACTIVE" : "KNOWLEDGE REQUIRED"}
           </span>
-          <span className="text-xs font-bold text-gray-600">
-            {isUnlocked
-              ? "Chatbot trained with verified business knowledge"
-              : `Minimum criteria: 10 Q&As (${qaCount}/10) or 1,000 words documentation (${markdownWords}/1,000)`}
-          </span>
+          {!isUnlocked && (
+            <span className="text-xs font-bold text-gray-500">
+              Add at least 10 FAQs or 1,000 words doc
+            </span>
+          )}
         </div>
-        <div className="text-[11px] font-mono font-bold text-gray-500">
-          Model: <span className="text-[#1a1a1a]">{user?.modelName || "llama-3.3-70b-versatile"}</span>
-        </div>
+        <span className="text-[11px] font-mono font-bold text-gray-500">
+          {user?.modelName || "llama-3.3-70b-versatile"}
+        </span>
       </div>
-
-      {!isUnlocked && (
-        <div className="p-3.5 bg-amber-50 border-2 border-[#1a1a1a] shadow-neo-sm mb-4 flex items-start gap-3">
-          <div className="p-2 bg-amber-400 border-2 border-[#1a1a1a] shrink-0">
-            <Lock className="w-4 h-4 text-[#1a1a1a]" />
-          </div>
-          <div>
-            <h4 className="font-syne font-black text-xs uppercase text-[#1a1a1a]">
-              Chatbot Inactive: Minimum Knowledge Base Required
-            </h4>
-            <p className="text-xs font-medium text-gray-700 mt-0.5 leading-relaxed">
-              Your AI chatbot cannot generate replies until business knowledge is provided. Please visit <strong>Business Details</strong> and add at least <strong>10 Q&A pairs</strong> (currently {qaCount}/10) or write a minimum of <strong>1,000 words</strong> Markdown documentation (currently {markdownWords}/1,000 words).
-            </p>
-          </div>
-        </div>
-      )}
 
       <ScrollArea className="flex-1 overflow-y-auto mb-4 p-3 sm:p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] min-h-[55vh] max-h-[60vh]">
         {messages.map((chat, index) => (

@@ -345,16 +345,8 @@ export default function Sessions() {
 
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-3">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-[#1a1a1a]">
-            LIVE INBOX & CHAT LOGS
-          </span>
-          <span className="text-xs font-bold text-gray-600">
-            Real-time visitor interactions and support takeover
-          </span>
-        </div>
+      {/* Top Actions */}
+      <div className="flex items-center justify-end border-b-2 border-[#1a1a1a] pb-3">
         <div className="flex items-center gap-2">
           <button
             onClick={() => {

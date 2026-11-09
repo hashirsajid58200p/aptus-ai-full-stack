@@ -537,19 +537,19 @@ Strict Instructions:
     <div className="w-full flex flex-col items-center gap-6 text-[#1a1a1a] pb-12">
       {/* Neo-brutalist Company Details Card with Sharp Edges */}
       <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 space-y-0 border-b-3 border-[#1a1a1a] bg-white gap-3">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+        <CardHeader className="flex flex-row items-center justify-between p-4 sm:p-5 border-b-3 border-[#1a1a1a] bg-white">
+          <div className="flex items-center gap-2.5">
             <span
               className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] text-[10px] sm:text-xs font-black uppercase tracking-wider ${
-                isKnowledgeUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-amber-400 text-[#1a1a1a]"
+                isKnowledgeUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-[#FF4D00] text-white"
               }`}
             >
-              {isKnowledgeUnlocked ? "CHATBOT ACTIVE & TRAINED" : "KNOWLEDGE BASE LOCKED"}
+              {isKnowledgeUnlocked ? "TRAINED" : "KNOWLEDGE NEEDED"}
             </span>
-            <span className="text-xs font-bold text-gray-600">
+            <span className="text-xs font-bold text-gray-500">
               {isKnowledgeUnlocked
-                ? "Knowledge base criteria satisfied"
-                : `Need 10 Q&As (${qaCount}/10) or 1,000 words doc (${mdWords}/1,000)`}
+                ? `${qaCount} FAQs • ${mdWords} Words Doc`
+                : "Needs 10 FAQs or 1,000 words documentation to activate"}
             </span>
           </div>
           <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -623,30 +623,24 @@ Strict Instructions:
 
         {activeKnowledgeTab === "markdown" ? (
           <CardContent className="p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
-              <div>
-                <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a] flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[#FF4D00]" />
-                  <span>Comprehensive Business Knowledge Base</span>
-                </h4>
-                <p className="text-xs font-semibold text-gray-600 mt-0.5">
-                  Write or paste your complete company documentation, pricing details, and policies in Markdown.
-                </p>
-              </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#FDF9F0] border-2 border-[#1a1a1a]">
+              <span className="text-xs font-mono font-bold text-gray-600 uppercase">
+                Markdown Documentation
+              </span>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleInsertTemplate}
-                  className="px-3 py-1.5 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase hover:bg-gray-50 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-2.5 py-1 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase hover:bg-gray-50 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Insert Template</span>
+                  <span>Template</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewMarkdown(!previewMarkdown)}
-                  className={`px-3 py-1.5 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
                     previewMarkdown ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-white text-[#1a1a1a] hover:bg-gray-50"
                   }`}
                 >
