@@ -256,17 +256,22 @@ export default function Sessions() {
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-4 gap-4">
-        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-          Customer Sessions
-        </h3>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-4 gap-4">
+        <div className="flex items-center gap-2.5">
+          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
+            INBOX & LOGS
+          </span>
+          <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
+            Customer Sessions
+          </h3>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
               window.open(`${baseurl}/session/owner/export`, "_blank");
               toast.success("Downloading Chat Logs CSV...");
             }}
-            className="btn-neo-primary px-3 sm:px-4 py-2 text-xs font-extrabold flex items-center gap-1.5"
+            className="px-3 sm:px-4 py-2 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs uppercase hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
@@ -274,7 +279,7 @@ export default function Sessions() {
           <button
             onClick={fetchSessions}
             disabled={loading}
-            className="px-3 sm:px-4 py-2 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs uppercase hover:bg-gray-50 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="px-3 sm:px-4 py-2 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-extrabold text-xs uppercase hover:bg-gray-50 hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh</span>
@@ -313,85 +318,88 @@ export default function Sessions() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 border-2 border-[#1a1a1a] bg-white min-h-[520px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 border-3 border-[#1a1a1a] shadow-neo-lg bg-[#FDF9F0] overflow-hidden">
           {/* Left Column: Conversation List */}
-          <div className="lg:col-span-5 border-b-2 lg:border-b-0 lg:border-r-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col max-h-[580px] overflow-y-auto no-scrollbar">
-            {filteredSessions.length === 0 ? (
-              <div className="p-8 text-center text-xs font-bold text-gray-500">
-                No conversations match your search.
-              </div>
-            ) : (
-              filteredSessions.map((session) => {
-                const isSelected = activeSession?._id === session._id;
-                const messagesList = session.messages || [];
-                const lastMessage = messagesList.length > 0 ? messagesList[messagesList.length - 1].message : "No messages";
-                const lastTime = (messagesList.length > 0 && messagesList[messagesList.length - 1].createdAt) || session.updatedAt || session.createdAt;
-                const dateStr = lastTime ? new Date(lastTime).toLocaleDateString([], { month: "short", day: "numeric" }) : "";
-                const timeStr = lastTime ? new Date(lastTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+          <div className="lg:col-span-5 border-b-3 lg:border-b-0 lg:border-r-3 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col h-[600px]">
+            <div className="flex-1 overflow-y-auto no-scrollbar">
+              {filteredSessions.length === 0 ? (
+                <div className="p-8 text-center text-xs font-bold text-gray-500">
+                  No conversations match your search.
+                </div>
+              ) : (
+                filteredSessions.map((session) => {
+                  const isSelected = activeSession?._id === session._id;
+                  const messagesList = session.messages || [];
+                  const lastMessage = messagesList.length > 0 ? messagesList[messagesList.length - 1].message : "No messages";
+                  const lastTime = (messagesList.length > 0 && messagesList[messagesList.length - 1].createdAt) || session.updatedAt || session.createdAt;
+                  const dateStr = lastTime ? new Date(lastTime).toLocaleDateString([], { month: "short", day: "numeric" }) : "";
+                  const timeStr = lastTime ? new Date(lastTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
 
-                return (
-                  <div
-                    key={session._id}
-                    onClick={() => setSelectedSessionId(session._id)}
-                    className={`p-3.5 border-b border-[#1a1a1a] cursor-pointer transition-all flex items-start gap-3 ${
-                      isSelected
-                        ? "bg-white border-l-4 border-l-[#FF4D00] shadow-sm"
-                        : "hover:bg-white/80"
-                    }`}
-                  >
-                    {/* User Avatar Initial */}
-                    <div className="w-8 h-8 shrink-0 bg-[#FF4D00] text-white border border-[#1a1a1a] flex items-center justify-center font-black text-xs uppercase">
-                      {session.username?.charAt(0) || "U"}
+                  return (
+                    <div
+                      key={session._id}
+                      onClick={() => setSelectedSessionId(session._id)}
+                      className={`p-3.5 border-b border-[#1a1a1a] cursor-pointer transition-all flex items-start gap-3 ${
+                        isSelected
+                          ? "bg-white border-l-4 border-l-[#FF4D00] shadow-sm"
+                          : "hover:bg-white/70"
+                      }`}
+                    >
+                      {/* User Avatar Initial */}
+                      <div className="w-8 h-8 shrink-0 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm flex items-center justify-center font-black text-xs uppercase">
+                        {session.username?.charAt(0) || "U"}
+                      </div>
+
+                      {/* Metadata & Preview */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1 mb-0.5">
+                          <span className="font-syne font-bold text-xs uppercase text-[#1a1a1a] truncate">
+                            {session.username || "Website Visitor"}
+                          </span>
+                          <span className="text-[10px] text-gray-500 font-mono shrink-0 font-semibold">
+                            {dateStr} {timeStr}
+                          </span>
+                        </div>
+
+                        <div className="text-[11px] text-gray-500 truncate mb-1">
+                          {session.email || "visitor@web.local"}
+                        </div>
+
+                        <p className="text-xs font-medium text-gray-700 truncate line-clamp-1">
+                          {lastMessage}
+                        </p>
+
+                        <div className="flex items-center justify-between gap-2 mt-2">
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-[#BFF000] border border-[#1a1a1a] text-[#1a1a1a]">
+                            {messagesList.length} msgs
+                          </span>
+                          <span className="text-[10px] font-mono font-bold text-gray-400">
+                            ID: #{session._id.slice(-5).toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-
-                    {/* Metadata & Preview */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1 mb-0.5">
-                        <span className="font-syne font-bold text-xs uppercase text-[#1a1a1a] truncate">
-                          {session.username || "Website Visitor"}
-                        </span>
-                        <span className="text-[10px] text-gray-500 font-mono shrink-0">
-                          {dateStr} {timeStr}
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] text-gray-500 truncate mb-1">
-                        {session.email || "visitor@web.local"}
-                      </div>
-
-                      <p className="text-xs font-medium text-gray-700 truncate line-clamp-1">
-                        {lastMessage}
-                      </p>
-
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-[#BFF000] border border-[#1a1a1a] text-[#1a1a1a]">
-                          {messagesList.length} msgs
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
 
           {/* Right Column: Chat Transcript View */}
-          <div className="lg:col-span-7 flex flex-col bg-white">
+          <div className="lg:col-span-7 flex flex-col bg-[#FDF9F0] h-[600px]">
             {activeSession ? (
               <div className="flex flex-col h-full">
                 {/* Active Session Header */}
-                <div className="p-4 border-b-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-3.5 sm:p-4 border-b-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
                       <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a]">
                         {activeSession.username || "Website Visitor"}
                       </h4>
-                      {activeSession.ipAddress && (
-                        <span className="font-mono text-[10px] text-gray-500 bg-white px-2 py-0.5 border border-[#1a1a1a] shadow-neo-sm font-bold">
-                          IP: {activeSession.ipAddress}
-                        </span>
-                      )}
+                      <span className="font-mono text-[10px] font-black px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase tracking-wider">
+                        ID: #{activeSession._id.slice(-6).toUpperCase()}
+                      </span>
                     </div>
                     <div className="text-xs font-semibold text-gray-600 flex items-center gap-3 mt-1">
                       <span>{activeSession.email || "No email provided"}</span>
@@ -401,7 +409,7 @@ export default function Sessions() {
 
                   <button
                     onClick={handleCopyTranscript}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-gray-100 transition-colors self-start sm:self-auto"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-gray-100 transition-colors self-start sm:self-auto cursor-pointer"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? "Copied" : "Copy Transcript"}</span>
@@ -409,7 +417,7 @@ export default function Sessions() {
                 </div>
 
                 {/* Messages Feed */}
-                <div className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 max-h-[480px] bg-[#FAF8F5]">
+                <div className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 bg-[#FAF8F5]">
                   {!activeSession.messages || activeSession.messages.length === 0 ? (
                     <div className="p-8 text-center text-xs font-bold text-gray-400 italic">
                       No message exchanges recorded in this session.
@@ -430,8 +438,8 @@ export default function Sessions() {
                       return (
                         <React.Fragment key={msg._id || idx}>
                           {showDateDivider && (
-                            <div className="flex justify-center my-2">
-                              <span className="px-3 py-1 bg-white border-2 border-[#1a1a1a] shadow-neo-sm text-[10px] font-mono font-bold uppercase text-gray-700">
+                            <div className="w-full flex items-center justify-center my-3 shrink-0">
+                              <span className="px-3 py-1 bg-white border-2 border-[#1a1a1a] shadow-neo-sm text-[10px] font-mono font-black uppercase text-[#1a1a1a] tracking-wider">
                                 {formatDateDivider(msgTime)}
                               </span>
                             </div>

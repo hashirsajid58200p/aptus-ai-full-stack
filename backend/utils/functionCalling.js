@@ -54,11 +54,11 @@ const toolDefinitions = [
   },
   {
     name: 'check_inventory',
-    description: 'Check stock availability and pricing for a product or service tier.',
+    description: 'Check stock availability for a product or service item.',
     parameters: {
       type: 'object',
       properties: {
-        productName: { type: 'string', description: 'Name of the item or subscription tier' },
+        productName: { type: 'string', description: 'Name of the item or product' },
       },
       required: ['productName'],
     },
@@ -67,9 +67,7 @@ const toolDefinitions = [
         success: true,
         product: args.productName,
         inStock: true,
-        stockCount: 42,
-        pricing: '$49.00 / month',
-        promotionsActive: true,
+        status: 'Available',
       };
     },
   },
@@ -104,10 +102,10 @@ class FunctionCallingEngine {
       };
     }
 
-    if (lower.includes('stock') || lower.includes('available') || lower.includes('inventory') || lower.includes('pricing')) {
+    if (lower.includes('stock') || lower.includes('in stock') || lower.includes('inventory')) {
       return {
         toolName: 'check_inventory',
-        args: { productName: 'Standard Plan' },
+        args: { productName: 'Standard Tier' },
       };
     }
 

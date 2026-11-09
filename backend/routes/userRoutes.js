@@ -11,7 +11,8 @@ const {
   generateNewToken,
   findChatbotUsingToken,
   updateAppearance,
-  getAvailableModels
+  getAvailableModels,
+  updateKnowledgeMarkdown
 } = require("../controllers/userController");
 
 const { isAuthenticatedUser } = require("../middleware/Auth");
@@ -31,6 +32,7 @@ router.route("/token").options(dashboardCors).post(dashboardCors, isAuthenticate
 router.route("/token/verify").options(widgetCors).get(widgetCors, findChatbotUsingToken);
 
 router.route("/appearance").options(dashboardCors).put(dashboardCors, isAuthenticatedUser, updateAppearance);
+router.route("/knowledge").options(dashboardCors).put(dashboardCors, isAuthenticatedUser, updateKnowledgeMarkdown);
 router.route("/models").options(dashboardCors).get(dashboardCors, isAuthenticatedUser, getAvailableModels);
 
 router

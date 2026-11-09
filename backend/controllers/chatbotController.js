@@ -53,14 +53,19 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
 
 const baseSystemPrompt = `You are a friendly, professional, and knowledgeable customer service AI chatbot.
 
-IMPORTANT RULES:
-- Respond naturally and conversationally like an attentive human customer service agent.
-- Never show template labels like "*Business Details*", "*Response*", "*User's Message*" in your replies.
-- Never repeat the customer's question back to them.
-- Keep responses concise, direct, and actionable.
-- If verified knowledge base context or business FAQ is provided below, prioritize it to answer accurately.
-- If you do not know something, politely say so and offer to connect with a representative or have them leave an inquiry.
-- Always respond directly to what the customer just said.`;
+CRITICAL ACCURACY & GROUNDING RULES:
+1. STRICT PRICING & FACT POLICY: NEVER invent, fabricate, or hallucinate specific prices, numeric dollar figures (e.g. $49, $99, etc.), hourly rates, discounts, or features that are NOT explicitly mentioned in the provided Business Info, Knowledge Base, or FAQs below.
+2. If a customer asks about pricing, packages, or rates and exact numerical dollar figures are NOT documented in the knowledge base:
+   - State clearly and honestly what you DO know (e.g., subscription model, 30-day money-back guarantee, or free trial).
+   - Inform the customer that exact pricing details or custom enterprise quotes are provided directly by the sales/support team.
+   - Invite them to leave their email or contact the team so a custom quote can be shared.
+   - NEVER invent or make up fake dollar amounts under any circumstances.
+3. Only answer based on verified facts in the business knowledge base. If information is not available, acknowledge it politely without guessing.
+4. Respond naturally and conversationally like an attentive human customer service agent.
+5. Never show template labels like "*Business Details*", "*Response*", "*User's Message*" in your replies.
+6. Never repeat the customer's question back to them.
+7. Keep responses concise, direct, and actionable.
+8. Always respond directly to what the customer just said.`;
 
 // POST /api/v1/chatbot/getResponse — Primary Chat Endpoint
 exports.getResponse = catchAsyncError(async (req, res, next) => {
@@ -145,8 +150,11 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 
   // Assemble full prompt
   let fullPrompt = `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\n`;
+  if (owner.knowledgeMarkdown && owner.knowledgeMarkdown.trim()) {
+    fullPrompt += `\n--- BUSINESS KNOWLEDGE DOCUMENTATION (MARKDOWN) ---\n${owner.knowledgeMarkdown.trim()}\n`;
+  }
   if (businessDetailsText) {
-    fullPrompt += `\nBusiness FAQ:\n${businessDetailsText}\n`;
+    fullPrompt += `\n--- BUSINESS FAQ (Q&A) ---\n${businessDetailsText}\n`;
   }
   if (actionResult) {
     fullPrompt += `\n--- EXECUTED ACTION RESULT ---\nTool: ${actionResult.toolName}\nOutput: ${JSON.stringify(actionResult.result)}\nIntegrate this action result naturally in your reply.\n`;
@@ -378,9 +386,16 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
     customBaseUrl: owner.customBaseUrl,
   });
 
-  const completion = await llm.generateText(
-    `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\nBusiness Details:\n${businessDetailsText}\n\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`
-  );
+  let testPrompt = `${baseSystemPrompt}\n\n--- BUSINESS INFO ---\nBusiness Name: ${owner.bussinessName}\nBusiness Description: ${owner.bussinessDescription || ''}\n`;
+  if (owner.knowledgeMarkdown && owner.knowledgeMarkdown.trim()) {
+    testPrompt += `\n--- BUSINESS KNOWLEDGE DOCUMENTATION (MARKDOWN) ---\n${owner.knowledgeMarkdown.trim()}\n`;
+  }
+  if (businessDetailsText) {
+    testPrompt += `\n--- BUSINESS FAQ (Q&A) ---\n${businessDetailsText}\n`;
+  }
+  testPrompt += `\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`;
+
+  const completion = await llm.generateText(testPrompt);
 
   res.status(200).json({
     success: true,

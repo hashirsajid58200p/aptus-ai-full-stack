@@ -268,6 +268,7 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
       bussinessCategory,
       bussinessDescription,
       bussinessDetails,
+      knowledgeMarkdown: user.knowledgeMarkdown || "",
       id: _id,
       theme: theme || 'aptus',
       primaryColor: primaryColor || '#f97316',
@@ -381,6 +382,21 @@ exports.generateNewToken = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "New token generated successfully",
+  });
+});
+
+// Update Business Knowledge Base Markdown Documentation
+exports.updateKnowledgeMarkdown = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
+  const { knowledgeMarkdown } = req.body;
+
+  user.knowledgeMarkdown = typeof knowledgeMarkdown === "string" ? knowledgeMarkdown : "";
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    data: user.knowledgeMarkdown,
+    message: "Business knowledge documentation updated successfully",
   });
 });
 

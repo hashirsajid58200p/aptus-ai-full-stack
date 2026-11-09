@@ -11,7 +11,14 @@ import {
   Info,
   Bot,
   Sparkles,
+  FileText,
+  Save,
+  Eye,
+  Code,
+  BookOpen,
 } from "lucide-react";
+import axios from "axios";
+import baseurl from "@/store/baseurl";
 import { generateJSONContent } from "@/lib/groq";
 
 import { CardHeader, CardTitle, CardContent } from "components/ui/card";
@@ -240,6 +247,63 @@ const BusinessDetails = () => {
     { id: Date.now(), question: "", answer: "" },
   ]);
   const [loading, setLoading] = useState(false);
+
+  // Knowledge Base Tab State ("qa" | "markdown")
+  const [activeKnowledgeTab, setActiveKnowledgeTab] = useState("qa");
+  const [knowledgeMarkdown, setKnowledgeMarkdown] = useState(user?.knowledgeMarkdown || "");
+  const [isSavingMarkdown, setIsSavingMarkdown] = useState(false);
+  const [previewMarkdown, setPreviewMarkdown] = useState(false);
+
+  useEffect(() => {
+    if (user?.knowledgeMarkdown !== undefined) {
+      setKnowledgeMarkdown(user.knowledgeMarkdown || "");
+    }
+  }, [user?.knowledgeMarkdown]);
+
+  const handleSaveMarkdown = async () => {
+    setIsSavingMarkdown(true);
+    try {
+      const res = await axios.put(
+        `${baseurl}/user/knowledge`,
+        { knowledgeMarkdown },
+        { withCredentials: true }
+      );
+      if (res.data?.success) {
+        toast.success("Business documentation saved successfully!");
+        dispatch(loadUser());
+      } else {
+        toast.error(res.data?.message || "Failed to save documentation");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to save documentation");
+    } finally {
+      setIsSavingMarkdown(false);
+    }
+  };
+
+  const handleInsertTemplate = () => {
+    const template = `# ${user?.bussinessName || "Company"} Knowledge Base
+
+## 1. Overview & Core Mission
+${user?.bussinessDescription || "We provide innovative AI solutions and automated customer support."}
+
+## 2. Products & Key Services
+- **Chatbot Integrations**: Lightweight embeddable widgets with instant live messaging.
+- **AI Models Supported**: Open-source models via Groq (Llama 3) and OpenAI GPT-4o.
+- **Agent Handoff**: Seamless live agent escalation and lead capture.
+
+## 3. Pricing, Plans & Trial Policy
+- **Subscription Model**: We offer starter and enterprise subscriptions.
+- **Money-back Guarantee**: 30-day money-back guarantee with zero risk.
+- **Custom Quotes**: Exact pricing and custom packages are provided upon request by our sales team.
+
+## 4. Support & Contact Information
+- **Email**: ${user?.email || "support@example.com"}
+- **Availability**: 24/7 automated assistance with live agent support during business hours.
+`;
+    setKnowledgeMarkdown(template);
+    toast.success("Documentation template inserted!");
+  };
 
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
@@ -506,7 +570,114 @@ Strict Instructions:
           </div>
         </CardHeader>
 
-        <CardContent className="p-6 sm:p-8">
+        {/* Knowledge Base Navigation Tabs: FAQs (Q&A) vs Markdown Documentation */}
+        <div className="flex border-b-3 border-[#1a1a1a] bg-[#FDF9F0]">
+          <button
+            type="button"
+            onClick={() => setActiveKnowledgeTab("qa")}
+            className={`px-5 py-3 text-xs sm:text-sm font-extrabold uppercase font-space tracking-wider border-r-3 border-[#1a1a1a] transition-all flex items-center gap-2 cursor-pointer ${
+              activeKnowledgeTab === "qa"
+                ? "bg-[#BFF000] text-[#1a1a1a]"
+                : "bg-transparent text-gray-600 hover:bg-white"
+            }`}
+          >
+            <Bot className="w-4 h-4" />
+            <span>Q&A / FAQ Pairs ({user?.bussinessDetails?.length || 0})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveKnowledgeTab("markdown")}
+            className={`px-5 py-3 text-xs sm:text-sm font-extrabold uppercase font-space tracking-wider border-r-3 border-[#1a1a1a] transition-all flex items-center gap-2 cursor-pointer ${
+              activeKnowledgeTab === "markdown"
+                ? "bg-[#BFF000] text-[#1a1a1a]"
+                : "bg-transparent text-gray-600 hover:bg-white"
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span>Markdown Documentation</span>
+            {knowledgeMarkdown?.trim() && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            )}
+          </button>
+        </div>
+
+        {activeKnowledgeTab === "markdown" ? (
+          <CardContent className="p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
+              <div>
+                <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a] flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[#FF4D00]" />
+                  <span>Comprehensive Business Knowledge Base</span>
+                </h4>
+                <p className="text-xs font-semibold text-gray-600 mt-0.5">
+                  Write or paste your complete company documentation, pricing details, and policies in Markdown.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleInsertTemplate}
+                  className="px-3 py-1.5 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase hover:bg-gray-50 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Insert Template</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewMarkdown(!previewMarkdown)}
+                  className={`px-3 py-1.5 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
+                    previewMarkdown ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-white text-[#1a1a1a] hover:bg-gray-50"
+                  }`}
+                >
+                  {previewMarkdown ? <Code className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{previewMarkdown ? "Edit Code" : "Preview"}</span>
+                </button>
+              </div>
+            </div>
+
+            {previewMarkdown ? (
+              <div className="p-5 bg-[#FAF8F5] border-2 border-[#1a1a1a] shadow-neo-sm min-h-[380px] max-h-[500px] overflow-y-auto no-scrollbar font-medium text-xs sm:text-sm leading-relaxed space-y-3">
+                {knowledgeMarkdown?.trim() ? (
+                  <div className="whitespace-pre-wrap font-sans text-gray-800">
+                    {knowledgeMarkdown}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-400 font-bold uppercase text-xs">
+                    No documentation entered yet. Click "Edit Code" or "Insert Template" above.
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <textarea
+                  value={knowledgeMarkdown}
+                  onChange={(e) => setKnowledgeMarkdown(e.target.value)}
+                  placeholder="Paste or write your full business documentation here in Markdown format (e.g. # About Us, ## Pricing, ## Terms)..."
+                  rows={16}
+                  className="w-full p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-[#1a1a1a] font-mono text-xs sm:text-sm placeholder-gray-500 focus:outline-none focus:bg-white shadow-neo-sm resize-y leading-relaxed"
+                />
+                <div className="flex items-center justify-between text-[11px] font-mono font-bold text-gray-500">
+                  <span>Characters: {knowledgeMarkdown.length} | Words: {knowledgeMarkdown.trim() ? knowledgeMarkdown.trim().split(/\s+/).length : 0}</span>
+                  <span>Markdown formatting supported (#, ##, **, -, etc.)</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={handleSaveMarkdown}
+                disabled={isSavingMarkdown}
+                className="px-6 py-3 bg-[#BFF000] text-[#1a1a1a] font-extrabold font-space text-xs sm:text-sm uppercase tracking-wider border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <Save className={`w-4 h-4 ${isSavingMarkdown ? "animate-spin" : ""}`} />
+                <span>{isSavingMarkdown ? "Saving..." : "Save Documentation"}</span>
+              </button>
+            </div>
+          </CardContent>
+        ) : (
+          <CardContent className="p-6 sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Dynamic list of Questions and Answers */}
             <div className="space-y-6">
@@ -681,10 +852,12 @@ Strict Instructions:
             </Button>
           </form>
         </CardContent>
+      )}
       </div>
 
       {/* Floating Carousel / Accordion List with Sharp Edges & Clean Original Fonts */}
-      <div className="w-full max-w-4xl mt-8">
+      {activeKnowledgeTab === "qa" && (
+        <div className="w-full max-w-4xl mt-8">
         <div className="p-2">
           {/* Layout Toggle Icons */}
           <div className="flex justify-end mb-4 gap-2">
@@ -873,6 +1046,7 @@ Strict Instructions:
           )}
         </div>
       </div>
+      )}
 
       {/* Edit Modal (Sharp Edges & Clean Fonts) */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>

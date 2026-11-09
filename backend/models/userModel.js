@@ -84,6 +84,10 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
+    knowledgeMarkdown: {
+        type: String,
+        default: "",
+    },
     provider: {
         type: String,
         enum: ['groq', 'gemini', 'deepseek', 'mistral', 'cohere', 'perplexity', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'],
