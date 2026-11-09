@@ -1,7 +1,8 @@
 "use client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Send, Mic, MicOff, Loader2 } from "lucide-react";
+import { Send, Mic, MicOff, Loader2, Lock, AlertTriangle } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
@@ -117,6 +118,12 @@ function FormattedText({ content }) {
 }
 
 const TestChatbot = () => {
+  const { user } = useSelector((state) => state.user);
+  const qaCount = Array.isArray(user?.bussinessDetails) ? user.bussinessDetails.length : 0;
+  const countWords = (str) => (!str || typeof str !== 'string' ? 0 : str.trim().split(/\s+/).filter(Boolean).length);
+  const markdownWords = countWords(user?.knowledgeMarkdown);
+  const isUnlocked = qaCount >= 10 || (markdownWords >= 1000 && markdownWords <= 10000);
+
   const [messages, setMessages] = useState([
     { sender: "Bot", message: "Hello! How can I assist you with your business queries today?" },
   ]);
@@ -330,6 +337,10 @@ const TestChatbot = () => {
   };
 
   const handleSendMessage = async () => {
+    if (!isUnlocked) {
+      toast.error("Chatbot is locked: please add 10 Q&As or minimum 1,000 words Markdown documentation in Business Details first.");
+      return;
+    }
     if (messageInput.trim()) {
       const newMessages = [...messages, { sender: "You", message: messageInput }];
       setMessages(newMessages);
@@ -387,11 +398,41 @@ const TestChatbot = () => {
 
   return (
     <div className="flex flex-col h-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-4 sm:p-6">
-      <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4">
-        <h3 className="font-syne text-base sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-          Test Chatbot
-        </h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 mb-4 gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] text-[10px] sm:text-xs font-black uppercase tracking-wider ${
+              isUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-amber-400 text-[#1a1a1a]"
+            }`}
+          >
+            {isUnlocked ? "READY & ACTIVE" : "LOCKED (NEEDS KNOWLEDGE)"}
+          </span>
+          <span className="text-xs font-bold text-gray-600">
+            {isUnlocked
+              ? "Chatbot trained with verified business knowledge"
+              : `Minimum criteria: 10 Q&As (${qaCount}/10) or 1,000 words documentation (${markdownWords}/1,000)`}
+          </span>
+        </div>
+        <div className="text-[11px] font-mono font-bold text-gray-500">
+          Model: <span className="text-[#1a1a1a]">{user?.modelName || "llama-3.3-70b-versatile"}</span>
+        </div>
       </div>
+
+      {!isUnlocked && (
+        <div className="p-3.5 bg-amber-50 border-2 border-[#1a1a1a] shadow-neo-sm mb-4 flex items-start gap-3">
+          <div className="p-2 bg-amber-400 border-2 border-[#1a1a1a] shrink-0">
+            <Lock className="w-4 h-4 text-[#1a1a1a]" />
+          </div>
+          <div>
+            <h4 className="font-syne font-black text-xs uppercase text-[#1a1a1a]">
+              Chatbot Inactive: Minimum Knowledge Base Required
+            </h4>
+            <p className="text-xs font-medium text-gray-700 mt-0.5 leading-relaxed">
+              Your AI chatbot cannot generate replies until business knowledge is provided. Please visit <strong>Business Details</strong> and add at least <strong>10 Q&A pairs</strong> (currently {qaCount}/10) or write a minimum of <strong>1,000 words</strong> Markdown documentation (currently {markdownWords}/1,000 words).
+            </p>
+          </div>
+        </div>
+      )}
 
       <ScrollArea className="flex-1 overflow-y-auto mb-4 p-3 sm:p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] min-h-[55vh] max-h-[60vh]">
         {messages.map((chat, index) => (
@@ -420,9 +461,15 @@ const TestChatbot = () => {
           type="text"
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
-          placeholder={isRecording ? "Listening to your voice..." : "Ask your trained Aptus AI assistant or use microphone..."}
-          className="flex-1 p-2.5 sm:p-3 text-xs sm:text-base bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-500 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm"
-          disabled={loading || isTranscribing}
+          placeholder={
+            !isUnlocked
+              ? "Chatbot locked: Add at least 10 Q&As or 1,000 words of documentation in Business Details first..."
+              : isRecording
+              ? "Listening to your voice..."
+              : "Ask your trained Aptus AI assistant or use microphone..."
+          }
+          className="flex-1 p-2.5 sm:p-3 text-xs sm:text-base bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] font-medium placeholder-gray-500 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+          disabled={!isUnlocked || loading || isTranscribing}
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
         />
 
@@ -430,8 +477,8 @@ const TestChatbot = () => {
         <button
           type="button"
           onClick={toggleRecording}
-          disabled={loading || isTranscribing}
-          className={`p-2.5 sm:p-3 border-2 border-[#1a1a1a] shadow-neo-sm transition-all ${
+          disabled={!isUnlocked || loading || isTranscribing}
+          className={`p-2.5 sm:p-3 border-2 border-[#1a1a1a] shadow-neo-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
             isRecording
               ? "bg-[#EF4444] text-white animate-pulse"
               : isTranscribing
@@ -452,8 +499,8 @@ const TestChatbot = () => {
         {/* Send Button */}
         <button
           onClick={handleSendMessage}
-          className="p-2.5 sm:p-3 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] text-[#1a1a1a] font-bold disabled:opacity-50 transition-all"
-          disabled={loading || isRecording || isTranscribing}
+          className="p-2.5 sm:p-3 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] text-[#1a1a1a] font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          disabled={!isUnlocked || loading || isRecording || isTranscribing}
         >
           <Send className="w-5 h-5" />
         </button>

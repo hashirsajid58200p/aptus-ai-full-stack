@@ -261,6 +261,11 @@ const BusinessDetails = () => {
   }, [user?.knowledgeMarkdown]);
 
   const handleSaveMarkdown = async () => {
+    const wordCount = knowledgeMarkdown?.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0;
+    if (wordCount > 10000) {
+      toast.error(`Documentation exceeds maximum limit of 10,000 words (currently ${wordCount} words).`);
+      return;
+    }
     setIsSavingMarkdown(true);
     try {
       const res = await axios.put(
@@ -524,15 +529,30 @@ Strict Instructions:
     );
   }
 
+  const qaCount = user?.bussinessDetails?.length || 0;
+  const mdWords = knowledgeMarkdown?.trim() ? knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0;
+  const isKnowledgeUnlocked = qaCount >= 10 || (mdWords >= 1000 && mdWords <= 10000);
+
   return (
     <div className="w-full flex flex-col items-center gap-6 text-[#1a1a1a] pb-12">
       {/* Neo-brutalist Company Details Card with Sharp Edges */}
       <div className="bg-white w-full max-w-4xl border-3 border-[#1a1a1a] shadow-neo-lg">
-        <CardHeader className="flex flex-row items-center justify-between p-6 space-y-0 border-b-3 border-[#1a1a1a] bg-white">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-lg sm:text-2xl font-semibold text-[#1a1a1a]">
-              Company Details
-            </CardTitle>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 space-y-0 border-b-3 border-[#1a1a1a] bg-white gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <span
+              className={`px-2.5 py-0.5 border-2 border-[#1a1a1a] text-[10px] sm:text-xs font-black uppercase tracking-wider ${
+                isKnowledgeUnlocked ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-amber-400 text-[#1a1a1a]"
+              }`}
+            >
+              {isKnowledgeUnlocked ? "CHATBOT ACTIVE & TRAINED" : "KNOWLEDGE BASE LOCKED"}
+            </span>
+            <span className="text-xs font-bold text-gray-600">
+              {isKnowledgeUnlocked
+                ? "Knowledge base criteria satisfied"
+                : `Need 10 Q&As (${qaCount}/10) or 1,000 words doc (${mdWords}/1,000)`}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button

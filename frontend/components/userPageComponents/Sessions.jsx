@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   MessageSquare,
   User,
@@ -10,6 +10,7 @@ import {
   Bot,
   Headphones,
   Check,
+  Send,
 } from "lucide-react";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
@@ -191,6 +192,10 @@ export default function Sessions() {
   const [selectedSessionId, setSelectedSessionId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [copied, setCopied] = useState(false);
+  const [takeoverLoading, setTakeoverLoading] = useState(false);
+  const [agentInput, setAgentInput] = useState("");
+  const [sendingAgentMsg, setSendingAgentMsg] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const fetchSessions = async () => {
     setLoading(true);
@@ -253,17 +258,102 @@ export default function Sessions() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleTakeoverToggle = async () => {
+    if (!activeSession) return;
+    const isHumanActive = activeSession.status === "human_active";
+    const nextAction = isHumanActive ? "handback" : "takeover";
+    setTakeoverLoading(true);
+    try {
+      const res = await fetch(`${baseurl}/session/takeover`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          sessionId: activeSession._id,
+          action: nextAction,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const newStatus = data.status;
+        setSessions((prev) =>
+          prev.map((s) => (s._id === activeSession._id ? { ...s, status: newStatus } : s))
+        );
+        toast.success(
+          newStatus === "human_active"
+            ? "Live Agent mode active! AI auto-replies paused."
+            : "Handed conversation back to AI assistant."
+        );
+      } else {
+        toast.error(data.message || "Failed to update session mode");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to connect to server");
+    } finally {
+      setTakeoverLoading(false);
+    }
+  };
+
+  const handleSendAgentMessage = async (e) => {
+    e?.preventDefault();
+    if (!activeSession || !agentInput.trim() || sendingAgentMsg) return;
+    const textToSend = agentInput.trim();
+    setSendingAgentMsg(true);
+    try {
+      const res = await fetch(`${baseurl}/session/agent-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          sessionId: activeSession._id,
+          message: textToSend,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.message) {
+        const createdMsg = data.message;
+        setSessions((prev) =>
+          prev.map((s) => {
+            if (s._id === activeSession._id) {
+              const updatedMsgs = [...(s.messages || []), createdMsg];
+              return {
+                ...s,
+                status: "human_active",
+                messages: updatedMsgs,
+                updatedAt: new Date().toISOString(),
+              };
+            }
+            return s;
+          })
+        );
+        setAgentInput("");
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        toast.success("Reply sent to visitor!");
+      } else {
+        toast.error(data.message || "Failed to send agent reply");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error sending message");
+    } finally {
+      setSendingAgentMsg(false);
+    }
+  };
+
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-4 gap-4">
-        <div className="flex items-center gap-2.5">
-          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
-            INBOX & LOGS
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 border-[#1a1a1a] pb-3 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-[#1a1a1a]">
+            LIVE INBOX & CHAT LOGS
           </span>
-          <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-            Customer Sessions
-          </h3>
+          <span className="text-xs font-bold text-gray-600">
+            Real-time visitor interactions and support takeover
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -370,9 +460,16 @@ export default function Sessions() {
                         </p>
 
                         <div className="flex items-center justify-between gap-2 mt-2">
-                          <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-[#BFF000] border border-[#1a1a1a] text-[#1a1a1a]">
-                            {messagesList.length} msgs
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-[#BFF000] border border-[#1a1a1a] text-[#1a1a1a]">
+                              {messagesList.length} msgs
+                            </span>
+                            {session.status === "human_active" && (
+                              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 bg-[#2563EB] text-white border border-[#1a1a1a]">
+                                LIVE
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[10px] font-mono font-bold text-gray-400">
                             ID: #{session._id.slice(-5).toUpperCase()}
                           </span>
@@ -407,13 +504,41 @@ export default function Sessions() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={handleCopyTranscript}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-gray-100 transition-colors self-start sm:self-auto cursor-pointer"
-                  >
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copied ? "Copied" : "Copy Transcript"}</span>
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+                    {activeSession.status === "human_active" ? (
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-[#2563EB] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                          LIVE AGENT ACTIVE
+                        </span>
+                        <button
+                          onClick={handleTakeoverToggle}
+                          disabled={takeoverLoading}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-[#aee000] transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          <Bot className="w-3.5 h-3.5" />
+                          <span>Hand Back to AI</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleTakeoverToggle}
+                        disabled={takeoverLoading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <Headphones className="w-3.5 h-3.5" />
+                        <span>Take Over Chat (Live Agent)</span>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={handleCopyTranscript}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-gray-100 transition-colors cursor-pointer"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copied ? "Copied" : "Copy"}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Messages Feed */}
@@ -494,7 +619,40 @@ export default function Sessions() {
                       );
                     })
                   )}
+                  <div ref={messagesEndRef} />
                 </div>
+
+                {/* Live Agent Direct Reply Input */}
+                <form
+                  onSubmit={handleSendAgentMessage}
+                  className="p-3 bg-[#FDF9F0] border-t-2 border-[#1a1a1a] flex items-center gap-2 shrink-0"
+                >
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={agentInput}
+                      onChange={(e) => setAgentInput(e.target.value)}
+                      placeholder={
+                        activeSession.status === "human_active"
+                          ? "Type live reply to visitor as support agent..."
+                          : "Take over chat or send direct agent reply..."
+                      }
+                      className="w-full px-3.5 py-2.5 bg-white border-2 border-[#1a1a1a] text-xs font-bold text-[#1a1a1a] placeholder-gray-500 outline-none shadow-neo-sm"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={sendingAgentMsg || !agentInput.trim()}
+                    className="px-4 py-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase tracking-wider flex items-center gap-1.5 hover:bg-orange-600 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                  >
+                    {sendingAgentMsg ? (
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
+                    <span className="hidden sm:inline">Send Reply</span>
+                  </button>
+                </form>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full p-12 text-center text-gray-400">

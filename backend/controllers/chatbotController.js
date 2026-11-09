@@ -51,6 +51,22 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
+const countWords = (str) => {
+  if (!str || typeof str !== 'string') return 0;
+  return str.trim().split(/\s+/).filter(Boolean).length;
+};
+
+const checkKnowledgeGate = (owner) => {
+  const qaCount = Array.isArray(owner?.bussinessDetails) ? owner.bussinessDetails.length : 0;
+  const mdWords = countWords(owner?.knowledgeMarkdown);
+  const isUnlocked = qaCount >= 10 || (mdWords >= 1000 && mdWords <= 10000);
+  return {
+    isUnlocked,
+    qaCount,
+    mdWords,
+  };
+};
+
 const baseSystemPrompt = `You are a friendly, professional, and knowledgeable customer service AI chatbot.
 
 CRITICAL ACCURACY & GROUNDING RULES:
@@ -90,6 +106,16 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
       success: false,
       message: "Chatbot monthly token quota has been reached. Please contact business administration.",
       quotaExceeded: true,
+    });
+  }
+
+  // Check Knowledge Base gate (minimum 10 Q&A pairs OR 1,000 words Markdown documentation)
+  const gate = checkKnowledgeGate(owner);
+  if (!gate.isUnlocked) {
+    return res.status(403).json({
+      success: false,
+      isLocked: true,
+      message: `Chatbot is currently locked. The business must provide at least 10 Q&A pairs (currently ${gate.qaCount}/10) or minimum 1,000 words of Markdown documentation (currently ${gate.mdWords}/1,000 words) in Business Details before the chatbot can reply.`,
     });
   }
 
@@ -356,6 +382,16 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
     return res.status(400).json({
       success: false,
       message: "Please enter a message",
+    });
+  }
+
+  // Check Knowledge Base gate
+  const gate = checkKnowledgeGate(owner);
+  if (!gate.isUnlocked) {
+    return res.status(403).json({
+      success: false,
+      isLocked: true,
+      message: `Test Chatbot is locked. Minimum knowledge base not met: please add at least 10 Q&A pairs (currently ${gate.qaCount}/10) or at least 1,000 words of Markdown documentation (currently ${gate.mdWords}/1,000 words) in Business Details.`,
     });
   }
 

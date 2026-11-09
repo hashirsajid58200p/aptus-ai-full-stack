@@ -158,3 +158,123 @@ exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
     res.attachment(`chat_history_${Date.now()}.csv`);
     return res.send(csv);
 });
+
+// Toggle Session between live human agent ('human_active') and automated AI ('active')
+exports.takeoverSession = catchAsyncError(async (req, res, next) => {
+    const { sessionId, action } = req.body;
+    const ownerId = req.user._id;
+
+    const session = await Session.findOne({ _id: sessionId, chatbotId: ownerId });
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: "Session not found",
+        });
+    }
+
+    if (action === "handback") {
+        session.status = "active";
+        session.agentSocketId = null;
+    } else {
+        session.status = "human_active";
+    }
+
+    await session.save();
+
+    res.status(200).json({
+        success: true,
+        status: session.status,
+        message: session.status === "human_active" ? "Session taken over by live agent" : "Session returned to AI assistant",
+    });
+});
+
+// Live human agent sends a message directly to visitor
+exports.sendAgentMessage = catchAsyncError(async (req, res, next) => {
+    const { sessionId, message } = req.body;
+    const ownerId = req.user._id;
+
+    if (!sessionId || !message || !message.trim()) {
+        return res.status(400).json({
+            success: false,
+            message: "Please enter a message to send",
+        });
+    }
+
+    const session = await Session.findOne({ _id: sessionId, chatbotId: ownerId });
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: "Session not found",
+        });
+    }
+
+    const agentMsg = await Message.create({
+        message: message.trim(),
+        sessionId,
+        role: "chatbot",
+        sender: "human_agent",
+        chatbotId: ownerId,
+    });
+
+    session.messages.push(agentMsg);
+    session.updatedAt = new Date();
+    await session.save();
+
+    res.status(200).json({
+        success: true,
+        message: agentMsg,
+    });
+});
+
+// Get session messages & live status for widget visitor
+exports.getSessionMessages = catchAsyncError(async (req, res, next) => {
+    const { sessionId } = req.query;
+    if (!sessionId) {
+        return res.status(400).json({
+            success: false,
+            message: "Session ID is required",
+        });
+    }
+
+    const session = await Session.findOne({ _id: sessionId, chatbotId: req.chatbot_id }).populate("messages");
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: "Session not found",
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        status: session.status,
+        messages: session.messages,
+    });
+});
+
+// Visitor requests human agent takeover via widget
+exports.requestLiveAgent = catchAsyncError(async (req, res, next) => {
+    const { sessionId } = req.body;
+    if (!sessionId) {
+        return res.status(400).json({
+            success: false,
+            message: "Session ID is required",
+        });
+    }
+
+    const session = await Session.findOne({ _id: sessionId, chatbotId: req.chatbot_id });
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: "Session not found",
+        });
+    }
+
+    session.status = "human_active";
+    await session.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Live agent requested",
+        status: session.status,
+    });
+});

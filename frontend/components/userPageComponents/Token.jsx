@@ -37,13 +37,15 @@ const Token = () => {
 
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 border-b-2 border-[#1a1a1a] pb-4 mb-4">
-        <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 sm:px-3 py-0.5 sm:py-1 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
-          API Key
-        </span>
-        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-          Aptus AI Chatbot Token
-        </h3>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b-2 border-[#1a1a1a] pb-3 mb-4">
+        <div className="flex items-center gap-2">
+          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-[#1a1a1a]">
+            API AUTHENTICATION TOKEN
+          </span>
+          <span className="text-xs font-bold text-gray-600">
+            Secure client credential for widget installation
+          </span>
+        </div>
       </div>
       <p className="mb-4 text-[#1a1a1a] font-semibold text-xs sm:text-sm">
         Use this unique token to integrate the Aptus AI chatbot widget into your website:

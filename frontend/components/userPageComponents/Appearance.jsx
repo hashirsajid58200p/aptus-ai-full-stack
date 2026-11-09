@@ -595,10 +595,18 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="border-b-2 border-[#1a1a1a] pb-4">
-        <h3 className="font-syne text-lg sm:text-2xl font-extrabold text-[#1a1a1a] uppercase leading-tight">
-          Appearance & Theme
-        </h3>
+      <div className="border-b-2 border-[#1a1a1a] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="bg-[#BFF000] border-2 border-[#1a1a1a] px-2.5 py-0.5 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-[#1a1a1a]">
+            WIDGET STYLING & BRANDING
+          </span>
+          <span className="text-xs font-bold text-gray-600">
+            Customize visual theme, bot name, and welcome greeting
+          </span>
+        </div>
+        <div className="text-[11px] font-mono font-bold text-gray-500">
+          Selected Theme: <strong className="text-[#1a1a1a]">{THEME_CONFIGS[theme]?.name || "Aptus Official"}</strong>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
