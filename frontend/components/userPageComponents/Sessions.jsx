@@ -144,7 +144,7 @@ export default function Sessions() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 border-2 border-[#1a1a1a] bg-white min-h-[520px]">
           {/* Left Column: Conversation List */}
-          <div className="lg:col-span-5 border-b-2 lg:border-b-0 lg:border-r-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col max-h-[580px] overflow-y-auto">
+          <div className="lg:col-span-5 border-b-2 lg:border-b-0 lg:border-r-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col max-h-[580px] overflow-y-auto no-scrollbar">
             {filteredSessions.length === 0 ? (
               <div className="p-8 text-center text-xs font-bold text-gray-500">
                 No conversations match your search.
@@ -232,7 +232,7 @@ export default function Sessions() {
                 </div>
 
                 {/* Messages Feed */}
-                <div className="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col gap-3.5 max-h-[480px] bg-[#FAF8F5]">
+                <div className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 max-h-[480px] bg-[#FAF8F5]">
                   {!activeSession.messages || activeSession.messages.length === 0 ? (
                     <div className="p-8 text-center text-xs font-bold text-gray-400 italic">
                       No message exchanges recorded in this session.

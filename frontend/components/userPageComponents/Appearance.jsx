@@ -665,7 +665,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 {activeConfig.name}
               </span>
             </div>
-            <div className="border-2 border-[#1a1a1a] bg-[#FDF9F0] p-2.5 max-h-[220px] overflow-y-auto">
+            <div className="border-2 border-[#1a1a1a] bg-[#FDF9F0] p-2.5 max-h-[220px] overflow-y-auto no-scrollbar">
               <div className="grid grid-cols-2 gap-2">
                 {Object.entries(THEME_CONFIGS).map(([key, t]) => {
                   const isSelected = theme === key;
