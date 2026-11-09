@@ -60,10 +60,6 @@ IMPORTANT RULES:
 - Keep responses concise, direct, and actionable.
 - If verified knowledge base context or business FAQ is provided below, prioritize it to answer accurately.
 - If you do not know something, politely say so and offer to connect with a representative or have them leave an inquiry.
-- When the customer asks about features, plans, trust, or payment security, you may optionally include one of these rich media trigger tags on a new line at the end of your response to showcase visual badges:
-  - [PROMO:showcase] (to display feature highlight cards)
-  - [PROMO:trust] (to display enterprise trust and safety badges)
-  - [PROMO:payment] (to display secure checkout and payment methods)
 - Always respond directly to what the customer just said.`;
 
 // POST /api/v1/chatbot/getResponse — Primary Chat Endpoint

@@ -982,7 +982,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.botBubbleBg,
                       color: activeConfig.botBubbleColor,
                       border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
                     }}
                   >
                     {welcomeMessage}
@@ -995,7 +995,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: effectiveAccent,
                       color: effectiveHeaderColor,
                       border: activeConfig.userBubbleBorder || "none",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
                     }}
                   >
                     How do I integrate this on my website?
@@ -1008,7 +1008,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.botBubbleBg,
                       color: activeConfig.botBubbleColor,
                       border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.bubbleRadius || "8px",
+                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
                     }}
                   >
                     Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
