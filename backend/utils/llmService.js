@@ -58,7 +58,7 @@ class LLMService {
         const client = new OpenAI({ apiKey: key });
         const res = await client.models.list();
         return res.data
-          .filter(m => m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3'))
+          .filter(m => (m.id.startsWith('gpt-') || m.id.startsWith('o1') || m.id.startsWith('o3')) && !m.id.includes('audio') && !m.id.includes('realtime') && !m.id.includes('tts') && !m.id.includes('transcribe') && !m.id.includes('dall-e'))
           .map(m => ({ id: m.id, name: m.id }))
           .sort((a, b) => a.id.localeCompare(b.id));
       } catch (err) {
@@ -110,11 +110,21 @@ class LLMService {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
         const data = await res.json();
         if (data.models && Array.isArray(data.models)) {
+          const nonChatKeywords = [
+            'tts', 'audio', 'lyria', 'music', 'image', 'imagen', 'banana',
+            'transcribe', 'robotics', 'computer-use', 'embedding', 'aqa',
+            'clip', 'customtools', 'antigravity', 'deep-research', 'argon'
+          ];
           return data.models
-            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent') && !m.name.includes('embedding') && !m.name.includes('aqa') && !m.name.includes('imagen'))
+            .filter(m => {
+              if (!m.supportedGenerationMethods?.includes('generateContent')) return false;
+              const id = m.name.toLowerCase();
+              const display = (m.displayName || '').toLowerCase();
+              return !nonChatKeywords.some(k => id.includes(k) || display.includes(k));
+            })
             .map(m => {
               const id = m.name.replace('models/', '');
-              return { id, name: m.displayName ? `${m.displayName} (${id})` : id };
+              return { id, name: m.displayName || id };
             })
             .sort((a, b) => a.id.localeCompare(b.id));
         } else if (data.error) {
@@ -124,9 +134,9 @@ class LLMService {
         throw new Error(`Google Gemini API verification failed: ${err.message}`);
       }
       return [
-        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
-        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+        { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash' },
+        { id: 'gemini-flash-latest', name: 'Gemini Flash Latest' },
+        { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview' },
       ];
     } else if (provider === 'deepseek') {
       const key = apiKey || process.env.DEEPSEEK_API_KEY;
