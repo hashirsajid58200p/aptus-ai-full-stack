@@ -336,6 +336,9 @@ exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   }
 
   let apiKey = req.query.apiKey || req.body.apiKey;
+  if (apiKey && typeof apiKey === 'string' && apiKey.includes('••••')) {
+    apiKey = null;
+  }
   if (!apiKey) {
     if (provider === 'openai') apiKey = user.openaiApiKey;
     else if (provider === 'groq') apiKey = user.groqApiKey;

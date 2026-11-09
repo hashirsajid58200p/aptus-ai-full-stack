@@ -78,6 +78,25 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
   };
 
   useEffect(() => {
+    if (user) {
+      setKeys({
+        groq: user?.groqApiKey || "",
+        gemini: user?.geminiApiKey || "",
+        deepseek: user?.deepseekApiKey || "",
+        mistral: user?.mistralApiKey || "",
+        cohere: user?.cohereApiKey || "",
+        perplexity: user?.perplexityApiKey || "",
+        openai: user?.openaiApiKey || "",
+        anthropic: user?.anthropicApiKey || "",
+        xai: user?.xaiApiKey || "",
+        openrouter: user?.openrouterApiKey || "",
+        custom: user?.customApiKey || "",
+      });
+      if (user?.customBaseUrl !== undefined) setCustomBaseUrl(user.customBaseUrl || "");
+    }
+  }, [user]);
+
+  useEffect(() => {
     fetchAllConnectedModels();
   }, []);
 
@@ -453,8 +472,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                   API Key / Bearer Token
                 </label>
                 <input
-                  type="password"
+                  type={keys.custom?.includes("••••") ? "text" : "password"}
                   value={keys.custom}
+                  onFocus={() => {
+                    if (keys.custom?.includes("••••")) handleKeyChange("custom", "");
+                  }}
                   onChange={(e) => handleKeyChange("custom", e.target.value)}
                   placeholder={activeProviderMeta.placeholder}
                   className="w-full p-2.5 bg-white border-2 border-[#1a1a1a] text-xs font-mono outline-none"
@@ -478,8 +500,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                 )}
               </div>
               <input
-                type="password"
+                type={keys[activeKeyTab]?.includes("••••") ? "text" : "password"}
                 value={keys[activeKeyTab] || ""}
+                onFocus={() => {
+                  if (keys[activeKeyTab]?.includes("••••")) handleKeyChange(activeKeyTab, "");
+                }}
                 onChange={(e) => handleKeyChange(activeKeyTab, e.target.value)}
                 placeholder={activeProviderMeta.placeholder}
                 className="w-full p-2.5 bg-white border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"

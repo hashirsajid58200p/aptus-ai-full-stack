@@ -191,5 +191,35 @@ userSchema.methods.comparePassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
+const maskApiKey = (key) => {
+    if (!key || typeof key !== "string") return null;
+    if (key.length <= 8) return "••••••••";
+    return `${key.slice(0, 4)}••••••••${key.slice(-4)}`;
+};
+
+userSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    delete obj.password;
+    const keyFields = [
+        "groqApiKey",
+        "geminiApiKey",
+        "deepseekApiKey",
+        "mistralApiKey",
+        "cohereApiKey",
+        "perplexityApiKey",
+        "openaiApiKey",
+        "anthropicApiKey",
+        "xaiApiKey",
+        "openrouterApiKey",
+        "customApiKey",
+    ];
+    for (const field of keyFields) {
+        if (obj[field]) {
+            obj[field] = maskApiKey(obj[field]);
+        }
+    }
+    return obj;
+};
+
 module.exports = mongoose.model("User", userSchema);
 

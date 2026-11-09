@@ -293,39 +293,25 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
   if (modelName) {
     user.modelName = modelName;
   }
-  if (openaiApiKey !== undefined) {
-    user.openaiApiKey = openaiApiKey;
-  }
-  if (groqApiKey !== undefined) {
-    user.groqApiKey = groqApiKey;
-  }
-  if (geminiApiKey !== undefined) {
-    user.geminiApiKey = geminiApiKey;
-  }
-  if (deepseekApiKey !== undefined) {
-    user.deepseekApiKey = deepseekApiKey;
-  }
-  if (mistralApiKey !== undefined) {
-    user.mistralApiKey = mistralApiKey;
-  }
-  if (cohereApiKey !== undefined) {
-    user.cohereApiKey = cohereApiKey;
-  }
-  if (perplexityApiKey !== undefined) {
-    user.perplexityApiKey = perplexityApiKey;
-  }
-  if (anthropicApiKey !== undefined) {
-    user.anthropicApiKey = anthropicApiKey;
-  }
-  if (xaiApiKey !== undefined) {
-    user.xaiApiKey = xaiApiKey;
-  }
-  if (openrouterApiKey !== undefined) {
-    user.openrouterApiKey = openrouterApiKey;
-  }
-  if (customApiKey !== undefined) {
-    user.customApiKey = customApiKey;
-  }
+
+  const applyKeyUpdate = (field, val) => {
+    if (val === undefined) return;
+    if (typeof val === 'string' && val.includes('••••')) return;
+    user[field] = val ? val.trim() : null;
+  };
+
+  applyKeyUpdate('openaiApiKey', openaiApiKey);
+  applyKeyUpdate('groqApiKey', groqApiKey);
+  applyKeyUpdate('geminiApiKey', geminiApiKey);
+  applyKeyUpdate('deepseekApiKey', deepseekApiKey);
+  applyKeyUpdate('mistralApiKey', mistralApiKey);
+  applyKeyUpdate('cohereApiKey', cohereApiKey);
+  applyKeyUpdate('perplexityApiKey', perplexityApiKey);
+  applyKeyUpdate('anthropicApiKey', anthropicApiKey);
+  applyKeyUpdate('xaiApiKey', xaiApiKey);
+  applyKeyUpdate('openrouterApiKey', openrouterApiKey);
+  applyKeyUpdate('customApiKey', customApiKey);
+
   if (customBaseUrl !== undefined) {
     user.customBaseUrl = customBaseUrl;
   }
