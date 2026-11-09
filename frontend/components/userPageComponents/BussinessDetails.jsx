@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { MdDeleteOutline, MdInfoOutline, MdOutlineEdit } from "react-icons/md";
-import { FaRobot, FaCommentDots } from "react-icons/fa";
 import {
   List,
   LayoutGrid,
@@ -10,6 +9,8 @@ import {
   Pencil,
   RotateCw,
   Info,
+  Bot,
+  Sparkles,
 } from "lucide-react";
 import { generateJSONContent } from "@/lib/groq";
 
@@ -50,7 +51,6 @@ import {
   clearState,
 } from "@/slices/userSlice";
 import toast from "react-hot-toast";
-import { AiFillThunderbolt } from "react-icons/ai";
 import Loader from "../Loader";
 
 const shuffleArray = (array) => {
@@ -547,9 +547,8 @@ Strict Instructions:
                           (e.target.placeholder =
                             "What is our Company Objective?")
                         }
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2.5 px-3"
                       />
-                      <FaRobot className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
                   </div>
 
@@ -576,9 +575,8 @@ Strict Instructions:
                             "Our objective is to provide the best services to our customers...")
                         }
                         rows={4}
-                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 pl-3 pr-10"
+                        className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] text-[10px] sm:text-sm font-medium placeholder-gray-400 focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2.5 px-3"
                       />
-                      <FaCommentDots className="absolute right-3 top-3.5 text-xl text-[#FF4D00] pointer-events-none" />
                     </div>
                   </div>
                 </div>
@@ -604,7 +602,7 @@ Strict Instructions:
               disabled={loading}
               className="w-full btn-neo-secondary py-2.5 sm:py-3 text-xs sm:text-sm uppercase flex items-center justify-center gap-2 font-extrabold shadow-neo-sm"
             >
-              <AiFillThunderbolt className="text-xl text-[#FF4D00]" />
+              <Sparkles className="w-4 h-4 text-[#FF4D00]" />
               {loading ? "Generating Questions..." : "Generate with AI"}
             </Button>
 
@@ -619,7 +617,7 @@ Strict Instructions:
               <div className="mt-6 p-5 border-3 border-[#1a1a1a] bg-[#FDF9F0] shadow-neo-sm space-y-4">
                 <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-3">
                   <h3 className="text-xs sm:text-base font-bold uppercase text-[#1a1a1a] flex items-center gap-2">
-                    <AiFillThunderbolt className="text-[#FF4D00] text-lg sm:text-xl" />
+                    <Sparkles className="w-4 h-4 text-[#FF4D00]" />
                     AI-Generated Questions
                   </h3>
                   <Button
@@ -736,7 +734,7 @@ Strict Instructions:
                           <div>
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b-2 border-[#1a1a1a] mb-3">
                               <div className="flex items-start sm:items-center gap-3 w-full sm:w-auto flex-1">
-                                <FaRobot className="text-2xl text-[#FF4D00] shrink-0 mt-0.5 sm:mt-0" />
+                                <Bot className="w-5 h-5 text-[#FF4D00] shrink-0 mt-0.5 sm:mt-0" />
                                 <CardTitle className="text-sm sm:text-lg font-bold text-[#1a1a1a]">
                                   {item.question}
                                 </CardTitle>
@@ -904,9 +902,8 @@ Strict Instructions:
                     }))
                   }
                   required
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2 sm:py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm py-2 sm:py-2.5 px-3"
                 />
-                <FaRobot className="absolute right-3 top-1/2 -translate-y-1/2 text-lg sm:text-xl text-[#FF4D00]" />
               </div>
             </div>
 
@@ -926,9 +923,8 @@ Strict Instructions:
                   }
                   required
                   rows={4}
-                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2 sm:py-2.5 pl-3 pr-10"
+                  className="mt-1 block w-full border-2 border-[#1a1a1a] bg-white text-[#1a1a1a] font-medium text-[10px] sm:text-sm focus:outline-none focus:bg-[#FDF9F0] focus:shadow-neo-sm resize-none max-h-40 overflow-y-auto py-2 sm:py-2.5 px-3"
                 />
-                <FaCommentDots className="absolute right-3 top-3 sm:top-3.5 text-lg sm:text-xl text-[#FF4D00]" />
               </div>
             </div>
 
