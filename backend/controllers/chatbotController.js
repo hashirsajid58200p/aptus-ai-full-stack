@@ -157,6 +157,11 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   let activeApiKey = null;
   if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
   else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'gemini') activeApiKey = owner.geminiApiKey;
+  else if (owner.provider === 'deepseek') activeApiKey = owner.deepseekApiKey;
+  else if (owner.provider === 'mistral') activeApiKey = owner.mistralApiKey;
+  else if (owner.provider === 'cohere') activeApiKey = owner.cohereApiKey;
+  else if (owner.provider === 'perplexity') activeApiKey = owner.perplexityApiKey;
   else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
   else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
   else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
@@ -264,6 +269,11 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
     modelName,
     openaiApiKey,
     groqApiKey,
+    geminiApiKey,
+    deepseekApiKey,
+    mistralApiKey,
+    cohereApiKey,
+    perplexityApiKey,
     anthropicApiKey,
     xaiApiKey,
     openrouterApiKey,
@@ -276,7 +286,7 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const validProviders = ['groq', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'];
+  const validProviders = ['groq', 'gemini', 'deepseek', 'mistral', 'cohere', 'perplexity', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'];
   if (provider && validProviders.includes(provider)) {
     user.provider = provider;
   }
@@ -288,6 +298,21 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
   }
   if (groqApiKey !== undefined) {
     user.groqApiKey = groqApiKey;
+  }
+  if (geminiApiKey !== undefined) {
+    user.geminiApiKey = geminiApiKey;
+  }
+  if (deepseekApiKey !== undefined) {
+    user.deepseekApiKey = deepseekApiKey;
+  }
+  if (mistralApiKey !== undefined) {
+    user.mistralApiKey = mistralApiKey;
+  }
+  if (cohereApiKey !== undefined) {
+    user.cohereApiKey = cohereApiKey;
+  }
+  if (perplexityApiKey !== undefined) {
+    user.perplexityApiKey = perplexityApiKey;
   }
   if (anthropicApiKey !== undefined) {
     user.anthropicApiKey = anthropicApiKey;
@@ -316,6 +341,11 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
       customBaseUrl: user.customBaseUrl,
       hasOpenAiKey: !!user.openaiApiKey,
       hasGroqKey: !!user.groqApiKey,
+      hasGeminiKey: !!user.geminiApiKey,
+      hasDeepseekKey: !!user.deepseekApiKey,
+      hasMistralKey: !!user.mistralApiKey,
+      hasCohereKey: !!user.cohereApiKey,
+      hasPerplexityKey: !!user.perplexityApiKey,
       hasAnthropicKey: !!user.anthropicApiKey,
       hasXaiKey: !!user.xaiApiKey,
       hasOpenrouterKey: !!user.openrouterApiKey,
@@ -345,6 +375,11 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
   let activeApiKey = null;
   if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
   else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'gemini') activeApiKey = owner.geminiApiKey;
+  else if (owner.provider === 'deepseek') activeApiKey = owner.deepseekApiKey;
+  else if (owner.provider === 'mistral') activeApiKey = owner.mistralApiKey;
+  else if (owner.provider === 'cohere') activeApiKey = owner.cohereApiKey;
+  else if (owner.provider === 'perplexity') activeApiKey = owner.perplexityApiKey;
   else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
   else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
   else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;

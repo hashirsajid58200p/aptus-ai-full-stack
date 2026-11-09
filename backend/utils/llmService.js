@@ -103,6 +103,74 @@ class LLMService {
         }
       } catch (e) {}
       return [];
+    } else if (provider === 'gemini') {
+      const key = apiKey || process.env.GEMINI_API_KEY;
+      if (!key) return [];
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+        const data = await res.json();
+        if (data.models && Array.isArray(data.models)) {
+          return data.models
+            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent') && !m.name.includes('embedding') && !m.name.includes('aqa') && !m.name.includes('imagen'))
+            .map(m => {
+              const id = m.name.replace('models/', '');
+              return { id, name: m.displayName ? `${m.displayName} (${id})` : id };
+            })
+            .sort((a, b) => a.id.localeCompare(b.id));
+        } else if (data.error) {
+          throw new Error(data.error.message);
+        }
+      } catch (err) {
+        throw new Error(`Google Gemini API verification failed: ${err.message}`);
+      }
+      return [
+        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+      ];
+    } else if (provider === 'deepseek') {
+      const key = apiKey || process.env.DEEPSEEK_API_KEY;
+      if (!key) return [];
+      try {
+        const client = new OpenAI({ apiKey: key, baseURL: 'https://api.deepseek.com' });
+        const res = await client.models.list();
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          return res.data.map(m => ({ id: m.id, name: m.id }));
+        }
+      } catch (e) {}
+      return [
+        { id: 'deepseek-chat', name: 'DeepSeek-V3 (deepseek-chat)' },
+        { id: 'deepseek-reasoner', name: 'DeepSeek-R1 (deepseek-reasoner)' },
+      ];
+    } else if (provider === 'mistral') {
+      const key = apiKey || process.env.MISTRAL_API_KEY;
+      if (!key) return [];
+      try {
+        const client = new OpenAI({ apiKey: key, baseURL: 'https://api.mistral.ai/v1' });
+        const res = await client.models.list();
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          return res.data
+            .filter(m => !m.id.includes('embed') && !m.id.includes('moderation'))
+            .map(m => ({ id: m.id, name: m.id }));
+        }
+      } catch (e) {}
+      return [
+        { id: 'mistral-large-latest', name: 'Mistral Large' },
+        { id: 'mistral-small-latest', name: 'Mistral Small' },
+        { id: 'codestral-latest', name: 'Codestral' },
+      ];
+    } else if (provider === 'perplexity') {
+      return [
+        { id: 'sonar', name: 'Sonar (8B Online Search)' },
+        { id: 'sonar-pro', name: 'Sonar Pro (70B Online Search)' },
+        { id: 'sonar-reasoning', name: 'Sonar Reasoning (Deep Research)' },
+      ];
+    } else if (provider === 'cohere') {
+      return [
+        { id: 'command-r-plus', name: 'Command R+ (Enterprise)' },
+        { id: 'command-r', name: 'Command R' },
+        { id: 'command-light', name: 'Command Light' },
+      ];
     } else if (provider === 'custom') {
       if (!customBaseUrl) return [];
       try {
@@ -252,6 +320,114 @@ class LLMService {
       const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
       const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
 
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'gemini') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.GEMINI_API_KEY;
+      if (!apiKey) throw new Error('Google Gemini API key is missing.');
+
+      console.log(`🟢 Calling Google Gemini API (model: ${model})...`);
+      const geminiModel = model || 'gemini-1.5-flash';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{ text: (systemPrompt ? `System Instructions: ${systemPrompt}\n\n` : '') + prompt }]
+          }],
+          generationConfig: {
+            temperature,
+            maxOutputTokens: maxTokens,
+          }
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error?.message || 'Gemini API request failed');
+      }
+
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const promptTokens = data.usageMetadata?.promptTokenCount || this.estimateTokens(prompt);
+      const completionTokens = data.usageMetadata?.candidatesTokenCount || this.estimateTokens(content);
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } };
+
+    } else if (provider === 'deepseek') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.DEEPSEEK_API_KEY;
+      if (!apiKey) throw new Error('DeepSeek API key is missing.');
+
+      console.log(`🟢 Calling DeepSeek API (model: ${model})...`);
+      const client = new OpenAI({ apiKey, baseURL: 'https://api.deepseek.com' });
+      const response = await client.chat.completions.create({
+        model: model || 'deepseek-chat',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'mistral') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.MISTRAL_API_KEY;
+      if (!apiKey) throw new Error('Mistral API key is missing.');
+
+      console.log(`🟢 Calling Mistral API (model: ${model})...`);
+      const client = new OpenAI({ apiKey, baseURL: 'https://api.mistral.ai/v1' });
+      const response = await client.chat.completions.create({
+        model: model || 'mistral-large-latest',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'perplexity') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.PERPLEXITY_API_KEY;
+      if (!apiKey) throw new Error('Perplexity API key is missing.');
+
+      console.log(`🟢 Calling Perplexity API (model: ${model})...`);
+      const client = new OpenAI({ apiKey, baseURL: 'https://api.perplexity.ai' });
+      const response = await client.chat.completions.create({
+        model: model || 'sonar',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
+      return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
+
+    } else if (provider === 'cohere') {
+      const apiKey = options.apiKey || this.customApiKey || process.env.COHERE_API_KEY;
+      if (!apiKey) throw new Error('Cohere API key is missing.');
+
+      console.log(`🟢 Calling Cohere API (model: ${model})...`);
+      const client = new OpenAI({ apiKey, baseURL: 'https://api.cohere.ai/compatibility/v1' });
+      const response = await client.chat.completions.create({
+        model: model || 'command-r',
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+      });
+
+      const content = response.choices[0]?.message?.content || '';
+      const promptTokens = response.usage?.prompt_tokens || this.estimateTokens(prompt);
+      const completionTokens = response.usage?.completion_tokens || this.estimateTokens(content);
+      const totalTokens = response.usage?.total_tokens || (promptTokens + completionTokens);
       return { text: content, usage: { promptTokens, completionTokens, totalTokens } };
 
     } else if (provider === 'custom') {

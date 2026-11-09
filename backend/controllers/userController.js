@@ -326,6 +326,11 @@ exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   if (!apiKey) {
     if (provider === 'openai') apiKey = user.openaiApiKey;
     else if (provider === 'groq') apiKey = user.groqApiKey;
+    else if (provider === 'gemini') apiKey = user.geminiApiKey;
+    else if (provider === 'deepseek') apiKey = user.deepseekApiKey;
+    else if (provider === 'mistral') apiKey = user.mistralApiKey;
+    else if (provider === 'cohere') apiKey = user.cohereApiKey;
+    else if (provider === 'perplexity') apiKey = user.perplexityApiKey;
     else if (provider === 'anthropic') apiKey = user.anthropicApiKey;
     else if (provider === 'xai') apiKey = user.xaiApiKey;
     else if (provider === 'openrouter') apiKey = user.openrouterApiKey;

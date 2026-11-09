@@ -86,7 +86,7 @@ const userSchema = new mongoose.Schema({
     ],
     provider: {
         type: String,
-        enum: ['groq', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'],
+        enum: ['groq', 'gemini', 'deepseek', 'mistral', 'cohere', 'perplexity', 'openai', 'anthropic', 'xai', 'openrouter', 'custom'],
         default: 'groq',
     },
     modelName: {
@@ -94,6 +94,26 @@ const userSchema = new mongoose.Schema({
         default: 'openai/gpt-oss-120b',
     },
     groqApiKey: {
+        type: String,
+        default: null,
+    },
+    geminiApiKey: {
+        type: String,
+        default: null,
+    },
+    deepseekApiKey: {
+        type: String,
+        default: null,
+    },
+    mistralApiKey: {
+        type: String,
+        default: null,
+    },
+    cohereApiKey: {
+        type: String,
+        default: null,
+    },
+    perplexityApiKey: {
         type: String,
         default: null,
     },

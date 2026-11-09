@@ -5,9 +5,14 @@ import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 
 const PROVIDERS = [
-  { id: "groq", name: "Groq", desc: "Ultra-fast open models (Llama 3, Gemma, Mixtral)" },
-  { id: "openai", name: "OpenAI", desc: "GPT-4o, GPT-4o Mini, and reasoning models" },
+  { id: "groq", name: "Groq", desc: "Ultra-fast open models (GPT-OSS, Qwen, Allam)" },
+  { id: "gemini", name: "Google Gemini", desc: "Gemini 2.0 Flash, 1.5 Pro & Flash (Free tier available)" },
+  { id: "deepseek", name: "DeepSeek", desc: "DeepSeek V3 & R1 Reasoning models" },
+  { id: "openai", name: "OpenAI", desc: "GPT-4o, GPT-4o Mini, and o1/o3 reasoning" },
   { id: "anthropic", name: "Anthropic Claude", desc: "Claude 3.5 Sonnet and Haiku" },
+  { id: "mistral", name: "Mistral AI", desc: "Mistral Large, Small, and Codestral" },
+  { id: "perplexity", name: "Perplexity", desc: "Sonar search & reasoning models" },
+  { id: "cohere", name: "Cohere", desc: "Command R+ and Command R enterprise models" },
   { id: "xai", name: "xAI Grok", desc: "Grok 2 and Grok Beta models" },
   { id: "openrouter", name: "OpenRouter", desc: "Unified multi-provider AI gateway" },
   { id: "custom", name: "Custom API", desc: "Self-hosted vLLM, Ollama, or OpenAI proxy" },
@@ -15,8 +20,13 @@ const PROVIDERS = [
 
 export default function AnalyticsUsage({ user, onUserUpdate }) {
   const [provider, setProvider] = useState(user?.provider || "groq");
-  const [modelName, setModelName] = useState(user?.modelName || "llama-3.3-70b-versatile");
+  const [modelName, setModelName] = useState(user?.modelName || "openai/gpt-oss-120b");
   const [groqKey, setGroqKey] = useState(user?.groqApiKey || "");
+  const [geminiKey, setGeminiKey] = useState(user?.geminiApiKey || "");
+  const [deepseekKey, setDeepseekKey] = useState(user?.deepseekApiKey || "");
+  const [mistralKey, setMistralKey] = useState(user?.mistralApiKey || "");
+  const [cohereKey, setCohereKey] = useState(user?.cohereApiKey || "");
+  const [perplexityKey, setPerplexityKey] = useState(user?.perplexityApiKey || "");
   const [openaiKey, setOpenaiKey] = useState(user?.openaiApiKey || "");
   const [anthropicKey, setAnthropicKey] = useState(user?.anthropicApiKey || "");
   const [xaiKey, setXaiKey] = useState(user?.xaiApiKey || "");
@@ -31,6 +41,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
   const getKeyForProvider = (prov) => {
     switch (prov) {
+      case "gemini": return geminiKey;
+      case "deepseek": return deepseekKey;
+      case "mistral": return mistralKey;
+      case "cohere": return cohereKey;
+      case "perplexity": return perplexityKey;
       case "openai": return openaiKey;
       case "anthropic": return anthropicKey;
       case "xai": return xaiKey;
@@ -111,6 +126,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
           provider,
           modelName,
           groqApiKey: groqKey || undefined,
+          geminiApiKey: geminiKey || undefined,
+          deepseekApiKey: deepseekKey || undefined,
+          mistralApiKey: mistralKey || undefined,
+          cohereApiKey: cohereKey || undefined,
+          perplexityApiKey: perplexityKey || undefined,
           openaiApiKey: openaiKey || undefined,
           anthropicApiKey: anthropicKey || undefined,
           xaiApiKey: xaiKey || undefined,
@@ -223,6 +243,146 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                 />
                 <span className="text-[11px] text-gray-500 mt-1 block">
                   Leave blank to use Aptus platform built-in Groq key, or enter your personal Groq key for unlimited speed.
+                </span>
+              </div>
+            )}
+
+            {provider === "gemini" && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                    Google Gemini API Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fetchModels("gemini", geminiKey)}
+                    className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                    Verify Key & Fetch Live Models
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={geminiKey}
+                  onChange={(e) => setGeminiKey(e.target.value)}
+                  placeholder="AIzaSy... (Get free key from aistudio.google.com)"
+                  className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"
+                />
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  Generous free tier! Supports Gemini 2.0 Flash, Gemini 1.5 Flash, and Gemini 1.5 Pro.
+                </span>
+              </div>
+            )}
+
+            {provider === "deepseek" && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                    DeepSeek API Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fetchModels("deepseek", deepseekKey)}
+                    className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                    Verify Key & Fetch Models
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={deepseekKey}
+                  onChange={(e) => setDeepseekKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"
+                />
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  Supports DeepSeek-V3 (deepseek-chat) and DeepSeek-R1 (deepseek-reasoner).
+                </span>
+              </div>
+            )}
+
+            {provider === "mistral" && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                    Mistral AI API Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fetchModels("mistral", mistralKey)}
+                    className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                    Verify Key & Fetch Models
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={mistralKey}
+                  onChange={(e) => setMistralKey(e.target.value)}
+                  placeholder="api key..."
+                  className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"
+                />
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  Supports Mistral Large, Mistral Small, and Codestral.
+                </span>
+              </div>
+            )}
+
+            {provider === "perplexity" && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                    Perplexity API Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fetchModels("perplexity", perplexityKey)}
+                    className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                    Fetch Models
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={perplexityKey}
+                  onChange={(e) => setPerplexityKey(e.target.value)}
+                  placeholder="pplx-..."
+                  className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"
+                />
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  Online real-time search models: Sonar, Sonar Pro, and Sonar Reasoning.
+                </span>
+              </div>
+            )}
+
+            {provider === "cohere" && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+                    Cohere API Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fetchModels("cohere", cohereKey)}
+                    className="text-[11px] font-bold text-[#2563eb] hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin" : ""}`} />
+                    Fetch Models
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={cohereKey}
+                  onChange={(e) => setCohereKey(e.target.value)}
+                  placeholder="cohere api key..."
+                  className="w-full p-2.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] text-xs md:text-sm font-mono outline-none"
+                />
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  Enterprise models: Command R+ and Command R.
                 </span>
               </div>
             )}
