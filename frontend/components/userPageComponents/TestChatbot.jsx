@@ -5,117 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
-
-function FormattedText({ content }) {
-  if (!content) return null;
-
-  const parseInline = (text) => {
-    const tokenRegex = /(\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*([^*]+)\*|_([^_]+)_)/g;
-    const elements = [];
-    let lastIndex = 0;
-    let match;
-
-    while ((match = tokenRegex.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        elements.push(text.slice(lastIndex, match.index));
-      }
-
-      if (match[2] || match[3]) {
-        elements.push(<strong key={match.index} className="font-bold">{match[2] || match[3]}</strong>);
-      } else if (match[4]) {
-        elements.push(<code key={match.index} className="bg-black/10 px-1 py-0.5 rounded text-xs font-mono">{match[4]}</code>);
-      } else if (match[5] && match[6]) {
-        elements.push(<a key={match.index} href={match[6]} target="_blank" rel="noopener noreferrer" className="underline font-bold">{match[5]}</a>);
-      } else if (match[7] || match[8]) {
-        elements.push(<em key={match.index} className="italic">{match[7] || match[8]}</em>);
-      }
-
-      lastIndex = tokenRegex.lastIndex;
-    }
-
-    if (lastIndex < text.length) {
-      elements.push(text.slice(lastIndex));
-    }
-
-    return elements;
-  };
-
-  const lines = content.split("\n");
-  const blocks = [];
-  let currentList = null;
-
-  const flushList = () => {
-    if (currentList) {
-      if (currentList.type === "ul") {
-        blocks.push(
-          <ul key={`list-${blocks.length}`} className="list-disc pl-5 my-1.5 space-y-1">
-            {currentList.items.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
-        );
-      } else {
-        blocks.push(
-          <ol key={`list-${blocks.length}`} className="list-decimal pl-5 my-1.5 space-y-1">
-            {currentList.items.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ol>
-        );
-      }
-      currentList = null;
-    }
-  };
-
-  lines.forEach((rawLine, index) => {
-    const line = rawLine.trim();
-    if (!line) {
-      flushList();
-      return;
-    }
-
-    const ulMatch = line.match(/^[-*•]\s+(.+)/);
-    if (ulMatch) {
-      if (!currentList || currentList.type !== "ul") {
-        flushList();
-        currentList = { type: "ul", items: [] };
-      }
-      currentList.items.push(parseInline(ulMatch[1]));
-      return;
-    }
-
-    const olMatch = line.match(/^\d+[.)]\s+(.+)/);
-    if (olMatch) {
-      if (!currentList || currentList.type !== "ol") {
-        flushList();
-        currentList = { type: "ol", items: [] };
-      }
-      currentList.items.push(parseInline(olMatch[1]));
-      return;
-    }
-
-    flushList();
-
-    const headerMatch = line.match(/^(#{1,3})\s+(.+)/);
-    if (headerMatch) {
-      blocks.push(
-        <div key={`header-${index}`} className="font-black text-sm my-1">
-          {parseInline(headerMatch[2])}
-        </div>
-      );
-      return;
-    }
-
-    blocks.push(
-      <p key={`p-${index}`} className="mb-1.5 leading-relaxed">
-        {parseInline(line)}
-      </p>
-    );
-  });
-
-  flushList();
-  return <div>{blocks}</div>;
-}
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 const TestChatbot = () => {
   const { user } = useSelector((state) => state.user);
@@ -433,7 +323,7 @@ const TestChatbot = () => {
                   : "bg-[#2D31FA] text-white"
               }`}
             >
-              <FormattedText content={chat.message} />
+              <MarkdownRenderer content={chat.message} isUser={chat.sender === "You"} />
             </span>
           </div>
         ))}
