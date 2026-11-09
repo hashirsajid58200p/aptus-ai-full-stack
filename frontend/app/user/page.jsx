@@ -102,28 +102,16 @@ export default function UserDashboard() {
         } flex flex-col justify-between`}
       >
         <div>
-          {/* Logo & Category */}
+          {/* Logo */}
           <div className="p-6 border-b-3 border-[#1a1a1a]">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2 py-0.5 font-black text-[10px] uppercase tracking-wider">
                 BUSINESS
               </span>
             </div>
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-7 w-auto object-contain" />
-              <span className="font-syne text-2xl font-black text-[#1a1a1a] uppercase tracking-tight group-hover:text-[#FF4D00] transition-colors">
-                APTUS<span className="text-[#FF4D00]">AI</span>
-              </span>
+            <Link href="/" className="inline-block group">
+              <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-8 w-auto object-contain" />
             </Link>
-            {user?.bussinessName && user.bussinessName.toLowerCase() !== "aptus ai" ? (
-              <p className="text-[11px] font-bold text-gray-500 uppercase mt-1.5 truncate">
-                {user.bussinessName}
-              </p>
-            ) : (
-              <p className="text-[11px] font-bold text-gray-500 uppercase mt-1.5 truncate">
-                {user?.bussinessCategory || "AI Assistant Hub"}
-              </p>
-            )}
           </div>
 
           {/* Navigation Links */}

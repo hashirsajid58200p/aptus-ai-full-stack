@@ -30,10 +30,12 @@ const TestChatbot = () => {
     }
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       try {
+        if (mediaRecorderRef.current.state === "recording") {
+          mediaRecorderRef.current.requestData();
+        }
         mediaRecorderRef.current.stop();
       } catch (e) {}
-    }
-    if (mediaStreamRef.current) {
+    } else if (mediaStreamRef.current) {
       try {
         mediaStreamRef.current.getTracks().forEach((track) => {
           track.stop();
@@ -146,7 +148,7 @@ const TestChatbot = () => {
           }
 
           const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-          if (audioBlob.size < 600) {
+          if (audioBlob.size < 300) {
             setIsRecording(false);
             setIsTranscribing(false);
             return;
@@ -166,7 +168,7 @@ const TestChatbot = () => {
                     audio: base64Audio,
                     mimeType,
                     token: user?.chatbot_token,
-                    prompt: "A natural conversation with a customer service assistant in English, Urdu (اردو), or Roman Urdu.",
+                    prompt: "Natural conversation with assistant in English, Urdu (اردو), or Roman Urdu (e.g. 'pricing kya hai', 'details batao').",
                   }),
                 });
 
@@ -174,8 +176,8 @@ const TestChatbot = () => {
                 if (data.success && data.text) {
                   const text = data.text.trim();
                   if (text) {
-                    setMessageInput((prev) => (prev && hasLiveTranscribedRef.current ? text : prev ? `${prev} ${text}` : text));
-                    toast.success("Voice transcribed accurately!");
+                    setMessageInput(text);
+                    toast.success("Transcribed accurately with Whisper AI!");
                   }
                 }
               } catch (err) {

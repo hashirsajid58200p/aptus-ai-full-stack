@@ -6,9 +6,7 @@ import {
   Sparkles,
   MessageSquare,
   Headphones,
-  UserCheck,
   ShieldCheck,
-  HelpCircle,
   MessageCircle,
   Check,
   RefreshCw,
@@ -435,9 +433,6 @@ const PREMADE_AVATARS = [
   { id: "agent", label: "Live Support", Icon: Headphones },
   { id: "chat", label: "Chat Messenger", Icon: MessageSquare },
   { id: "sparkles", label: "Smart Assistant", Icon: Sparkles },
-  { id: "concierge", label: "Digital Concierge", Icon: UserCheck },
-  { id: "shield", label: "Verified Bot", Icon: ShieldCheck },
-  { id: "faq", label: "FAQ Helper", Icon: HelpCircle },
   { id: "message", label: "Speech Bubble", Icon: MessageCircle },
 ];
 
