@@ -18,6 +18,7 @@ import TestChatbot from "components/userPageComponents/TestChatbot";
 import Sessions from "components/userPageComponents/Sessions";
 import AnalyticsUsage from "components/userPageComponents/AnalyticsUsage";
 import AppearanceTab from "components/userPageComponents/Appearance";
+import OverviewTab from "components/userPageComponents/OverviewTab";
 import { useRouter } from "next/navigation";
 import { logout, clearState, loadUser } from "@/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,13 +42,14 @@ export default function UserDashboard() {
   const { isLoggedOut, loading, user, isInitialized } = useSelector((state) => state.user);
 
   const [isMounted, setIsMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState("business details");
+  const [activeTab, setActiveTab] = useState("overview & analytics");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const tabs = [
+    { name: "overview & analytics", icon: <BarChart3 /> },
     { name: "business details", icon: <Briefcase /> },
     { name: "appearance & theme", icon: <Palette /> },
-    { name: "ai model & analytics", icon: <Cpu /> },
+    { name: "ai model & keys", icon: <Cpu /> },
     { name: "test chatbot", icon: <MessageSquare /> },
     { name: "sessions", icon: <History /> },
     { name: "token & security", icon: <Coins /> },
@@ -107,12 +109,21 @@ export default function UserDashboard() {
                 BUSINESS
               </span>
             </div>
-            <Link href="/" className="font-syne text-2xl font-black text-[#1a1a1a] uppercase tracking-tight hover:text-[#FF4D00] transition-colors">
-              APTUS<span className="text-[#FF4D00]">AI</span>
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-7 w-auto object-contain" />
+              <span className="font-syne text-2xl font-black text-[#1a1a1a] uppercase tracking-tight group-hover:text-[#FF4D00] transition-colors">
+                APTUS<span className="text-[#FF4D00]">AI</span>
+              </span>
             </Link>
-            <p className="text-xs font-bold text-gray-500 uppercase mt-1 truncate">
-              {user?.bussinessName || "My Business"}
-            </p>
+            {user?.bussinessName && user.bussinessName.toLowerCase() !== "aptus ai" ? (
+              <p className="text-[11px] font-bold text-gray-500 uppercase mt-1.5 truncate">
+                {user.bussinessName}
+              </p>
+            ) : (
+              <p className="text-[11px] font-bold text-gray-500 uppercase mt-1.5 truncate">
+                {user?.bussinessCategory || "AI Assistant Hub"}
+              </p>
+            )}
           </div>
 
           {/* Navigation Links */}
@@ -198,11 +209,20 @@ export default function UserDashboard() {
         </header>
 
         {/* Tab Content */}
+        {activeTab === "overview & analytics" && (
+          <OverviewTab
+            user={user}
+            onNavigateTab={(tab) => {
+              setActiveTab(tab);
+              setIsSidebarOpen(false);
+            }}
+          />
+        )}
         {activeTab === "business details" && <BussinessDetails />}
         {activeTab === "appearance & theme" && (
           <AppearanceTab user={user} onUserUpdate={() => dispatch(loadUser())} />
         )}
-        {activeTab === "ai model & analytics" && (
+        {activeTab === "ai model & keys" && (
           <AnalyticsUsage user={user} onUserUpdate={() => dispatch(loadUser())} />
         )}
         {activeTab === "test chatbot" && <TestChatbot />}

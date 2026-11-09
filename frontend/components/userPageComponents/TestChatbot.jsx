@@ -14,10 +14,42 @@ const TestChatbot = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const messagesEndRef = useRef(null);
+  const mediaStreamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
   const hasLiveTranscribedRef = useRef(false);
+
+  // Terminate all microphone recording & hardware streams immediately
+  const stopAllAudio = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+      recognitionRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {}
+    }
+    if (mediaStreamRef.current) {
+      try {
+        mediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop();
+          track.enabled = false;
+        });
+      } catch (e) {}
+      mediaStreamRef.current = null;
+    }
+    setIsRecording(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopAllAudio();
+    };
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,15 +57,7 @@ const TestChatbot = () => {
 
   const toggleRecording = async () => {
     if (isRecording) {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (e) {}
-      }
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-      setIsRecording(false);
+      stopAllAudio();
     } else {
       hasLiveTranscribedRef.current = false;
 
@@ -46,7 +70,10 @@ const TestChatbot = () => {
           const recognition = new SpeechRec();
           recognition.continuous = true;
           recognition.interimResults = true;
-          recognition.lang = typeof navigator !== "undefined" && navigator.language ? navigator.language : "en-US";
+          recognition.lang =
+            typeof navigator !== "undefined" && navigator.languages && navigator.languages.length > 0
+              ? navigator.languages[0]
+              : "en-US";
 
           const initialText = messageInput.trim();
 
@@ -76,7 +103,7 @@ const TestChatbot = () => {
         }
       }
 
-      // 2. Concurrently record for Whisper fallback
+      // 2. Concurrently record for high-accuracy Whisper multilingual fallback
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -87,6 +114,8 @@ const TestChatbot = () => {
             autoGainControl: true,
           },
         });
+
+        mediaStreamRef.current = stream;
 
         let mimeType = "audio/webm";
         if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
@@ -106,17 +135,18 @@ const TestChatbot = () => {
         };
 
         mediaRecorder.onstop = async () => {
-          stream.getTracks().forEach((track) => track.stop());
-
-          if (hasLiveTranscribedRef.current) {
-            setIsTranscribing(false);
-            setIsRecording(false);
-            toast.success("Speech transcribed live in real-time!");
-            return;
+          if (mediaStreamRef.current) {
+            try {
+              mediaStreamRef.current.getTracks().forEach((track) => {
+                track.stop();
+                track.enabled = false;
+              });
+            } catch (e) {}
+            mediaStreamRef.current = null;
           }
 
           const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-          if (audioBlob.size < 500) {
+          if (audioBlob.size < 600) {
             setIsRecording(false);
             setIsTranscribing(false);
             return;
@@ -136,28 +166,29 @@ const TestChatbot = () => {
                     audio: base64Audio,
                     mimeType,
                     token: user?.chatbot_token,
+                    prompt: "A natural conversation with a customer service assistant in English, Urdu (اردو), or Roman Urdu.",
                   }),
                 });
 
                 const data = await res.json();
                 if (data.success && data.text) {
                   const text = data.text.trim();
-                  setMessageInput((prev) => (prev ? `${prev} ${text}` : text));
-                  toast.success("Voice transcribed accurately!");
-                } else {
-                  toast.error(data.message || "Could not transcribe audio");
+                  if (text) {
+                    setMessageInput((prev) => (prev && hasLiveTranscribedRef.current ? text : prev ? `${prev} ${text}` : text));
+                    toast.success("Voice transcribed accurately!");
+                  }
                 }
               } catch (err) {
                 console.error("Transcription fetch error:", err);
-                toast.error("Transcription service temporarily unavailable");
               } finally {
                 setIsTranscribing(false);
+                setIsRecording(false);
               }
             };
           } catch (err) {
             console.error("Transcription error:", err);
-            toast.error("Failed to connect to transcription server");
             setIsTranscribing(false);
+            setIsRecording(false);
           }
         };
 

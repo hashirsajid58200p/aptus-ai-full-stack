@@ -6,14 +6,15 @@ import {
   Sparkles,
   MessageSquare,
   Headphones,
-  Brain,
-  Cpu,
-  Zap,
-  Wand2,
+  UserCheck,
+  ShieldCheck,
+  HelpCircle,
+  MessageCircle,
   Check,
   RefreshCw,
-  ShieldCheck,
   Send,
+  Mic,
+  X,
   Shapes,
   Type,
 } from "lucide-react";
@@ -431,13 +432,13 @@ export const THEME_CONFIGS = {
 
 const PREMADE_AVATARS = [
   { id: "bot", label: "AI Robot", Icon: Bot },
-  { id: "sparkles", label: "AI Spark", Icon: Sparkles },
-  { id: "chat", label: "Chatbot", Icon: MessageSquare },
-  { id: "agent", label: "Live Agent", Icon: Headphones },
-  { id: "brain", label: "Neural Brain", Icon: Brain },
-  { id: "cpu", label: "AI Core", Icon: Cpu },
-  { id: "zap", label: "Turbo Speed", Icon: Zap },
-  { id: "wand", label: "Magic AI", Icon: Wand2 },
+  { id: "agent", label: "Live Support", Icon: Headphones },
+  { id: "chat", label: "Chat Messenger", Icon: MessageSquare },
+  { id: "sparkles", label: "Smart Assistant", Icon: Sparkles },
+  { id: "concierge", label: "Digital Concierge", Icon: UserCheck },
+  { id: "shield", label: "Verified Bot", Icon: ShieldCheck },
+  { id: "faq", label: "FAQ Helper", Icon: HelpCircle },
+  { id: "message", label: "Speech Bubble", Icon: MessageCircle },
 ];
 
 const SHAPE_PRESETS = [
@@ -946,15 +947,32 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       </span>
                     </div>
                   </div>
-                  <span
-                    className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded opacity-90"
-                    style={{
-                      backgroundColor: "rgba(0,0,0,0.25)",
-                      color: effectiveHeaderColor,
-                    }}
-                  >
-                    {theme}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="w-7 h-7 flex items-center justify-center border transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        borderColor: "rgba(255, 255, 255, 0.35)",
+                        borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                        color: effectiveHeaderColor,
+                      }}
+                      title="Request Live Agent"
+                    >
+                      <Headphones className="w-3.5 h-3.5" />
+                    </div>
+                    <div
+                      className="w-7 h-7 flex items-center justify-center border transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        borderColor: "rgba(255, 255, 255, 0.35)",
+                        borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                        color: effectiveHeaderColor,
+                      }}
+                      title="Close Chat"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Chat Body */}
@@ -1002,29 +1020,41 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                   </div>
                 </div>
 
-                {/* Input Bar */}
+                {/* Input Bar with Input, Voice Mic on Right, and Send */}
                 <div
                   className="p-2.5 flex items-center gap-2"
                   style={{
                     backgroundColor: activeConfig.containerBg,
-                    borderTop: activeConfig.headerBorderBottom || "1px solid rgba(0,0,0,0.1)",
+                    borderTop: activeConfig.headerBorderBottom || "2px solid #1a1a1a",
                   }}
                 >
                   <input
                     type="text"
                     disabled
-                    placeholder="Type a message or use voice..."
+                    placeholder="Type a message..."
                     className="flex-1 text-xs p-2 outline-none"
                     style={{
                       backgroundColor: activeConfig.inputBg,
                       color: activeConfig.inputColor,
-                      border: activeConfig.inputBorder || "1px solid #ccc",
+                      border: activeConfig.inputBorder || "1px solid #1a1a1a",
                       borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.inputRadius || "4px",
                     }}
                   />
+                  <div
+                    className="w-8 h-8 flex items-center justify-center border cursor-pointer"
+                    style={{
+                      backgroundColor: activeConfig.inputBg,
+                      color: activeConfig.inputColor,
+                      border: activeConfig.inputBorder || "1px solid #1a1a1a",
+                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                    }}
+                    title="Voice Input (Whisper STT)"
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                  </div>
                   <button
                     type="button"
-                    className="p-2 text-xs font-bold flex items-center justify-center transition-opacity"
+                    className="w-8 h-8 flex items-center justify-center border transition-opacity"
                     style={{
                       backgroundColor: effectiveAccent,
                       color: effectiveHeaderColor,
