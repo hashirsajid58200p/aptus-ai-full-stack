@@ -120,8 +120,13 @@ class LLMService {
       try {
         const client = new Groq({ apiKey: key });
         const res = await client.models.list();
+        const nonChatKeywords = ['whisper', 'orpheus', 'guard', 'safeguard', 'embed', 'tts', 'moderation', 'vision', 'audio', 'distil', 'rerank'];
         return res.data
-          .filter(m => m.active && !m.id.includes('whisper') && !m.id.includes('guard') && !m.id.includes('safeguard'))
+          .filter(m => {
+            if (!m.active) return false;
+            const lower = m.id.toLowerCase();
+            return !nonChatKeywords.some(k => lower.includes(k));
+          })
           .map(m => ({ id: m.id, name: m.id }))
           .sort((a, b) => a.id.localeCompare(b.id));
       } catch (err) {
@@ -291,8 +296,8 @@ class LLMService {
           max_tokens: maxTokens,
         });
       } catch (err) {
-        if (err.status === 404 && groqModel !== 'openai/gpt-oss-120b') {
-          console.warn(`⚠️ Model "${groqModel}" not found on Groq. Automatically falling back to "openai/gpt-oss-120b"...`);
+        if (groqModel !== 'openai/gpt-oss-120b') {
+          console.warn(`⚠️ Model "${groqModel}" failed on Groq (${err.message}). Automatically falling back to "openai/gpt-oss-120b"...`);
           response = await client.chat.completions.create({
             model: 'openai/gpt-oss-120b',
             messages,
