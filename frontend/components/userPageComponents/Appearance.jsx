@@ -566,7 +566,11 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const activeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS.aptus;
   const effectiveAccent = hasCustomAccent ? primaryColor : activeConfig.defaultColor;
   const effectiveHeaderColor = textColor || getContrastColor(effectiveAccent);
-  const effectiveRadius = borderRadius || activeConfig.wrapperRadius;
+  const effectiveRadius = borderRadius ? borderRadius : activeConfig.wrapperRadius;
+  const effectiveBubbleRadius = borderRadius ? borderRadius : (activeConfig.bubbleRadius || "0px");
+  const effectiveInputRadius = borderRadius ? borderRadius : (activeConfig.inputRadius || "4px");
+  const effectiveButtonRadius = borderRadius ? borderRadius : (activeConfig.buttonRadius || "4px");
+  const effectiveToggleRadius = borderRadius ? (borderRadius === "24px" ? "50%" : borderRadius) : (activeConfig.toggleRadius || activeConfig.wrapperRadius || "50%");
 
   const renderAvatarPreview = (size = 18, customColor = null) => {
     const found = PREMADE_AVATARS.find((a) => a.id === chatbotAvatar);
@@ -889,7 +893,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       style={{
                         backgroundColor: "rgba(255, 255, 255, 0.15)",
                         borderColor: "rgba(255, 255, 255, 0.35)",
-                        borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                        borderRadius: effectiveButtonRadius,
                         color: effectiveHeaderColor,
                       }}
                     >
@@ -900,7 +904,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       style={{
                         backgroundColor: "rgba(255, 255, 255, 0.15)",
                         borderColor: "rgba(255, 255, 255, 0.35)",
-                        borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                        borderRadius: effectiveButtonRadius,
                         color: effectiveHeaderColor,
                       }}
                     >
@@ -921,7 +925,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.botBubbleBg,
                       color: activeConfig.botBubbleColor,
                       border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
+                      borderRadius: effectiveBubbleRadius,
                     }}
                   >
                     {welcomeMessage}
@@ -934,7 +938,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: effectiveAccent,
                       color: effectiveHeaderColor,
                       border: activeConfig.userBubbleBorder || "none",
-                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
+                      borderRadius: effectiveBubbleRadius,
                     }}
                   >
                     How do I integrate this on my website?
@@ -947,7 +951,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.botBubbleBg,
                       color: activeConfig.botBubbleColor,
                       border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: borderRadius !== undefined && borderRadius !== "" ? borderRadius : (activeConfig.bubbleRadius || "0px"),
+                      borderRadius: effectiveBubbleRadius,
                     }}
                   >
                     Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
@@ -971,7 +975,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.inputBg,
                       color: activeConfig.inputColor,
                       border: activeConfig.inputBorder || "1px solid #1a1a1a",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.inputRadius || "4px",
+                      borderRadius: effectiveInputRadius,
                     }}
                   />
                   <div
@@ -980,7 +984,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: activeConfig.inputBg,
                       color: activeConfig.inputColor,
                       border: activeConfig.inputBorder || "1px solid #1a1a1a",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                      borderRadius: effectiveButtonRadius,
                     }}
                   >
                     <Mic className="w-3.5 h-3.5" />
@@ -992,7 +996,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                       backgroundColor: effectiveAccent,
                       color: effectiveHeaderColor,
                       border: activeConfig.buttonBorder || "none",
-                      borderRadius: effectiveRadius === "0px" ? "0px" : activeConfig.buttonRadius || "4px",
+                      borderRadius: effectiveButtonRadius,
                     }}
                   >
                     <Send className="w-3.5 h-3.5" />
@@ -1010,7 +1014,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                   style={{
                     backgroundColor: effectiveAccent,
                     color: effectiveHeaderColor,
-                    borderRadius: effectiveRadius || "50%",
+                    borderRadius: effectiveToggleRadius,
                   }}
                 >
                   {renderAvatarPreview(20, effectiveHeaderColor)}
