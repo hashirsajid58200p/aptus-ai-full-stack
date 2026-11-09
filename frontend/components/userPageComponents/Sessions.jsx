@@ -31,7 +31,7 @@ function FormattedText({ content }) {
 
       if (match[2] || match[3]) {
         elements.push(
-          <strong key={match.index} className="font-bold">
+          <strong key={match.index} className="font-extrabold text-[#1a1a1a]">
             {match[2] || match[3]}
           </strong>
         );
@@ -39,7 +39,7 @@ function FormattedText({ content }) {
         elements.push(
           <code
             key={match.index}
-            className="bg-black/10 px-1 py-0.5 rounded text-xs font-mono"
+            className="bg-black/10 px-1 py-0.5 rounded text-[11px] font-mono text-[#1a1a1a]"
           >
             {match[4]}
           </code>
@@ -84,7 +84,7 @@ function FormattedText({ content }) {
         blocks.push(
           <ul
             key={`list-${blocks.length}`}
-            className="list-disc pl-5 my-1.5 space-y-1"
+            className="list-disc pl-5 my-1.5 space-y-1 text-xs md:text-sm leading-relaxed"
           >
             {currentList.items.map((item, idx) => (
               <li key={idx}>{item}</li>
@@ -95,7 +95,7 @@ function FormattedText({ content }) {
         blocks.push(
           <ol
             key={`list-${blocks.length}`}
-            className="list-decimal pl-5 my-1.5 space-y-1"
+            className="list-decimal pl-5 my-1.5 space-y-1 text-xs md:text-sm leading-relaxed"
           >
             {currentList.items.map((item, idx) => (
               <li key={idx}>{item}</li>
@@ -114,29 +114,69 @@ function FormattedText({ content }) {
       return;
     }
 
-    const bulletMatch = line.match(/^[\*\-]\s+(.*)$/);
-    const numberedMatch = line.match(/^\d+[\.\)]\s+(.*)$/);
+    // Markdown Headers: #, ##, ###, ####
+    const headerMatch = line.match(/^(#{1,6})\s+(.*)$/);
+    if (headerMatch) {
+      flushList();
+      const level = headerMatch[1].length;
+      const headerText = parseInline(headerMatch[2]);
+      if (level <= 2) {
+        blocks.push(
+          <h3 key={`h-${index}`} className="font-syne font-black text-sm uppercase mt-2.5 mb-1 text-[#1a1a1a]">
+            {headerText}
+          </h3>
+        );
+      } else {
+        blocks.push(
+          <h4 key={`h-${index}`} className="font-syne font-bold text-xs uppercase mt-2 mb-1 text-gray-900">
+            {headerText}
+          </h4>
+        );
+      }
+      return;
+    }
 
+    // Bullet Lists (*, -, +, •)
+    const bulletMatch = line.match(/^([\*\-\+]|•)\s+(.*)$/);
     if (bulletMatch) {
       if (!currentList || currentList.type !== "ul") {
         flushList();
         currentList = { type: "ul", items: [] };
       }
-      currentList.items.push(parseInline(bulletMatch[1]));
-    } else if (numberedMatch) {
+      currentList.items.push(parseInline(bulletMatch[2]));
+      return;
+    }
+
+    // Numbered Lists (1., 1))
+    const numberedMatch = line.match(/^\d+[\.\)]\s+(.*)$/);
+    if (numberedMatch) {
       if (!currentList || currentList.type !== "ol") {
         flushList();
         currentList = { type: "ol", items: [] };
       }
       currentList.items.push(parseInline(numberedMatch[1]));
-    } else {
+      return;
+    }
+
+    // Blockquotes (> )
+    const quoteMatch = line.match(/^>\s+(.*)$/);
+    if (quoteMatch) {
       flushList();
       blocks.push(
-        <p key={`p-${index}`} className="my-1 leading-relaxed">
-          {parseInline(line)}
-        </p>
+        <blockquote key={`q-${index}`} className="border-l-3 border-[#1a1a1a] pl-3 py-0.5 my-1.5 italic text-gray-700 bg-black/5">
+          {parseInline(quoteMatch[1])}
+        </blockquote>
       );
+      return;
     }
+
+    // Normal Paragraph
+    flushList();
+    blocks.push(
+      <p key={`p-${index}`} className="my-1 leading-relaxed">
+        {parseInline(line)}
+      </p>
+    );
   });
 
   flushList();
@@ -480,46 +520,42 @@ export default function Sessions() {
               <div className="flex flex-col h-full">
                 {/* Active Session Header */}
                 <div className="p-3.5 sm:p-4 border-b-2 border-[#1a1a1a] bg-[#FDF9F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
-                      <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a]">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shrink-0"></span>
+                      <h4 className="font-syne font-black text-sm uppercase text-[#1a1a1a] truncate">
                         {activeSession.username || "Website Visitor"}
                       </h4>
-                      <span className="font-mono text-[10px] font-black px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase tracking-wider">
+                      <span className="font-mono text-[10px] font-black px-2 py-0.5 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase tracking-wider shrink-0">
                         ID: #{activeSession._id.slice(-6).toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-xs font-semibold text-gray-600 flex items-center gap-3 mt-1">
+                    <div className="text-xs font-semibold text-gray-600 flex items-center gap-3 mt-1 truncate">
                       <span>{activeSession.email || "No email provided"}</span>
                       {activeSession.phone && <span>Phone: {activeSession.phone}</span>}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     {activeSession.status === "human_active" ? (
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 bg-[#2563EB] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                          LIVE AGENT ACTIVE
-                        </span>
-                        <button
-                          onClick={handleTakeoverToggle}
-                          disabled={takeoverLoading}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#BFF000] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-[#aee000] transition-colors cursor-pointer disabled:opacity-50"
-                        >
-                          <Bot className="w-3.5 h-3.5" />
-                          <span>Hand Back to AI</span>
-                        </button>
-                      </div>
-                    ) : (
                       <button
                         onClick={handleTakeoverToggle}
                         disabled={takeoverLoading}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB] text-white border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50"
+                        title="Live Agent is active. Click to hand back to AI."
                       >
-                        <Headphones className="w-3.5 h-3.5" />
-                        <span>Take Over Chat (Live Agent)</span>
+                        <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                        <Bot className="w-3.5 h-3.5" />
+                        <span>Hand Back to AI</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleTakeoverToggle}
+                        disabled={takeoverLoading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-black text-xs uppercase hover:bg-gray-100 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <Headphones className="w-3.5 h-3.5 text-[#2563EB]" />
+                        <span>Take Over Chat</span>
                       </button>
                     )}
 

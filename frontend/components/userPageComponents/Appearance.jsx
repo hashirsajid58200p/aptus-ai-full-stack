@@ -468,7 +468,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const [hasCustomAccent, setHasCustomAccent] = useState(false);
   const [textColor, setTextColor] = useState(user?.textColor || "");
   const [borderRadius, setBorderRadius] = useState(user?.borderRadius || "");
-  const [chatbotAvatar, setChatbotAvatar] = useState(user?.chatbotAvatar || "bot");
+  const [chatbotAvatar, setChatbotAvatar] = useState(user?.chatbotAvatar || "chat");
   const [botName, setBotName] = useState(user?.botName || "Aptus AI");
   const [welcomeMessage, setWelcomeMessage] = useState(
     user?.welcomeMessage || "Hello! How can I assist you today?"
@@ -508,7 +508,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
     if (themeDef) {
       setPrimaryColor(themeDef.defaultColor);
       setHasCustomAccent(false);
-      setTextColor(themeDef.headerColor || "");
+      setTextColor(themeDef.headerColor || getContrastColor(themeDef.defaultColor));
       setBorderRadius("");
     }
   };
@@ -516,6 +516,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const handleColorChange = (newColor) => {
     setPrimaryColor(newColor);
     setHasCustomAccent(true);
+    setTextColor(getContrastColor(newColor));
   };
 
   const handleResetToThemeColor = () => {

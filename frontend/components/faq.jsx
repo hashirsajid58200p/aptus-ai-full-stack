@@ -1,8 +1,11 @@
 "use client";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Plus, Minus } from "lucide-react";
 
 export default function Faq() {
+  const [openIndex, setOpenIndex] = useState(0);
+
   const faqData = [
     {
       question: "Do I need to set up or host my own backend?",
@@ -12,7 +15,7 @@ export default function Faq() {
     {
       question: "Which LLM models and inference providers can I use?",
       answer:
-        "Aptus AI connects to 11 leading AI providers: Groq (ultra-fast LPU inference), OpenAI (GPT-4o), Google Gemini, DeepSeek (V3/R1), Anthropic Claude, Mistral, Perplexity, Cohere, xAI Grok, OpenRouter, and custom OpenAI-compatible endpoints.",
+        "Aptus AI connects to 11+ leading AI inference providers: Groq (ultra-fast LPU inference), OpenAI (GPT-4o), Google Gemini, DeepSeek (V3/R1), Anthropic Claude, Mistral, Perplexity, Cohere, xAI Grok, OpenRouter, and custom OpenAI-compatible endpoints (Ollama, vLLM, or self-hosted API servers).",
     },
     {
       question: "How do I train the chatbot to prevent false answers and hallucinations?",
@@ -64,26 +67,37 @@ export default function Faq() {
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8"
+          className="w-full flex flex-col gap-3"
         >
-          <Accordion variant="splitted" className="gap-4">
-            {faqData.map((item, index) => (
-              <AccordionItem
+          {faqData.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div
                 key={index}
-                aria-label={item.question}
-                title={
-                  <span className="font-syne font-bold text-sm sm:text-base md:text-lg text-[#1a1a1a] uppercase whitespace-normal break-words text-left block">
+                className="bg-white border-3 border-[#1a1a1a] shadow-neo-md transition-all"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer hover:bg-[#FDF9F0]/60 transition-colors"
+                >
+                  <span className="font-syne font-black text-xs sm:text-sm md:text-base uppercase text-[#1a1a1a] leading-snug">
                     {item.question}
                   </span>
-                }
-                className="bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm rounded-none px-4 py-2 font-medium text-[#1a1a1a]"
-              >
-                <div className="pt-2 text-gray-900 font-semibold leading-relaxed border-t border-[#1a1a1a]/20">
-                  {item.answer}
-                </div>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                  <span className={`p-1.5 border-2 border-[#1a1a1a] shrink-0 font-black shadow-neo-sm transition-transform ${
+                    isOpen ? "bg-[#FF4D00] text-white" : "bg-[#BFF000] text-[#1a1a1a]"
+                  }`}>
+                    {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-gray-700 font-medium text-xs sm:text-sm leading-relaxed border-t-2 border-[#1a1a1a]/15 pt-3">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

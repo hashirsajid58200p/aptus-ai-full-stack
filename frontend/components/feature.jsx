@@ -12,8 +12,8 @@ export default function KeyBenefitsSection() {
       badgeBg: "bg-[#FF4D00]",
     },
     {
-      title: "11 AI Providers",
-      description: "Choose ultra-fast Groq LPU inference, OpenAI GPT-4o, Google Gemini, DeepSeek, Anthropic Claude, or your own private API.",
+      title: "11+ Providers & Custom APIs",
+      description: "Choose ultra-fast Groq LPU inference, OpenAI GPT-4o, Google Gemini, DeepSeek, Claude, or your own self-hosted / Ollama API.",
       icon: Cpu,
       badgeBg: "bg-[#2D31FA]",
     },

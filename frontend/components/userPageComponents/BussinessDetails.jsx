@@ -208,6 +208,163 @@ const getRandomFallbackQuestions = (category, description) => {
   });
 };
 
+function MarkdownPreview({ markdown }) {
+  if (!markdown || !markdown.trim()) {
+    return (
+      <div className="text-center py-16 text-gray-400 font-bold uppercase text-xs">
+        No documentation entered yet. Type or paste Markdown in the editor.
+      </div>
+    );
+  }
+
+  const parseInline = (text) => {
+    const tokenRegex = /(\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*([^*]+)\*|_([^_]+)_)/g;
+    const elements = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        elements.push(text.slice(lastIndex, match.index));
+      }
+      if (match[2] || match[3]) {
+        elements.push(
+          <strong key={match.index} className="font-extrabold text-[#1a1a1a]">
+            {match[2] || match[3]}
+          </strong>
+        );
+      } else if (match[4]) {
+        elements.push(
+          <code key={match.index} className="bg-black/10 px-1 py-0.5 rounded text-xs font-mono text-[#1a1a1a]">
+            {match[4]}
+          </code>
+        );
+      } else if (match[5] && match[6]) {
+        elements.push(
+          <a key={match.index} href={match[6]} target="_blank" rel="noopener noreferrer" className="underline font-bold text-blue-600 hover:text-blue-800">
+            {match[5]}
+          </a>
+        );
+      } else if (match[7] || match[8]) {
+        elements.push(
+          <em key={match.index} className="italic">
+            {match[7] || match[8]}
+          </em>
+        );
+      }
+      lastIndex = tokenRegex.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      elements.push(text.slice(lastIndex));
+    }
+    return elements;
+  };
+
+  const lines = markdown.split("\n");
+  const nodes = [];
+  let currentList = null;
+
+  const flushList = () => {
+    if (currentList) {
+      if (currentList.type === "ul") {
+        nodes.push(
+          <ul key={`ul-${nodes.length}`} className="list-disc pl-6 space-y-1 my-2 text-xs sm:text-sm text-gray-800">
+            {currentList.items.map((it, idx) => (
+              <li key={idx} className="leading-relaxed">{it}</li>
+            ))}
+          </ul>
+        );
+      } else {
+        nodes.push(
+          <ol key={`ol-${nodes.length}`} className="list-decimal pl-6 space-y-1 my-2 text-xs sm:text-sm text-gray-800">
+            {currentList.items.map((it, idx) => (
+              <li key={idx} className="leading-relaxed">{it}</li>
+            ))}
+          </ol>
+        );
+      }
+      currentList = null;
+    }
+  };
+
+  lines.forEach((rawLine, i) => {
+    const line = rawLine.trim();
+    if (!line) {
+      flushList();
+      return;
+    }
+
+    const hMatch = line.match(/^(#{1,6})\s+(.*)$/);
+    if (hMatch) {
+      flushList();
+      const level = hMatch[1].length;
+      const text = parseInline(hMatch[2]);
+      if (level === 1) {
+        nodes.push(
+          <h1 key={i} className="font-syne font-black text-xl sm:text-2xl uppercase text-[#1a1a1a] border-b-2 border-[#1a1a1a] pb-2 mt-4 mb-2">
+            {text}
+          </h1>
+        );
+      } else if (level === 2) {
+        nodes.push(
+          <h2 key={i} className="font-syne font-black text-base sm:text-lg uppercase text-[#1a1a1a] border-b border-[#1a1a1a]/30 pb-1 mt-3 mb-1.5">
+            {text}
+          </h2>
+        );
+      } else {
+        nodes.push(
+          <h3 key={i} className="font-syne font-extrabold text-sm uppercase text-[#1a1a1a] mt-2.5 mb-1">
+            {text}
+          </h3>
+        );
+      }
+      return;
+    }
+
+    const bulletMatch = line.match(/^([\*\-\+]|•)\s+(.*)$/);
+    if (bulletMatch) {
+      if (!currentList || currentList.type !== "ul") {
+        flushList();
+        currentList = { type: "ul", items: [] };
+      }
+      currentList.items.push(parseInline(bulletMatch[2]));
+      return;
+    }
+
+    const numMatch = line.match(/^\d+[\.\)]\s+(.*)$/);
+    if (numMatch) {
+      if (!currentList || currentList.type !== "ol") {
+        flushList();
+        currentList = { type: "ol", items: [] };
+      }
+      currentList.items.push(parseInline(numMatch[1]));
+      return;
+    }
+
+    const quoteMatch = line.match(/^>\s+(.*)$/);
+    if (quoteMatch) {
+      flushList();
+      nodes.push(
+        <blockquote key={i} className="border-l-3 border-[#FF4D00] bg-orange-50/50 pl-3 py-1 my-2 italic text-xs sm:text-sm text-gray-700 font-medium">
+          {parseInline(quoteMatch[1])}
+        </blockquote>
+      );
+      return;
+    }
+
+    flushList();
+    nodes.push(
+      <p key={i} className="text-xs sm:text-sm leading-relaxed text-gray-800 my-1.5">
+        {parseInline(line)}
+      </p>
+    );
+  });
+
+  flushList();
+
+  return <div className="space-y-1">{nodes}</div>;
+}
+
 const BusinessDetails = () => {
   const dispatch = useDispatch();
   const [layout, setLayout] = useState("carousel");
@@ -284,30 +441,6 @@ const BusinessDetails = () => {
     } finally {
       setIsSavingMarkdown(false);
     }
-  };
-
-  const handleInsertTemplate = () => {
-    const template = `# ${user?.bussinessName || "Company"} Knowledge Base
-
-## 1. Overview & Core Mission
-${user?.bussinessDescription || "We provide innovative AI solutions and automated customer support."}
-
-## 2. Products & Key Services
-- **Chatbot Integrations**: Lightweight embeddable widgets with instant live messaging.
-- **AI Models Supported**: Open-source models via Groq (Llama 3) and OpenAI GPT-4o.
-- **Agent Handoff**: Seamless live agent escalation and lead capture.
-
-## 3. Pricing, Plans & Trial Policy
-- **Subscription Model**: We offer starter and enterprise subscriptions.
-- **Money-back Guarantee**: 30-day money-back guarantee with zero risk.
-- **Custom Quotes**: Exact pricing and custom packages are provided upon request by our sales team.
-
-## 4. Support & Contact Information
-- **Email**: ${user?.email || "support@example.com"}
-- **Availability**: 24/7 automated assistance with live agent support during business hours.
-`;
-    setKnowledgeMarkdown(template);
-    toast.success("Documentation template inserted!");
   };
 
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
@@ -631,14 +764,6 @@ Strict Instructions:
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={handleInsertTemplate}
-                  className="px-2.5 py-1 bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase hover:bg-gray-50 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Template</span>
-                </button>
-                <button
-                  type="button"
                   onClick={() => setPreviewMarkdown(!previewMarkdown)}
                   className={`px-2.5 py-1 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-extrabold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
                     previewMarkdown ? "bg-[#BFF000] text-[#1a1a1a]" : "bg-white text-[#1a1a1a] hover:bg-gray-50"
@@ -651,16 +776,8 @@ Strict Instructions:
             </div>
 
             {previewMarkdown ? (
-              <div className="p-5 bg-[#FAF8F5] border-2 border-[#1a1a1a] shadow-neo-sm min-h-[380px] max-h-[500px] overflow-y-auto no-scrollbar font-medium text-xs sm:text-sm leading-relaxed space-y-3">
-                {knowledgeMarkdown?.trim() ? (
-                  <div className="whitespace-pre-wrap font-sans text-gray-800">
-                    {knowledgeMarkdown}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 text-gray-400 font-bold uppercase text-xs">
-                    No documentation entered yet. Click "Edit Code" or "Insert Template" above.
-                  </div>
-                )}
+              <div className="p-5 sm:p-6 bg-white border-2 border-[#1a1a1a] shadow-neo-sm min-h-[380px] max-h-[500px] overflow-y-auto no-scrollbar font-sans leading-relaxed">
+                <MarkdownPreview markdown={knowledgeMarkdown} />
               </div>
             ) : (
               <div className="space-y-2">

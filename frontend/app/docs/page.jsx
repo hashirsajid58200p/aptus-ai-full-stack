@@ -39,13 +39,10 @@ export default function RootLayout({ children }) {
       <body>
         {children}
 
-        {/* Drop the widget anywhere in your layout */}
+        {/* Zero-Config: All themes, avatars, and settings sync live from your Aptus AI dashboard portal */}
         <ChatBot 
           token="YOUR_BUSINESS_TOKEN"
           apiUrl="${baseurl}"
-          theme="aptus"
-          position="right"
-          wantToShowSuggestions={true}
         />
       </body>
     </html>
@@ -158,10 +155,10 @@ export default function RootLayout({ children }) {
 
                 <div className="p-4 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm">
                   <span className="font-black text-xs uppercase text-[#1a1a1a] block mb-1">
-                    11 AI Inference Providers
+                    11+ AI Providers & Custom APIs
                   </span>
                   <p className="text-xs font-medium text-gray-700 leading-relaxed">
-                    Connect directly to Groq (Llama 3.3 70B), OpenAI GPT-4o, Google Gemini, DeepSeek, Claude 3.5, Mistral, Perplexity, or Custom APIs.
+                    Connect to Groq (Llama 3.3 70B), OpenAI, Gemini, DeepSeek, Claude, Mistral, Perplexity, Cohere, xAI, OpenRouter, or your own Custom API (Ollama / vLLM).
                   </p>
                 </div>
 

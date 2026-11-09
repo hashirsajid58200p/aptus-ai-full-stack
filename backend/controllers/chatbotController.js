@@ -127,8 +127,8 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  // If session is currently actively in live human mode, do not auto-respond with AI
-  if (session.status === 'human_active') {
+  // If session is waiting for a live agent or actively handled by one, pause AI generation
+  if (session.status === 'human_active' || session.status === 'waiting_human') {
     const userMessage = await Message.create({
       sessionId: session_id,
       message,
@@ -141,7 +141,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      data: "Your message has been delivered to the human agent.",
+      data: "A human support agent has been notified and will take over this chat shortly. Please hold on.",
       isHumanMode: true,
     });
   }
