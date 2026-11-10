@@ -55,6 +55,7 @@ Aptus AI is an enterprise-grade customer support automation and conversational A
 - **Real-Time Voice AI (Streaming STT)**: Browser-native Web Speech streaming with instant word-by-word interim results paired with Groq Whisper Large v3 Turbo server-side audio fallback.
 - **Unified Visitor Sessions**: Intelligently consolidates repeat chats from the same visitor ID into a single chronological timeline (earliest chats at top, newly sent below).
 - **Domain Whitelisting & Origin Security**: Token authentication paired with strict domain restrictions protects API token allowances against unauthorized scraping or hotlinking.
+- **14 Built-in Themes & Visual Presets**: Zero-code switching between `aptus` (Signature Burnt Orange Neo-Brutalist), `boty` (Organic Beige/Green), `chatgpt` (Charcoal/Emerald), `compute` (Retro CRT Cyan), `crosshaven` (Editorial Luxury Navy), `studio` (Dark Yellow), `energy` (Neon Lime), `smarthome` (Emerald Cyan), `superdesign` (Pastel Violet), `professional` (Corporate Blue), `github` (Dimmed Slate), `dracula` (Syntax Purple), `nord` (Nordic Frost), and `cyberpunk` (High-Voltage Neon).
 - **Zero-Config Remote Synchronization**: Widget avatar, theme presets, colors, and welcome greetings update immediately from the dashboard without redeploying website code.
 
 ---
