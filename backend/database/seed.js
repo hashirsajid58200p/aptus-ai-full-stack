@@ -17,10 +17,9 @@ const seedAccounts = async () => {
     } else {
       existingAdmin.password = "AptusAI2026!";
       await existingAdmin.save();
-      console.log("🌱 [Seed] Super Admin password refreshed: aptusai@example.com");
     }
 
-    // 2. Seed Default Business (Aptus AI with landing page token)
+    // 2. Ensure Aptus AI Business exists
     const landingToken = "A1ED-AC9D6DEE-46A3DFD8";
     const aptusBiz = await User.findOne({ chatbot_token: landingToken });
     if (!aptusBiz) {
@@ -39,30 +38,62 @@ const seedAccounts = async () => {
         tokenLimit: 1000000,
         provider: "groq",
         modelName: "openai/gpt-oss-120b",
-        bussinessDetails: [
-          {
-            question: "What is Aptus AI?",
-            answer: "Aptus AI is a comprehensive SaaS chatbot platform that empowers companies to train, customize, and deploy AI chatbots to their websites in minutes."
-          },
-          {
-            question: "How do I embed the chatbot widget?",
-            answer: "You can install our npm package 'aptus-ai-chatbot-widget' or embed our lightweight script tag with your unique chatbot token."
-          },
-          {
-            question: "What AI models are supported?",
-            answer: "We support ultra-fast open-source models via Groq (Llama 3) as well as OpenAI GPT-4o with custom API key support."
-          },
-          {
-            question: "Can I connect live human agents?",
-            answer: "Yes! Aptus AI includes built-in live agent handoff via WebSockets with out-of-office automated lead capture."
-          },
-          {
-            question: "What is your pricing and trial policy?",
-            answer: "We offer flexible starter and enterprise tiers with a 30-day money-back satisfaction guarantee."
-          }
-        ],
       });
-      console.log("🌱 [Seed] Default Aptus AI Chatbot created with token:", landingToken);
+    }
+
+    // 3. Ensure Demo Businesses exist
+    const demos = [
+      {
+        email: "nexuscloud@example.com",
+        token: "A1ED-CD70379B-E72B6C6D",
+        name: "NexusCloud Admin",
+        bussinessName: "NexusCloud Solutions",
+        bussinessCategory: "Software & Technology",
+        theme: "compute",
+        primaryColor: "#6366F1",
+        avatar: "cyber",
+      },
+      {
+        email: "velovitawellness@example.com",
+        token: "A1ED-EEB2866D-48C86113",
+        name: "VeloVita Manager",
+        bussinessName: "VeloVita Wellness Hub",
+        bussinessCategory: "Health & Fitness",
+        theme: "boty",
+        primaryColor: "#10B981",
+        avatar: "smart",
+      },
+      {
+        email: "fitlifepro@example.com",
+        token: "A1ED-E8E08127-D535E9F7",
+        name: "FitLife Pro Coach",
+        bussinessName: "FitLife Pro",
+        bussinessCategory: "Health & Fitness",
+        theme: "chatgpt",
+        primaryColor: "#A3E635",
+        avatar: "friendly",
+      }
+    ];
+
+    for (const d of demos) {
+      const exists = await User.findOne({ email: d.email });
+      if (!exists) {
+        await User.create({
+          name: d.name,
+          email: d.email,
+          password: "AptusAI2026!",
+          bussinessName: d.bussinessName,
+          bussinessCategory: d.bussinessCategory,
+          chatbot_token: d.token,
+          chatbotAvatar: d.avatar,
+          theme: d.theme,
+          primaryColor: d.primaryColor,
+          textColor: "#FFFFFF",
+          tokenLimit: 1000000,
+          provider: "groq",
+          modelName: "openai/gpt-oss-120b",
+        });
+      }
     }
   } catch (err) {
     console.warn("⚠️ [Seed] Seed operation error:", err.message);

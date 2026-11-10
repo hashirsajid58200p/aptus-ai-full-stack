@@ -11,11 +11,14 @@ const ChatBot = dynamic(
 );
 
 export default function ChatBotWrapper() {
+  const apiUrl = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3100/api/v1'
+    : 'https://aptus-ai-full-stack.vercel.app/api/v1';
+
   return (
     <ChatBot
       token="A1ED-E8E08127-D535E9F7"
-      apiUrl="https://aptus-ai-full-stack.vercel.app/api/v1"
-      theme="chatgpt"
+      apiUrl={apiUrl}
       wantToShowSuggestions={true}
     />
   );

@@ -7,6 +7,10 @@ import Footer from './components/Footer';
 import { ChatBot } from 'aptus-ai-chatbot-widget';
 
 export default function App() {
+  const apiUrl = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3100/api/v1'
+    : 'https://aptus-ai-full-stack.vercel.app/api/v1';
+
   return (
     <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-indigo-500 selection:text-white relative">
       <Navbar />
@@ -20,8 +24,7 @@ export default function App() {
       {/* Aptus AI Chatbot Floating Widget configured with NexusCloud API Token */}
       <ChatBot
         token="A1ED-CD70379B-E72B6C6D"
-        apiUrl="https://aptus-ai-full-stack.vercel.app/api/v1"
-        theme="dracula"
+        apiUrl={apiUrl}
         wantToShowSuggestions={true}
       />
     </div>
