@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
     },
     primaryColor: {
         type: String,
-        default: '#f97316',
+        default: '#FF4D00',
     },
     botName: {
         type: String,

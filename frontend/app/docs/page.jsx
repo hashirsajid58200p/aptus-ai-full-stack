@@ -153,7 +153,7 @@ export default function RootLayout({ children }) {
                   <div className="border-2 border-[#1a1a1a] shadow-neo-sm">
                     <pre className="bg-[#1a1a1a] p-3 text-xs font-mono text-white overflow-x-auto leading-relaxed">
 {`<script
-  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.12/dist/index.js"
+  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.13/dist/index.js"
   data-token="YOUR_BUSINESS_TOKEN"
   data-api-url="${baseurl}"
   defer>

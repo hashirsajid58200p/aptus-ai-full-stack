@@ -78,7 +78,7 @@ Aptus AI is an enterprise-grade customer support automation and conversational A
 - **Security**: JWT authentication, HTTP-only cookies, Rate Limiting, Domain CORS validation
 
 ### NPM Widget (`aptus-ai-chatbot-widget`)
-- **Package**: `aptus-ai-chatbot-widget` v1.0.12
+- **Package**: `aptus-ai-chatbot-widget` v1.0.13
 - **Bundler**: `tsup` (Dual output: ESM + CommonJS + TypeScript declarations)
 - **Zero Heavy Dependencies**: Inline vector SVGs, standalone GFM parser, zero CSS framework conflicts
 
@@ -118,7 +118,7 @@ export default function RootLayout({ children }) {
 
 ```html
 <script
-  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.12/dist/index.js"
+  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.13/dist/index.js"
   data-token="YOUR_BUSINESS_TOKEN"
   data-api-url="https://your-api.domain.com/api/v1"
   defer>

@@ -271,7 +271,7 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
       knowledgeMarkdown: user.knowledgeMarkdown || "",
       id: _id,
       theme: theme || 'aptus',
-      primaryColor: primaryColor || '#f97316',
+      primaryColor: primaryColor || '#FF4D00',
       textColor: textColor || '',
       borderRadius: borderRadius || '',
       botName: botName || 'Aptus AI',
