@@ -14,12 +14,22 @@ const getInitialUser = () => {
   return null;
 };
 
+const getAuthHeaders = () => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("aptus_token");
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+  }
+  return {};
+};
+
 const initialState = {
   error: "",
   loading: false,
   isUserRegistered: false,
   isUserLogged: false,
-  user: null,
+  user: getInitialUser(),
   isTokenGenerated: false,
   isBusinessDetailsAdded: false,
   isBusinessDetailsUpdated: false,
@@ -67,10 +77,11 @@ export const logout = createAsyncThunk(
     try {
       const { data } = await axios.get(`${baseurl}/user/logout`, {
         withCredentials: true,
+        headers: getAuthHeaders(),
       });
       return fulfillWithValue(data);
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -82,10 +93,11 @@ export const loadUser = createAsyncThunk(
     try {
       const { data } = await axios.get(`${baseurl}/user/me`, {
         withCredentials: true,
+        headers: getAuthHeaders(),
       });
       return fulfillWithValue(data.user);
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -160,13 +172,11 @@ const userReducer = createSlice({
       state.error = "";
       state.isUserRegistered = false;
       state.isUserLogged = false;
-      state.user = null;
       state.isTokenGenerated = false;
       state.isBusinessDetailsAdded = false;
       state.isBusinessDetailsUpdated = false;
       state.isBusinessDetailsDeleted = false;
       state.isLoggedOut = false;
-      state.isInitialized = false;
     },
   },
   extraReducers: (builder) => {
@@ -174,9 +184,19 @@ const userReducer = createSlice({
     builder.addCase(signUp.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(signUp.fulfilled, (state) => {
+    builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
       state.isUserRegistered = true;
+      if (action.payload?.user) {
+        state.user = action.payload.user;
+        state.isInitialized = true;
+        if (typeof window !== "undefined") {
+          localStorage.setItem("aptus_user", JSON.stringify(action.payload.user));
+          if (action.payload?.token) {
+            localStorage.setItem("aptus_token", action.payload.token);
+          }
+        }
+      }
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
@@ -187,9 +207,19 @@ const userReducer = createSlice({
     builder.addCase(login.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(login.fulfilled, (state) => {
+    builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
       state.isUserLogged = true;
+      if (action.payload?.user) {
+        state.user = action.payload.user;
+        state.isInitialized = true;
+        if (typeof window !== "undefined") {
+          localStorage.setItem("aptus_user", JSON.stringify(action.payload.user));
+          if (action.payload?.token) {
+            localStorage.setItem("aptus_token", action.payload.token);
+          }
+        }
+      }
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -280,13 +310,24 @@ const userReducer = createSlice({
     builder.addCase(logout.fulfilled, (state) => {
       state.loading = false;
       state.user = null;
+      state.isUserLogged = false;
       state.isLoggedOut = true;
+      state.isInitialized = true;
       if (typeof window !== "undefined") {
         localStorage.removeItem("aptus_user");
+        localStorage.removeItem("aptus_token");
       }
     });
     builder.addCase(logout.rejected, (state) => {
       state.loading = false;
+      state.user = null;
+      state.isUserLogged = false;
+      state.isLoggedOut = true;
+      state.isInitialized = true;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("aptus_user");
+        localStorage.removeItem("aptus_token");
+      }
     });
   },
 });

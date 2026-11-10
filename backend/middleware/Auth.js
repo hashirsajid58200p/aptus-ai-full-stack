@@ -3,7 +3,14 @@ const jwt=require("jsonwebtoken")
 const User = require("../models/userModel")
 
 exports.isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
-    const { token } = req.cookies;
+    let token = null;
+
+    // Prefer explicit Authorization header (Bearer <token>)
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    } else if (req.cookies?.token) {
+      token = req.cookies.token;
+    }
 
     if (!token) {
       return res.status(401).json({

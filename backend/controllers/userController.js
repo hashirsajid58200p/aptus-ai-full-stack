@@ -85,11 +85,13 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
 // logout user
 exports.logoutUser = catchAsyncError(async (req, res, next) => {
+  const isProduction = process.env.NODE_ENV === "production";
   res.cookie("token", "", {
     expires: new Date(0),
     path: "/",
-    secure: true,
-    sameSite: "None",
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   // Set Cache-Control header to prevent caching

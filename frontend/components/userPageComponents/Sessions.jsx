@@ -70,12 +70,20 @@ export default function Sessions() {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
+  const getAuthHeaders = () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("aptus_token") : null;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   const fetchSessions = async () => {
     setLoading(true);
     try {
       const response = await fetch(`${baseurl}/session/owner/all`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getAuthHeaders(),
+        },
         credentials: "include",
       });
       const data = await response.json();
@@ -156,7 +164,10 @@ export default function Sessions() {
     try {
       const res = await fetch(`${baseurl}/session/takeover`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getAuthHeaders(),
+        },
         credentials: "include",
         body: JSON.stringify({
           sessionId: activeSession._id,
@@ -193,7 +204,10 @@ export default function Sessions() {
     try {
       const res = await fetch(`${baseurl}/session/agent-message`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getAuthHeaders(),
+        },
         credentials: "include",
         body: JSON.stringify({
           sessionId: activeSession._id,

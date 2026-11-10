@@ -103,7 +103,7 @@ export default function AuthForm() {
     if (isUserRegistered) {
       toast.success("User registered successfully");
       dispatch(clearState());
-      dispatch(loadUser());
+      router.push("/user");
       setFormData({
         name: "",
         email: "",
@@ -116,7 +116,7 @@ export default function AuthForm() {
     if (isUserLogged) {
       toast.success("User logged in successfully");
       dispatch(clearState());
-      dispatch(loadUser());
+      router.push("/user");
       setLoginData({
         email: "",
         password: "",

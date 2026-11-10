@@ -187,19 +187,47 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   }
   fullPrompt += `\n--- CONVERSATION HISTORY ---\n${messagesText}\n\n--- CUSTOMER'S CURRENT MESSAGE ---\n${message}\n\nYour response:`;
 
-  // Resolve active API key based on provider (fallback to server env key if owner key empty)
+  // Resolve active API key strictly based on tenant's saved portal configuration
   let activeApiKey = null;
-  if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey || process.env.OPENAI_API_KEY;
-  else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey || process.env.GROQ_API_KEY;
-  else if (owner.provider === 'gemini') activeApiKey = owner.geminiApiKey || process.env.GEMINI_API_KEY;
-  else if (owner.provider === 'deepseek') activeApiKey = owner.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
-  else if (owner.provider === 'mistral') activeApiKey = owner.mistralApiKey || process.env.MISTRAL_API_KEY;
-  else if (owner.provider === 'cohere') activeApiKey = owner.cohereApiKey || process.env.COHERE_API_KEY;
-  else if (owner.provider === 'perplexity') activeApiKey = owner.perplexityApiKey || process.env.PERPLEXITY_API_KEY;
-  else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
-  else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey || process.env.XAI_API_KEY;
-  else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey || process.env.OPENROUTER_API_KEY;
+  if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
+  else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'gemini') activeApiKey = owner.geminiApiKey;
+  else if (owner.provider === 'deepseek') activeApiKey = owner.deepseekApiKey;
+  else if (owner.provider === 'mistral') activeApiKey = owner.mistralApiKey;
+  else if (owner.provider === 'cohere') activeApiKey = owner.cohereApiKey;
+  else if (owner.provider === 'perplexity') activeApiKey = owner.perplexityApiKey;
+  else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
+  else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
+  else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
   else if (owner.provider === 'custom') activeApiKey = owner.customApiKey;
+
+  // The official landing page bot (token A1ED-AC9D6DEE-46A3DFD8) can use server key fallback
+  if (!activeApiKey && owner.chatbot_token === "A1ED-AC9D6DEE-46A3DFD8") {
+    activeApiKey = process.env.GROQ_API_KEY;
+  }
+
+  // If the business has not configured an API key in the portal, notify user gracefully
+  if (!activeApiKey) {
+    const defaultPendingReply = "Hello! The AI model key for this business chatbot has not been configured yet. Please log into your Aptus AI dashboard under 'AI Model & Keys' to connect an API key.";
+    
+    const botMsg = await Message.create({
+      message: defaultPendingReply,
+      sessionId: session._id,
+      role: 'chatbot',
+      sender: 'ai',
+      tokensUsed: 0,
+      chatbotId: owner._id
+    });
+    session.messages.push(botMsg._id);
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      data: defaultPendingReply,
+      action: null,
+      tokensUsed: 0
+    });
+  }
 
   // Initialize unified LLM service with tenant settings
   const llm = new LLMService({
@@ -216,20 +244,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     });
   } catch (genErr) {
     console.warn("Primary LLM generation failed:", genErr.message);
-    // If tenant custom key threw an auth/rate error, safely retry with verified server key
-    if (activeApiKey !== process.env.GROQ_API_KEY && process.env.GROQ_API_KEY) {
-      console.warn("Retrying generation with fallback server Groq key...");
-      const fallbackLlm = new LLMService({
-        provider: 'groq',
-        model: 'openai/gpt-oss-120b',
-        apiKey: process.env.GROQ_API_KEY,
-      });
-      completion = await fallbackLlm.generateText(fullPrompt, {
-        temperature: 0.7,
-      });
-    } else {
-      throw genErr;
-    }
+    throw genErr;
   }
 
   const replyText = completion.text;
@@ -433,6 +448,18 @@ exports.testByOwner = catchAsyncError(async (req, res, next) => {
   else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
   else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
   else if (owner.provider === 'custom') activeApiKey = owner.customApiKey;
+
+  if (!activeApiKey && owner.chatbot_token === "A1ED-AC9D6DEE-46A3DFD8") {
+    activeApiKey = process.env.GROQ_API_KEY;
+  }
+
+  if (!activeApiKey) {
+    return res.status(200).json({
+      success: true,
+      data: "Please configure your AI Model API key under 'AI Model & Keys' tab first.",
+      tokensUsed: 0,
+    });
+  }
 
   const llm = new LLMService({
     provider: owner.provider || 'groq',
