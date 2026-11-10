@@ -43,6 +43,8 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
       liveAgentAvailable: owner.liveAgentAvailable || false,
       theme: owner.theme || 'aptus',
       primaryColor: owner.primaryColor || '#FF4D00',
+      textColor: owner.textColor || '',
+      borderRadius: owner.borderRadius || '',
       botName: owner.botName || 'Aptus AI',
       welcomeMessage: owner.welcomeMessage || 'Hello! How can I assist you today?',
       chatbotAvatar: owner.chatbotAvatar || '',
