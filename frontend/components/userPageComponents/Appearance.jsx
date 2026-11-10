@@ -572,6 +572,8 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   const effectiveUserBubbleColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.userBubbleColor || getContrastColor(effectiveUserBubbleBg)));
   const effectiveButtonBg = hasCustomAccent ? effectiveAccent : (activeConfig.buttonBg || effectiveAccent);
   const effectiveButtonColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.buttonColor || getContrastColor(effectiveButtonBg)));
+  const effectiveToggleBg = hasCustomAccent ? effectiveAccent : (activeConfig.toggleBg || effectiveAccent);
+  const effectiveToggleColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.toggleColor || getContrastColor(effectiveToggleBg)));
   const effectiveRadius = borderRadius ? borderRadius : activeConfig.wrapperRadius;
   const effectiveBubbleRadius = borderRadius ? borderRadius : (activeConfig.bubbleRadius || "0px");
   const effectiveInputRadius = borderRadius ? borderRadius : (activeConfig.inputRadius || "4px");
