@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import baseurl from "@/store/baseurl";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 import {
   Building2,
   MessageSquare,
@@ -70,6 +71,10 @@ export default function AdminDashboardPage() {
 
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const filterDropdownRef = useRef(null);
+
+  const [viewKnowledgeTab, setViewKnowledgeTab] = useState("markdown");
+  const [editKnowledgeTab, setEditKnowledgeTab] = useState("markdown");
+  const [editMarkdownPreview, setEditMarkdownPreview] = useState(false);
 
   useEffect(() => {
     document.title = "Admin Dashboard — Aptus AI";
@@ -164,6 +169,7 @@ export default function AdminDashboardPage() {
 
       if (res.data?.success) {
         setSelectedBusiness(res.data.data);
+        setViewKnowledgeTab("markdown");
       }
     } catch (err) {
       toast.error("Failed to fetch business details");
@@ -179,6 +185,8 @@ export default function AdminDashboardPage() {
 
       if (res.data?.success) {
         setEditingBusiness(res.data.data);
+        setEditKnowledgeTab("markdown");
+        setEditMarkdownPreview(false);
         setHasUnsavedChanges(false);
         setShowCancelConfirm(false);
         setShowSaveConfirm(false);
@@ -1340,6 +1348,24 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
 
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
+                <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
+                  AI Model & Provider
+                </span>
+                <p className="text-xs font-mono font-bold text-[#1a1a1a] mt-1 uppercase">
+                  {selectedBusiness.provider || "groq"} / {selectedBusiness.modelName || "llama-3.3-70b-versatile"}
+                </p>
+              </div>
+
+              <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
+                <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
+                  Token Allocation
+                </span>
+                <p className="text-xs font-mono font-bold text-[#1a1a1a] mt-1">
+                  {(selectedBusiness.tokenUsage?.totalTokens || 0).toLocaleString()} / {(selectedBusiness.tokenLimit || 200000).toLocaleString()}
+                </p>
+              </div>
+
               <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] sm:col-span-2">
                 <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                   Chatbot Integration Token
@@ -1350,7 +1376,7 @@ export default function AdminDashboardPage() {
                   </p>
                   <button
                     onClick={() => copyToClipboard(selectedBusiness.chatbot_token)}
-                    className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm"
+                    className="p-2.5 bg-[#FF4D00] text-white border-2 border-[#1a1a1a] rounded-none shadow-neo-sm cursor-pointer"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
@@ -1367,29 +1393,64 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Business FAQs */}
+            {/* Knowledge Base Section */}
             <div>
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] font-syne mb-3">
-                Configured Knowledge Base FAQs ({selectedBusiness.bussinessDetails?.length || 0})
-              </h4>
-
-              <div className="space-y-3 max-h-60 overflow-y-auto border-2 border-[#1a1a1a] p-3 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                {selectedBusiness.bussinessDetails?.length > 0 ? (
-                  selectedBusiness.bussinessDetails.map((faq, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
-                    >
-                      <p className="font-extrabold text-[#1a1a1a]">Q: {faq.question}</p>
-                      <p className="font-bold text-gray-800">A: {faq.answer}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
-                    No custom FAQ entries configured yet.
-                  </p>
-                )}
+              <div className="flex items-center justify-between border-b-2 border-[#1a1a1a] pb-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setViewKnowledgeTab("markdown")}
+                    className={`px-3 py-1.5 text-xs font-extrabold uppercase font-space border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                      viewKnowledgeTab === "markdown"
+                        ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                        : "bg-[#fdf9f0] text-[#1a1a1a] hover:bg-white"
+                    }`}
+                  >
+                    Markdown Knowledge Base ({selectedBusiness.knowledgeMarkdown?.trim() ? selectedBusiness.knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0} words)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewKnowledgeTab("faqs")}
+                    className={`px-3 py-1.5 text-xs font-extrabold uppercase font-space border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                      viewKnowledgeTab === "faqs"
+                        ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                        : "bg-[#fdf9f0] text-[#1a1a1a] hover:bg-white"
+                    }`}
+                  >
+                    Configured FAQs ({selectedBusiness.bussinessDetails?.length || 0})
+                  </button>
+                </div>
               </div>
+
+              {viewKnowledgeTab === "markdown" ? (
+                <div className="border-2 border-[#1a1a1a] p-4 bg-white max-h-72 overflow-y-auto font-space text-xs [scrollbar-width:thin]">
+                  {selectedBusiness.knowledgeMarkdown?.trim() ? (
+                    <MarkdownRenderer content={selectedBusiness.knowledgeMarkdown} />
+                  ) : (
+                    <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
+                      No markdown knowledge base documentation configured yet.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-72 overflow-y-auto border-2 border-[#1a1a1a] p-3 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                  {selectedBusiness.bussinessDetails?.length > 0 ? (
+                    selectedBusiness.bussinessDetails.map((faq, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-1 font-space"
+                      >
+                        <p className="font-extrabold text-[#1a1a1a]">Q: {faq.question}</p>
+                        <p className="font-bold text-gray-800">A: {faq.answer}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
+                      No custom FAQ entries configured yet.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Footer Close */}
@@ -1559,6 +1620,41 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
+                <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
+                  <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
+                    AI Model Provider
+                  </span>
+                  <select
+                    value={editingBusiness.provider || "groq"}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, provider: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
+                    className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] py-1 mt-1 focus:outline-none focus:border-[#FF4D00] uppercase cursor-pointer"
+                  >
+                    <option value="groq">Groq (Llama 3)</option>
+                    <option value="openai">OpenAI (GPT-4o)</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="anthropic">Anthropic Claude</option>
+                    <option value="cohere">Cohere Command-R</option>
+                  </select>
+                </div>
+
+                <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a]">
+                  <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
+                    Token Limit
+                  </span>
+                  <input
+                    type="number"
+                    value={editingBusiness.tokenLimit || 200000}
+                    onChange={(e) => {
+                      setEditingBusiness({ ...editingBusiness, tokenLimit: e.target.value });
+                      setHasUnsavedChanges(true);
+                    }}
+                    className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] py-1 mt-1 focus:outline-none focus:border-[#FF4D00]"
+                  />
+                </div>
+
                 <div className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] sm:col-span-2">
                   <span className="text-[10px] font-extrabold uppercase text-[#1a1a1a] tracking-wider font-syne">
                     Business Description
@@ -1575,98 +1671,143 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Business FAQs */}
+              {/* Knowledge Base Section */}
               <div>
-                <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a] font-syne">
-                    Configured Knowledge Base FAQs
-                  </h4>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newFaqs = [...(editingBusiness.bussinessDetails || [])];
-                      newFaqs.push({ question: "", answer: "" });
-                      setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
-                    }}
-                    className="w-full sm:w-auto text-[10px] bg-[#1a1a1a] hover:bg-black text-white px-3 py-2 sm:py-1 font-bold uppercase tracking-wider border-2 border-[#1a1a1a] shadow-neo-sm transition-all whitespace-nowrap shrink-0 text-center"
-                  >
-                    + Add Q&A
-                  </button>
-                </div>
-
-                <div className="space-y-3 max-h-60 overflow-y-auto border-2 border-[#1a1a1a] p-3 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                  {(editingBusiness.bussinessDetails || []).map((faq, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-2 font-space relative pr-8"
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#1a1a1a] pb-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditKnowledgeTab("markdown")}
+                      className={`px-3 py-1.5 text-xs font-extrabold uppercase font-space border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                        editKnowledgeTab === "markdown"
+                          ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                          : "bg-[#fdf9f0] text-[#1a1a1a] hover:bg-white"
+                      }`}
                     >
+                      Markdown Documentation
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditKnowledgeTab("faqs")}
+                      className={`px-3 py-1.5 text-xs font-extrabold uppercase font-space border-2 border-[#1a1a1a] transition-all cursor-pointer ${
+                        editKnowledgeTab === "faqs"
+                          ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                          : "bg-[#fdf9f0] text-[#1a1a1a] hover:bg-white"
+                      }`}
+                    >
+                      Configured FAQs ({editingBusiness.bussinessDetails?.length || 0})
+                    </button>
+                  </div>
+
+                  {editKnowledgeTab === "markdown" ? (
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-mono font-bold text-gray-600">
+                        Words: {editingBusiness.knowledgeMarkdown?.trim() ? editingBusiness.knowledgeMarkdown.trim().split(/\s+/).filter(Boolean).length : 0}
+                      </span>
                       <button
                         type="button"
-                        onClick={() => {
-                          const newFaqs = [...editingBusiness.bussinessDetails];
-                          newFaqs.splice(idx, 1);
-                          setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
-                          setHasUnsavedChanges(true);
-                        }}
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                        title="Remove Q&A"
+                        onClick={() => setEditMarkdownPreview(!editMarkdownPreview)}
+                        className="px-2.5 py-1 text-[10px] font-extrabold uppercase font-space border-2 border-[#1a1a1a] bg-[#BFF000] text-[#1a1a1a] shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {editMarkdownPreview ? "Edit Mode" : "Preview MD"}
                       </button>
-                      <div className="flex flex-col gap-2">
-                        <textarea
-                          placeholder="Question"
-                          rows={1}
-                          ref={(el) => {
-                            if (el && el.value) {
-                              el.style.height = 'auto';
-                              el.style.height = el.scrollHeight + 'px';
-                            }
-                          }}
-                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
-                          value={faq.question}
-                          onInput={(e) => {
-                            e.target.style.height = 'auto';
-                            e.target.style.height = e.target.scrollHeight + 'px';
-                          }}
-                          onChange={(e) => {
-                            const newFaqs = [...editingBusiness.bussinessDetails];
-                            newFaqs[idx] = { ...newFaqs[idx], question: e.target.value };
-                            setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
-                            setHasUnsavedChanges(true);
-                          }}
-                        />
-                        <textarea
-                          placeholder="Answer"
-                          rows={2}
-                          ref={(el) => {
-                            if (el && el.value) {
-                              el.style.height = 'auto';
-                              el.style.height = el.scrollHeight + 'px';
-                            }
-                          }}
-                          className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none overflow-hidden"
-                          value={faq.answer}
-                          onInput={(e) => {
-                            e.target.style.height = 'auto';
-                            e.target.style.height = e.target.scrollHeight + 'px';
-                          }}
-                          onChange={(e) => {
-                            const newFaqs = [...editingBusiness.bussinessDetails];
-                            newFaqs[idx] = { ...newFaqs[idx], answer: e.target.value };
-                            setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
-                            setHasUnsavedChanges(true);
-                          }}
-                        />
-                      </div>
                     </div>
-                  ))}
-                  {(!editingBusiness.bussinessDetails || editingBusiness.bussinessDetails.length === 0) && (
-                    <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
-                      No custom FAQ entries configured yet.
-                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newFaqs = [...(editingBusiness.bussinessDetails || [])];
+                        newFaqs.push({ question: "", answer: "" });
+                        setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                        setHasUnsavedChanges(true);
+                      }}
+                      className="text-[10px] bg-[#1a1a1a] hover:bg-black text-white px-3 py-1.5 font-bold uppercase tracking-wider border-2 border-[#1a1a1a] shadow-neo-sm transition-all whitespace-nowrap shrink-0 text-center cursor-pointer"
+                    >
+                      + Add Q&A
+                    </button>
                   )}
                 </div>
+
+                {editKnowledgeTab === "markdown" ? (
+                  editMarkdownPreview ? (
+                    <div className="max-h-72 overflow-y-auto border-2 border-[#1a1a1a] p-4 bg-white font-space text-xs [scrollbar-width:thin]">
+                      {editingBusiness.knowledgeMarkdown?.trim() ? (
+                        <MarkdownRenderer content={editingBusiness.knowledgeMarkdown} />
+                      ) : (
+                        <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
+                          No markdown content to preview.
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <textarea
+                        rows={9}
+                        value={editingBusiness.knowledgeMarkdown || ""}
+                        placeholder="# Company Knowledge Base&#10;&#10;Write comprehensive markdown documentation here covering company background, services, product specs, pricing, shipping, policies, and FAQs..."
+                        onChange={(e) => {
+                          setEditingBusiness({ ...editingBusiness, knowledgeMarkdown: e.target.value });
+                          setHasUnsavedChanges(true);
+                        }}
+                        className="w-full text-xs font-mono font-medium border-2 border-[#1a1a1a] p-3 bg-white text-[#1a1a1a] focus:outline-none focus:border-[#FF4D00] resize-y"
+                      />
+                    </div>
+                  )
+                ) : (
+                  <div className="space-y-3 max-h-60 overflow-y-auto border-2 border-[#1a1a1a] p-3 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                    {(editingBusiness.bussinessDetails || []).map((faq, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-[#fdf9f0] p-3.5 rounded-none border-2 border-[#1a1a1a] text-xs space-y-2 font-space relative pr-8"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newFaqs = [...editingBusiness.bussinessDetails];
+                            newFaqs.splice(idx, 1);
+                            setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                            setHasUnsavedChanges(true);
+                          }}
+                          className="absolute top-2 right-2 text-red-500 hover:text-red-700 cursor-pointer"
+                          title="Remove Q&A"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            placeholder="Question"
+                            rows={1}
+                            className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none"
+                            value={faq.question}
+                            onChange={(e) => {
+                              const newFaqs = [...editingBusiness.bussinessDetails];
+                              newFaqs[idx] = { ...newFaqs[idx], question: e.target.value };
+                              setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                              setHasUnsavedChanges(true);
+                            }}
+                          />
+                          <textarea
+                            placeholder="Answer"
+                            rows={2}
+                            className="w-full text-xs font-bold border-b-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] pb-1 focus:outline-none focus:border-[#FF4D00] resize-none"
+                            value={faq.answer}
+                            onChange={(e) => {
+                              const newFaqs = [...editingBusiness.bussinessDetails];
+                              newFaqs[idx] = { ...newFaqs[idx], answer: e.target.value };
+                              setEditingBusiness({ ...editingBusiness, bussinessDetails: newFaqs });
+                              setHasUnsavedChanges(true);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {(!editingBusiness.bussinessDetails || editingBusiness.bussinessDetails.length === 0) && (
+                      <p className="text-xs text-gray-500 font-bold italic py-2 font-space">
+                        No custom FAQ entries configured yet.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Footer Close/Save */}

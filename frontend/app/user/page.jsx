@@ -162,12 +162,6 @@ export default function UserDashboard() {
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-xs font-bold px-3 py-1.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase truncate max-w-[180px] sm:max-w-xs">
-              {user?.bussinessName || user?.name || "Business"}
-            </span>
-          </div>
         </header>
 
         {/* Tab Content */}

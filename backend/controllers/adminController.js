@@ -265,7 +265,7 @@ const deleteBusiness = async (req, res, next) => {
   }
 };
 
-// Update Business Data (including tokenLimit, provider, modelName)
+// Update Business Data (including tokenLimit, provider, modelName, knowledgeMarkdown)
 const updateBusiness = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -277,6 +277,7 @@ const updateBusiness = async (req, res, next) => {
       bussinessCategory,
       bussinessDescription,
       bussinessDetails,
+      knowledgeMarkdown,
       tokenLimit,
       provider,
       modelName,
@@ -295,6 +296,7 @@ const updateBusiness = async (req, res, next) => {
     if (bussinessName) user.bussinessName = bussinessName;
     if (bussinessCategory) user.bussinessCategory = bussinessCategory;
     if (bussinessDescription) user.bussinessDescription = bussinessDescription;
+    if (knowledgeMarkdown !== undefined) user.knowledgeMarkdown = knowledgeMarkdown;
     if (tokenLimit !== undefined) user.tokenLimit = Number(tokenLimit);
     if (provider) user.provider = provider;
     if (modelName) user.modelName = modelName;
@@ -317,6 +319,9 @@ const updateBusiness = async (req, res, next) => {
         name: user.name,
         email: user.email,
         bussinessName: user.bussinessName,
+        bussinessCategory: user.bussinessCategory,
+        bussinessDescription: user.bussinessDescription,
+        knowledgeMarkdown: user.knowledgeMarkdown,
         chatbot_token: user.chatbot_token,
         tokenLimit: user.tokenLimit,
         provider: user.provider,

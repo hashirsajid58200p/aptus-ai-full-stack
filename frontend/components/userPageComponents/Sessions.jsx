@@ -68,6 +68,16 @@ export default function Sessions() {
   const [agentInput, setAgentInput] = useState("");
   const [sendingAgentMsg, setSendingAgentMsg] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+
+  // Auto-scroll chat feed to bottom so latest messages are visible immediately
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
+  }, [selectedSessionId, sortedMessages.length]);
 
   const fetchSessions = async () => {
     setLoading(true);
@@ -410,7 +420,10 @@ export default function Sessions() {
                 </div>
 
                 {/* Messages Feed */}
-                <div className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 bg-[#FAF8F5]">
+                <div
+                  ref={messagesContainerRef}
+                  className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 bg-[#FAF8F5]"
+                >
                   {sortedMessages.length === 0 ? (
                     <div className="p-8 text-center text-xs font-bold text-gray-400 italic">
                       No message exchanges recorded in this session.

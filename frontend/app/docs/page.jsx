@@ -69,11 +69,10 @@ export default function DocsPage() {
             {/* TAB 1: QUICKSTART */}
             {activeTab === "quickstart" && (
               <div className="space-y-6">
-                <div className="border-b-2 border-[#1a1a1a] pb-3 flex items-center justify-between">
+                <div className="border-b-2 border-[#1a1a1a] pb-3">
                   <h1 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
                     Quickstart
                   </h1>
-                  <span className="font-mono text-xs font-bold text-gray-500">2-minute setup</span>
                 </div>
 
                 {/* 1. Install */}
@@ -178,11 +177,10 @@ export default function RootLayout({ children }) {
             {/* TAB 2: PROPS API */}
             {activeTab === "props" && (
               <div className="space-y-6">
-                <div className="border-b-2 border-[#1a1a1a] pb-3 flex items-center justify-between">
+                <div className="border-b-2 border-[#1a1a1a] pb-3">
                   <h1 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
                     Props Reference
                   </h1>
-                  <span className="font-mono text-xs font-bold text-gray-500">&lt;ChatBot /&gt;</span>
                 </div>
 
                 <div className="border-2 border-[#1a1a1a] shadow-neo-sm overflow-x-auto">
@@ -247,20 +245,27 @@ export default function RootLayout({ children }) {
             {/* TAB 3: THEMES */}
             {activeTab === "themes" && (
               <div className="space-y-6">
-                <div className="border-b-2 border-[#1a1a1a] pb-3 flex items-center justify-between">
+                <div className="border-b-2 border-[#1a1a1a] pb-3">
                   <h1 className="font-syne text-xl sm:text-2xl font-black uppercase text-[#1a1a1a]">
                     Built-in Themes
                   </h1>
-                  <span className="font-mono text-xs font-bold text-gray-500">theme prop</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   {[
                     { id: "aptus", name: "Aptus Official", desc: "Signature neo-brutalist: burnt orange (#FF4D00), cream, 3px solid borders.", color: "bg-[#FF4D00]" },
-                    { id: "boty", name: "Boty Organic", desc: "Earthy nature palette: warm beige and olive green (#2D5A27).", color: "bg-[#2D5A27]" },
-                    { id: "chatgpt", name: "ChatGPT Dark", desc: "Charcoal dark mode (#212121) with emerald accents.", color: "bg-[#212121]" },
-                    { id: "compute", name: "Retro Terminal", desc: "Cyber terminal monospace black-and-cyan aesthetic.", color: "bg-[#1a1a1a]" },
-                    { id: "crosshaven", name: "Corporate Slate", desc: "Slate navy and royal cobalt blue (#2563EB).", color: "bg-[#2563EB]" },
+                    { id: "boty", name: "Boty Organic", desc: "Earthy nature palette: warm beige and olive green (#4F5B3A).", color: "bg-[#4F5B3A]" },
+                    { id: "chatgpt", name: "ChatGPT Dark", desc: "Charcoal dark mode (#212121) with emerald accents (#10A37F).", color: "bg-[#10A37F]" },
+                    { id: "compute", name: "Retro Terminal", desc: "Cyber terminal monospace black-and-cyan aesthetic (#38BDF8).", color: "bg-[#38BDF8]" },
+                    { id: "crosshaven", name: "Editorial Luxury", desc: "Refined navy slate and clean royal blue contrast (#2563EB).", color: "bg-[#2563EB]" },
+                    { id: "studio", name: "Dark Studio", desc: "Monochrome obsidian with electric yellow (#FFD600).", color: "bg-[#FFD600]" },
+                    { id: "energy", name: "Neon Energy", desc: "Vibrant violet and high-impact lime punch (#A3E635).", color: "bg-[#A3E635]" },
+                    { id: "smarthome", name: "Emerald Cyan", desc: "Soft aqua cyan with modern smooth curves (#0EA5E9).", color: "bg-[#0EA5E9]" },
+                    { id: "superdesign", name: "Pastel Violet", desc: "Deep violet header with soft purple canvas (#8B5CF6).", color: "bg-[#8B5CF6]" },
+                    { id: "professional", name: "Corporate Blue", desc: "Enterprise royal blue and crisp white card (#1D4ED8).", color: "bg-[#1D4ED8]" },
+                    { id: "github", name: "GitHub Dimmed", desc: "Developer-focused dark slate theme (#F0F6FC).", color: "bg-[#30363D]" },
+                    { id: "dracula", name: "Dracula Purple", desc: "Classic dark purple syntax highlight aesthetic (#BD93F9).", color: "bg-[#BD93F9]" },
+                    { id: "nord", name: "Nordic Frost", desc: "Arctic cold ice blue with muted dark grays (#88C0D0).", color: "bg-[#88C0D0]" },
                     { id: "cyberpunk", name: "Cyberpunk", desc: "High-voltage neon yellow (#FCEE09) with sharp edges.", color: "bg-[#FCEE09]" },
                   ].map((t) => (
                     <div key={t.id} className="p-3.5 bg-white border-2 border-[#1a1a1a] shadow-neo-sm space-y-1.5">
