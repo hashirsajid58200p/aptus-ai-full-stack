@@ -508,7 +508,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
     if (themeDef) {
       setPrimaryColor(themeDef.defaultColor);
       setHasCustomAccent(false);
-      setTextColor(themeDef.headerColor || getContrastColor(themeDef.defaultColor));
+      setTextColor("");
       setBorderRadius("");
     }
   };
@@ -566,7 +566,12 @@ export default function AppearanceTab({ user, onUserUpdate }) {
   // Resolve current active theme configuration for the live preview
   const activeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS.aptus;
   const effectiveAccent = hasCustomAccent ? primaryColor : activeConfig.defaultColor;
-  const effectiveHeaderColor = textColor || getContrastColor(effectiveAccent);
+  const effectiveHeaderBg = hasCustomAccent ? effectiveAccent : (activeConfig.headerBg || effectiveAccent);
+  const effectiveHeaderColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.headerColor || getContrastColor(effectiveHeaderBg)));
+  const effectiveUserBubbleBg = hasCustomAccent ? effectiveAccent : (activeConfig.userBubbleBg || effectiveAccent);
+  const effectiveUserBubbleColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.userBubbleColor || getContrastColor(effectiveUserBubbleBg)));
+  const effectiveButtonBg = hasCustomAccent ? effectiveAccent : (activeConfig.buttonBg || effectiveAccent);
+  const effectiveButtonColor = textColor || (hasCustomAccent ? getContrastColor(effectiveAccent) : (activeConfig.buttonColor || getContrastColor(effectiveButtonBg)));
   const effectiveRadius = borderRadius ? borderRadius : activeConfig.wrapperRadius;
   const effectiveBubbleRadius = borderRadius ? borderRadius : (activeConfig.bubbleRadius || "0px");
   const effectiveInputRadius = borderRadius ? borderRadius : (activeConfig.inputRadius || "4px");
@@ -851,7 +856,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 <div
                   className="p-3.5 flex items-center justify-between transition-colors"
                   style={{
-                    backgroundColor: effectiveAccent,
+                    backgroundColor: effectiveHeaderBg,
                     color: effectiveHeaderColor,
                     borderBottom: activeConfig.headerBorderBottom || "none",
                   }}
@@ -929,8 +934,8 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                   <div
                     className="self-end max-w-[85%] p-2.5 text-[11px] font-semibold leading-relaxed"
                     style={{
-                      backgroundColor: effectiveAccent,
-                      color: effectiveHeaderColor,
+                      backgroundColor: effectiveUserBubbleBg,
+                      color: effectiveUserBubbleColor,
                       border: activeConfig.userBubbleBorder || "none",
                       borderRadius: effectiveBubbleRadius,
                     }}
@@ -987,8 +992,8 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     type="button"
                     className="w-8 h-8 flex items-center justify-center border transition-opacity"
                     style={{
-                      backgroundColor: effectiveAccent,
-                      color: effectiveHeaderColor,
+                      backgroundColor: effectiveButtonBg,
+                      color: effectiveButtonColor,
                       border: activeConfig.buttonBorder || "none",
                       borderRadius: effectiveButtonRadius,
                     }}
@@ -1006,12 +1011,12 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                 <div
                   className="w-10 h-10 flex items-center justify-center border-2 border-[#1a1a1a] shadow-neo-sm"
                   style={{
-                    backgroundColor: effectiveAccent,
-                    color: effectiveHeaderColor,
+                    backgroundColor: effectiveToggleBg,
+                    color: effectiveToggleColor,
                     borderRadius: effectiveToggleRadius,
                   }}
                 >
-                  {renderAvatarPreview(20, effectiveHeaderColor)}
+                  {renderAvatarPreview(20, effectiveToggleColor)}
                 </div>
               </div>
             </div>

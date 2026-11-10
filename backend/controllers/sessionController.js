@@ -16,15 +16,24 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
 
     // Reuse existing session for the same visitor/chatbot so historical chats stay unified
     let session = null;
-    if (visitorId) {
-        session = await Session.findOne({ chatbotId, visitorId }).populate({
+    const lookupClauses = [];
+    if (visitorId) lookupClauses.push({ visitorId });
+    if (email && email !== "visitor@web.local") lookupClauses.push({ email });
+
+    if (lookupClauses.length > 0) {
+        session = await Session.findOne({
+            chatbotId,
+            $or: lookupClauses
+        }).populate({
             path: "messages",
             options: { sort: { createdAt: 1 } }
         });
+
         if (session) {
             if (username && username !== "Website Visitor") session.username = username;
             if (email && email !== "visitor@web.local") session.email = email;
             if (phone) session.phone = phone;
+            if (visitorId && !session.visitorId) session.visitorId = visitorId;
             session.updatedAt = new Date();
             await session.save();
         }
@@ -124,7 +133,7 @@ exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
     const consolidatedSessions = [];
 
     for (const session of sessions) {
-        const key = session.visitorId || session._id.toString();
+        const key = session.visitorId || (session.email && session.email !== "visitor@web.local" ? session.email : session._id.toString());
         if (!visitorMap.has(key)) {
             const sessionObj = session.toObject ? session.toObject() : { ...session };
             visitorMap.set(key, sessionObj);

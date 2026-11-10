@@ -2,21 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  ArrowLeft,
   Terminal,
-  Code2,
   Settings,
   Palette,
   Copy,
   Check,
   ExternalLink,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import NavBar from "@/components/navbar";
 import baseurl from "@/store/baseurl";
 
 export default function DocsPage() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("quickstart");
   const [copiedKey, setCopiedKey] = useState(null);
 
@@ -37,56 +33,9 @@ export default function DocsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDF9F0] text-[#1a1a1a]">
+    <div className="min-h-screen flex flex-col bg-[#FDF9F0] text-[#1a1a1a]">
       {/* Signature Site Navbar */}
-      <nav className="sticky top-0 z-50 bg-white border-b-3 border-[#1a1a1a]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-3">
-              <div
-                className="flex-shrink-0 flex items-center cursor-pointer"
-                onClick={() => router.push("/")}
-              >
-                <img
-                  src="/aptus-logo.png"
-                  alt="Aptus AI"
-                  className="h-10 sm:h-12 w-auto object-contain hover:scale-105 transition-transform"
-                />
-              </div>
-              <span className="font-mono text-xs font-black px-2.5 py-1 bg-[#BFF000] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase">
-                Setup Guide
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <a
-                href="https://www.npmjs.com/package/aptus-ai-chatbot-widget"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 bg-[#FDF9F0] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-neo-sm font-mono text-xs font-bold hover:bg-white transition-all"
-              >
-                <span>npm v1.0.12</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-
-              <Button
-                onClick={() => router.push("/")}
-                className="btn-neo text-xs px-3 sm:px-4 py-2"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-                <span>Home</span>
-              </Button>
-
-              <Button
-                onClick={() => router.push("/start")}
-                className="btn-neo-primary text-xs px-3 sm:px-4 py-2"
-              >
-                <span>Dashboard</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <NavBar />
 
       {/* Main Content Area */}
       <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
@@ -331,6 +280,22 @@ export default function RootLayout({ children }) {
           </main>
         </div>
       </div>
+
+      {/* Neo-brutalist Footer */}
+      <footer className="bg-white border-t-3 border-[#1a1a1a] py-10 px-6 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center">
+            <img
+              src="/aptus-logo.png"
+              alt="Aptus"
+              className="h-10 w-auto object-contain"
+            />
+          </div>
+          <p className="text-xs font-extrabold uppercase tracking-wider text-[#1a1a1a]">
+            © {new Date().getFullYear()} APTUS AI — NPM CHATBOT WIDGET. ALL RIGHTS RESERVED.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

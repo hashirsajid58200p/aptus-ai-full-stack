@@ -30,28 +30,34 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex md:space-x-6 lg:space-x-8">
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               HOW IT WORKS
             </a>
             <a
-              href="#features"
+              href="/#features"
               className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FEATURES
             </a>
             <a
-              href="#action-preview"
+              href="/#action-preview"
               className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               IN ACTION
             </a>
             <a
-              href="#faq"
+              href="/#faq"
               className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               FAQ
+            </a>
+            <a
+              href="/docs"
+              className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
+            >
+              SETUP GUIDE
             </a>
           </div>
 
@@ -91,32 +97,39 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden border-t-3 border-[#1a1a1a] bg-[#FDF9F0] py-4 px-2 space-y-3">
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               HOW IT WORKS
             </a>
             <a
-              href="#features"
+              href="/#features"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               FEATURES
             </a>
             <a
-              href="#action-preview"
+              href="/#action-preview"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               IN ACTION
             </a>
             <a
-              href="#faq"
+              href="/#faq"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               FAQ
+            </a>
+            <a
+              href="/docs"
+              onClick={() => setIsOpen(false)}
+              className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
+            >
+              SETUP GUIDE
             </a>
 
             <div className="pt-2">
