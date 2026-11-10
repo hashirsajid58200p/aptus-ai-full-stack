@@ -70,15 +70,6 @@ export default function Sessions() {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
-  // Auto-scroll chat feed to bottom so latest messages are visible immediately
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    } else {
-      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-    }
-  }, [selectedSessionId, sortedMessages.length]);
-
   const fetchSessions = async () => {
     setLoading(true);
     try {
@@ -136,6 +127,15 @@ export default function Sessions() {
       (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
     );
   }, [activeSession]);
+
+  // Auto-scroll chat feed to bottom so latest messages are visible immediately
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
+  }, [selectedSessionId, sortedMessages.length]);
 
   const handleCopyTranscript = () => {
     if (!sortedMessages || sortedMessages.length === 0) return;
