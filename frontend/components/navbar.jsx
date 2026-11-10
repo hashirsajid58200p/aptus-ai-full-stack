@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -7,8 +7,13 @@ import { useSelector } from "react-redux";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const { loading, user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -63,7 +68,7 @@ export default function Navbar() {
 
           {/* Desktop Buttons */}
           <div className="hidden md:flex md:items-center gap-3">
-            {loading && !user ? (
+            {!isMounted || (loading && !user) ? (
               <div className="w-28 h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
             ) : user ? (
               <Button
@@ -133,7 +138,7 @@ export default function Navbar() {
             </a>
 
             <div className="pt-2">
-              {loading && !user ? (
+              {!isMounted || (loading && !user) ? (
                 <div className="w-full h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
               ) : user ? (
                 <Button

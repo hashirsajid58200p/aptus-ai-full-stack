@@ -36,6 +36,23 @@ app.use(async (req, res, next) => {
   }
 });
 
+// Universal CORS & Preflight handler (must be placed before rate limiter)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Chatbot-Token");
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(morgan("dev"));
 app.use(compression());
 app.use(express.json({ limit: "150mb" }));
@@ -44,8 +61,14 @@ app.use(cookieParser());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
-  message: "Too many requests from this IP, please try again after 15 minutes.",
+  max: 10000,
+  skip: (req) => {
+    // Skip rate limiting in development or for local addresses
+    if (process.env.NODE_ENV !== "production") return true;
+    const ip = req.ip || req.connection?.remoteAddress || "";
+    return ip.includes("127.0.0.1") || ip.includes("::1");
+  },
+  message: { success: false, message: "Too many requests from this IP, please try again after 15 minutes." },
 });
 
 app.use(limiter);

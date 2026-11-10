@@ -29,7 +29,7 @@ const initialState = {
   loading: false,
   isUserRegistered: false,
   isUserLogged: false,
-  user: getInitialUser(),
+  user: null,
   isTokenGenerated: false,
   isBusinessDetailsAdded: false,
   isBusinessDetailsUpdated: false,
