@@ -107,6 +107,12 @@ async function runTestSuite() {
       verifiedUser.theme === "dracula" && verifiedUser.allowedDomains.includes("mytestsite.com"),
       "Chatbot theme and domain whitelist successfully saved"
     );
+    // Restore default Aptus theme
+    testUser.theme = "aptus";
+    testUser.primaryColor = "#FF4D00";
+    testUser.textColor = "#FFFFFF";
+    testUser.chatbotAvatar = "chat";
+    await testUser.save();
 
     // 6. Token Tracking & Quota Enforcement
     console.log("\n🔹 Step 6: Testing Token Tracking & Daily Usage Recording...");
