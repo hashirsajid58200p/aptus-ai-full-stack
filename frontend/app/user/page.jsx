@@ -9,8 +9,6 @@ import {
   Menu,
   Palette,
   Cpu,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
 import BussinessDetails from "components/userPageComponents/BussinessDetails";
@@ -25,17 +23,6 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import Loader from "components/Loader";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "components/ui/alert-dialog";
 
 export default function UserDashboard() {
   const dispatch = useDispatch();
@@ -44,7 +31,7 @@ export default function UserDashboard() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("business details");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const tabs = [
     { name: "business details", icon: <Briefcase /> },
@@ -90,55 +77,34 @@ export default function UserDashboard() {
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Neo-Brutalist Sidebar Matching Admin */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-30 ${
-          isCollapsed ? "md:w-20" : "md:w-64"
-        } w-72 bg-white border-r-3 border-[#1a1a1a] shadow-neo-lg transition-all duration-200 ease-in-out md:translate-x-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } flex flex-col justify-between`}
+        className={`${
+          isSidebarOpen ? "fixed inset-y-0 left-0 z-50 flex" : "hidden"
+        } lg:flex flex-col justify-between w-64 lg:w-72 bg-white p-5 h-screen sticky top-0 left-0 border-r-3 border-[#1a1a1a] shadow-neo z-40 shrink-0`}
       >
         <div>
-          {/* Logo & Collapse Header */}
-          <div
-            className={`border-b-3 border-[#1a1a1a] flex ${
-              isCollapsed
-                ? "flex-col items-center justify-center p-3 gap-3"
-                : "items-center justify-between p-4 sm:p-5 gap-2"
-            }`}
-          >
-            {!isCollapsed ? (
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] px-2 py-0.5 font-black text-[10px] uppercase tracking-wider">
-                    BUSINESS
-                  </span>
-                </div>
-                <Link href="/" className="inline-block group">
-                  <img src="/aptus-logo.png" alt="Aptus AI Logo" className="h-7 w-auto object-contain" />
-                </Link>
-              </div>
-            ) : (
-              <Link href="/" className="block" title="Aptus AI">
-                <img src="/favicon-32x32.png" alt="Aptus Logo" className="w-7 h-7 object-contain hover:scale-105 transition-transform" />
-              </Link>
-            )}
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden md:flex p-1.5 border-2 border-[#1a1a1a] bg-[#FDF9F0] hover:bg-[#FF4D00] hover:text-white transition-colors cursor-pointer shrink-0"
-              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
+          {/* Logo & Business Branding */}
+          <div className="py-3 border-b-3 border-[#1a1a1a] mb-6 flex flex-col items-start gap-2">
+            <span className="bg-[#FF4D00] text-white border-2 border-[#1a1a1a] text-[10px] font-extrabold uppercase px-2.5 py-0.5 shadow-neo-sm font-space tracking-wider">
+              BUSINESS
+            </span>
+            <Link href="/" className="flex items-center">
+              <img
+                src="/aptus-logo.png"
+                alt="Aptus AI"
+                className="h-10 w-auto object-contain"
+              />
+            </Link>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="p-3 sm:p-4 flex flex-col gap-2">
+          {/* Navigation Tabs */}
+          <nav className="space-y-2.5">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.name;
               return (
@@ -148,83 +114,115 @@ export default function UserDashboard() {
                     setActiveTab(tab.name);
                     setIsSidebarOpen(false);
                   }}
-                  title={isCollapsed ? tab.name : undefined}
-                  className={`w-full flex items-center ${
-                    isCollapsed ? "justify-center px-2 py-2.5" : "gap-3 px-4 py-3"
-                  } border-2 border-[#1a1a1a] text-xs font-black uppercase transition-all duration-150 ${
+                  className={`flex items-center w-full text-left py-3 px-4 uppercase text-xs sm:text-sm font-extrabold border-2 border-[#1a1a1a] rounded-none transition-all duration-150 cursor-pointer ${
                     isActive
-                      ? `bg-[#FF4D00] text-white shadow-neo-sm ${isCollapsed ? "" : "translate-x-1"}`
-                      : "bg-white text-[#1a1a1a] hover:bg-[#FDF9F0]"
+                      ? "bg-[#FF4D00] text-white shadow-neo-sm"
+                      : "bg-white hover:bg-[#BFF000] text-[#1a1a1a]"
                   }`}
                 >
-                  {React.cloneElement(tab.icon, { className: "w-4 h-4 shrink-0" })}
-                  {!isCollapsed && <span className="truncate">{tab.name}</span>}
+                  <span className="mr-3">
+                    {React.cloneElement(tab.icon, { className: "w-4 h-4 shrink-0" })}
+                  </span>
+                  <span className="truncate">{tab.name}</span>
                 </button>
               );
             })}
           </nav>
         </div>
+
+        {/* Sidebar Footer - Bottom Left Logout */}
+        <div className="mt-auto pt-6 border-t-3 border-[#1a1a1a] flex justify-start">
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className="flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold uppercase text-white bg-red-600 border-2 border-[#1a1a1a] shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform cursor-pointer font-space"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>LOGOUT</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-6">
-        {/* Top Header */}
-        <header className="flex items-center justify-between border-3 border-[#1a1a1a] bg-white p-4 shadow-neo-md">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        {/* Top Sticky Header */}
+        <header className="bg-white border-b-3 border-[#1a1a1a] sticky top-0 z-30 px-4 sm:px-6 py-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden p-2 border-2 border-[#1a1a1a] bg-[#FDF9F0]"
+              className="lg:hidden p-2 border-2 border-[#1a1a1a] bg-[#FDF9F0] cursor-pointer"
             >
               <Menu className="w-5 h-5 text-[#1a1a1a]" />
             </button>
-            <h1 className="font-syne text-xl md:text-2xl font-black uppercase text-[#1a1a1a]">
-              {activeTab}
-            </h1>
+            <div>
+              <h2 className="text-xl font-extrabold font-syne uppercase tracking-tight text-[#1a1a1a]">
+                BUSINESS <span className="text-[#FF4D00]">DASHBOARD</span>
+              </h2>
+              <p className="text-xs font-bold text-[#1a1a1a]/70 font-space hidden sm:block">
+                Manage your AI chatbot, knowledge base, theme, and visitor conversations
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-2 bg-[#E53935] hover:bg-[#D32F2F] text-white font-black text-xs uppercase border-2 border-[#1a1a1a] shadow-neo-sm">
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white text-[#1a1a1a] border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-6 max-w-[340px]">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="font-syne font-black text-xl uppercase">Confirm Logout</AlertDialogTitle>
-                  <AlertDialogDescription className="text-xs font-bold text-gray-600">
-                    Are you sure you want to end your current session?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="mt-4 flex flex-col gap-2">
-                  <AlertDialogAction
-                    onClick={handleLogout}
-                    className="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] py-2 text-xs uppercase rounded-none m-0"
-                  >
-                    Yes, Logout
-                  </AlertDialogAction>
-                  <AlertDialogCancel className="w-full bg-[#F5F5F5] font-black border-2 border-[#1a1a1a] py-2 text-xs uppercase rounded-none m-0">
-                    Cancel
-                  </AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <span className="font-mono text-xs font-bold px-3 py-1.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm text-[#1a1a1a] uppercase truncate max-w-[180px] sm:max-w-xs">
+              {user?.bussinessName || user?.name || "Business"}
+            </span>
           </div>
         </header>
 
         {/* Tab Content */}
-        {activeTab === "business details" && <BussinessDetails />}
-        {activeTab === "appearance & theme" && (
-          <AppearanceTab user={user} onUserUpdate={() => dispatch(loadUser())} />
-        )}
-        {activeTab === "ai model & keys" && (
-          <AnalyticsUsage user={user} onUserUpdate={() => dispatch(loadUser())} />
-        )}
-        {activeTab === "test chatbot" && <TestChatbot />}
-        {activeTab === "sessions" && <Sessions />}
-        {activeTab === "token & security" && <Token />}
-      </main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-6">
+          {activeTab === "business details" && <BussinessDetails />}
+          {activeTab === "appearance & theme" && (
+            <AppearanceTab user={user} onUserUpdate={() => dispatch(loadUser())} />
+          )}
+          {activeTab === "ai model & keys" && (
+            <AnalyticsUsage user={user} onUserUpdate={() => dispatch(loadUser())} />
+          )}
+          {activeTab === "test chatbot" && <TestChatbot />}
+          {activeTab === "sessions" && <Sessions />}
+          {activeTab === "token & security" && <Token />}
+        </main>
+      </div>
+
+      {/* ── Confirmation Modal (Logout) ── */}
+      {showLogoutModal && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowLogoutModal(false)}
+        >
+          <div
+            className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg rounded-none p-8 max-w-[340px] w-[90%] flex flex-col items-center text-center gap-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col items-center text-center w-full mb-6">
+              <h2 className="font-syne font-black text-2xl md:text-3xl uppercase text-[#1a1a1a] leading-tight mb-4 tracking-wider">
+                CONFIRM<br />LOGOUT
+              </h2>
+              <p className="text-[#1a1a1a] font-bold text-sm">
+                Are you sure you want to log out of your account?
+              </p>
+            </div>
+            <div className="w-full flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setShowLogoutModal(false);
+                }}
+                className="bg-[#E53935] hover:bg-[#D32F2F] text-white font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 transition-colors cursor-pointer"
+              >
+                YES, LOGOUT
+              </button>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="bg-[#F5F5F5] hover:bg-[#E0E0E0] text-[#1a1a1a] font-black border-2 border-[#1a1a1a] px-4 py-3 text-xs sm:text-sm uppercase w-full shadow-neo-sm rounded-none m-0 mt-0 transition-colors cursor-pointer"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
