@@ -14,17 +14,33 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
 
     const chatbotId = req.chatbot_id;
 
-    // Create a fresh session for each page visit/refresh so the widget starts a clean new chat,
-    // while all historical sessions are preserved in the business dashboard.
-    const session = await Session.create({
-        username,
-        email,
-        phone,
-        chatbotId,
-        visitorId,
-        ipAddress,
-        status: "active"
-    });
+    // Reuse existing session for the same visitor/chatbot so historical chats stay unified
+    let session = null;
+    if (visitorId) {
+        session = await Session.findOne({ chatbotId, visitorId }).populate({
+            path: "messages",
+            options: { sort: { createdAt: 1 } }
+        });
+        if (session) {
+            if (username && username !== "Website Visitor") session.username = username;
+            if (email && email !== "visitor@web.local") session.email = email;
+            if (phone) session.phone = phone;
+            session.updatedAt = new Date();
+            await session.save();
+        }
+    }
+
+    if (!session) {
+        session = await Session.create({
+            username,
+            email,
+            phone,
+            chatbotId,
+            visitorId,
+            ipAddress,
+            status: "active"
+        });
+    }
 
     res.status(200).json({
         success: true,
@@ -92,17 +108,55 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
 exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
     const ownerId = req.user._id;
 
-    // Filter out abandoned empty sessions (0 messages) and sort by latest activity
+    // Filter out abandoned empty sessions (0 messages) and sort messages chronologically
     const sessions = await Session.find({
         chatbotId: ownerId,
         "messages.0": { $exists: true }
     })
-        .populate("messages")
+        .populate({
+            path: "messages",
+            options: { sort: { createdAt: 1 } }
+        })
         .sort({ updatedAt: -1, createdAt: -1 });
+
+    // Consolidate sessions with the same visitorId or ID into a single unified session
+    const visitorMap = new Map();
+    const consolidatedSessions = [];
+
+    for (const session of sessions) {
+        const key = session.visitorId || session._id.toString();
+        if (!visitorMap.has(key)) {
+            const sessionObj = session.toObject ? session.toObject() : { ...session };
+            visitorMap.set(key, sessionObj);
+            consolidatedSessions.push(sessionObj);
+        } else {
+            const existing = visitorMap.get(key);
+            const currentMsgs = session.toObject ? session.toObject().messages : (session.messages || []);
+            const allMessages = [...(existing.messages || []), ...(currentMsgs || [])];
+            
+            // Sort merged messages chronologically: earlier at top, newly below
+            allMessages.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+            // Deduplicate messages by _id
+            const uniqueMsgs = [];
+            const seenMsgIds = new Set();
+            for (const m of allMessages) {
+                const idStr = m._id ? m._id.toString() : `${m.message}-${m.createdAt}`;
+                if (!seenMsgIds.has(idStr)) {
+                    seenMsgIds.add(idStr);
+                    uniqueMsgs.push(m);
+                }
+            }
+            existing.messages = uniqueMsgs;
+            if (new Date(session.updatedAt) > new Date(existing.updatedAt)) {
+                existing.updatedAt = session.updatedAt;
+            }
+        }
+    }
 
     res.status(200).json({
         success: true,
-        sessions
+        sessions: consolidatedSessions
     });
 });
 
@@ -111,7 +165,10 @@ exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
     const ownerId = req.user._id;
 
     const sessions = await Session.find({ chatbotId: ownerId })
-        .populate("messages")
+        .populate({
+            path: "messages",
+            options: { sort: { createdAt: 1 } }
+        })
         .sort({ createdAt: -1 });
 
     let csv = "Session ID,Visitor Name,Email,Phone,Status,Message Sender,Message Text,Timestamp\n";

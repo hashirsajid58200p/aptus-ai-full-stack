@@ -286,9 +286,10 @@ class LLMService {
       return [];
     } else {
       // Groq
-      if (!apiKey) return [];
+      const effectiveKey = apiKey || process.env.GROQ_API_KEY;
+      if (!effectiveKey) return [];
       try {
-        const client = new Groq({ apiKey });
+        const client = new Groq({ apiKey: effectiveKey });
         const res = await client.models.list();
         const raw = res.data
           .filter(m => m.active)

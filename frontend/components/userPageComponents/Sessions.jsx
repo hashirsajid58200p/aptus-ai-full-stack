@@ -119,9 +119,17 @@ export default function Sessions() {
     return sessions.find((s) => s._id === selectedSessionId) || sessions[0] || null;
   }, [sessions, selectedSessionId]);
 
+  // Chronologically sorted messages: previous at the top, newly sent below
+  const sortedMessages = useMemo(() => {
+    if (!activeSession || !activeSession.messages) return [];
+    return [...activeSession.messages].sort(
+      (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+    );
+  }, [activeSession]);
+
   const handleCopyTranscript = () => {
-    if (!activeSession || !activeSession.messages) return;
-    const text = activeSession.messages
+    if (!sortedMessages || sortedMessages.length === 0) return;
+    const text = sortedMessages
       .map((m) => `${m.role === "user" ? activeSession.username || "Visitor" : "Aptus AI"}: ${m.message}`)
       .join("\n\n");
     navigator.clipboard.writeText(text);
@@ -403,19 +411,19 @@ export default function Sessions() {
 
                 {/* Messages Feed */}
                 <div className="flex-1 p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-3.5 bg-[#FAF8F5]">
-                  {!activeSession.messages || activeSession.messages.length === 0 ? (
+                  {sortedMessages.length === 0 ? (
                     <div className="p-8 text-center text-xs font-bold text-gray-400 italic">
                       No message exchanges recorded in this session.
                     </div>
                   ) : (
-                    activeSession.messages.map((msg, idx) => {
+                    sortedMessages.map((msg, idx) => {
                       const isUser = msg.role === "user" || msg.sender === "user";
                       const msgTime = msg.createdAt || activeSession.createdAt;
                       const currentDateKey = getMessageDateKey(msgTime);
                       const prevDateKey =
                         idx > 0
                           ? getMessageDateKey(
-                              activeSession.messages[idx - 1].createdAt || activeSession.createdAt
+                              sortedMessages[idx - 1].createdAt || activeSession.createdAt
                             )
                           : null;
                       const showDateDivider = currentDateKey && currentDateKey !== prevDateKey;

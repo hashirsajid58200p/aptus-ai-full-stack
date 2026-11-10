@@ -85,7 +85,7 @@ export default function Hero() {
               onClick={() => window.location.href = "/docs"}
               className="btn-neo text-[15px] sm:text-[17px] px-[26px] py-[13px] rounded-none flex items-center gap-2.5"
             >
-              VIEW DOCS
+              SETUP GUIDE
             </Button>
           </motion.div>
         </motion.div>
