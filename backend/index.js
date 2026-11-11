@@ -21,8 +21,40 @@ const seedAccounts = require("./database/seed");
 
 const PORT = process.env.PORT || 3100;
 
+// 1. CORS & Preflight handler (Must run FIRST before DB connection or rate limiters)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isDev = process.env.NODE_ENV !== "production";
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+  const isTrustedOrigin = !origin ||
+    origin === frontendUrl ||
+    origin.endsWith(".vercel.app") ||
+    (isDev && (origin.includes("localhost") || origin.includes("127.0.0.1")));
+
+  const isWidgetPath = req.path.startsWith("/api/v1/user/token/verify") || req.path.startsWith("/api/v1/chatbot");
+
+  if (origin) {
+    if (isTrustedOrigin) {
+      res.header("Access-Control-Allow-Origin", origin);
+      res.header("Access-Control-Allow-Credentials", "true");
+    } else if (isWidgetPath) {
+      // Allow cross-origin requests for widget routes (domain enforcement happens in validateWidget)
+      res.header("Access-Control-Allow-Origin", origin);
+    }
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Chatbot-Token, x-chatbot-token");
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 let isSeeded = false;
-// Middleware to ensure DB is connected before processing requests
+// 2. Middleware to ensure DB is connected before processing non-preflight requests
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -36,34 +68,6 @@ app.use(async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
-
-// CORS & Preflight handler (must be placed before rate limiter)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const isDev = process.env.NODE_ENV !== "production";
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-
-  const isTrustedOrigin = origin && (
-    origin === frontendUrl ||
-    origin.endsWith(".vercel.app") ||
-    (isDev && (origin.includes("localhost") || origin.includes("127.0.0.1")))
-  );
-
-  if (origin) {
-    if (isTrustedOrigin) {
-      res.header("Access-Control-Allow-Origin", origin);
-      res.header("Access-Control-Allow-Credentials", "true");
-    }
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Chatbot-Token, x-chatbot-token");
-  } else {
-    res.header("Access-Control-Allow-Origin", "*");
-  }
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-  next();
 });
 
 app.use(morgan("dev"));
