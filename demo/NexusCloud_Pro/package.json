@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "aptus-ai-chatbot-widget": "^1.0.17",
     "lucide-react": "^0.294.0",
-    "aptus-ai-chatbot-widget": "^1.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^6.1.1"
