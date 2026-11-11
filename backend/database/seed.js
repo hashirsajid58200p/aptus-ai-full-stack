@@ -18,7 +18,7 @@ const seedAccounts = async () => {
 
     // 2. Ensure Aptus AI Business exists
     const landingToken = "A1ED-AC9D6DEE-46A3DFD8";
-    const aptusBiz = await User.findOne({ chatbot_token: landingToken });
+    const aptusBiz = await User.findOne({ chatbot_token: landingToken }).select("+password");
     if (!aptusBiz) {
       await User.create({
         name: "Aptus AI Business",
@@ -36,6 +36,11 @@ const seedAccounts = async () => {
         provider: "groq",
         modelName: "openai/gpt-oss-120b",
       });
+    } else {
+      // Keep demo login in sync with documented credentials
+      aptusBiz.password = "AptusAI2026!";
+      aptusBiz.email = "business-aptus@example.com";
+      await aptusBiz.save();
     }
 
     // 3. Ensure Demo Businesses exist
@@ -79,7 +84,7 @@ const seedAccounts = async () => {
     ];
 
     for (const d of demos) {
-      const exists = await User.findOne({ email: d.email });
+      const exists = await User.findOne({ email: d.email }).select("+password");
       if (!exists) {
         await User.create({
           name: d.name,
@@ -99,20 +104,15 @@ const seedAccounts = async () => {
           modelName: "openai/gpt-oss-120b",
         });
       } else {
-        // Sync bot branding if missing or unconfigured
-        await User.updateOne(
-          { email: d.email },
-          {
-            $set: {
-              botName: d.botName,
-              welcomeMessage: d.welcomeMessage,
-              theme: d.theme,
-              chatbotAvatar: d.avatar,
-              primaryColor: d.primaryColor,
-              chatbot_token: d.token,
-            }
-          }
-        );
+        // Sync bot branding + documented demo password
+        exists.botName = d.botName;
+        exists.welcomeMessage = d.welcomeMessage;
+        exists.theme = d.theme;
+        exists.chatbotAvatar = d.avatar;
+        exists.primaryColor = d.primaryColor;
+        exists.chatbot_token = d.token;
+        exists.password = "AptusAI2026!";
+        await exists.save();
       }
     }
   } catch (err) {
