@@ -46,9 +46,11 @@ const seedAccounts = async () => {
         name: "NexusCloud Admin",
         bussinessName: "NexusCloud Solutions",
         bussinessCategory: "Software & Technology",
+        botName: "NexusCloud Assistant",
+        welcomeMessage: "Welcome to NexusCloud Solutions. How can I assist you with your cloud infrastructure today?",
         theme: "compute",
         primaryColor: "#6366F1",
-        avatar: "cyber",
+        avatar: "bot",
       },
       {
         email: "velovitawellness@example.com",
@@ -56,6 +58,8 @@ const seedAccounts = async () => {
         name: "VeloVita Manager",
         bussinessName: "VeloVita Wellness Hub",
         bussinessCategory: "Health & Fitness",
+        botName: "VeloVita Guide",
+        welcomeMessage: "Welcome to VeloVita Wellness Sanctuary! How can I assist you with your fitness and recovery goals?",
         theme: "boty",
         primaryColor: "#10B981",
         avatar: "smart",
@@ -66,9 +70,11 @@ const seedAccounts = async () => {
         name: "FitLife Pro Coach",
         bussinessName: "FitLife Pro",
         bussinessCategory: "Health & Fitness",
+        botName: "FitLife Assistant",
+        welcomeMessage: "Hey there! Ready to level up your fitness? Ask me anything about memberships, classes, or our 3-day guest pass!",
         theme: "chatgpt",
         primaryColor: "#A3E635",
-        avatar: "friendly",
+        avatar: "cyber",
       }
     ];
 
@@ -81,6 +87,8 @@ const seedAccounts = async () => {
           password: "AptusAI2026!",
           bussinessName: d.bussinessName,
           bussinessCategory: d.bussinessCategory,
+          botName: d.botName,
+          welcomeMessage: d.welcomeMessage,
           chatbot_token: d.token,
           chatbotAvatar: d.avatar,
           theme: d.theme,
@@ -90,6 +98,21 @@ const seedAccounts = async () => {
           provider: "groq",
           modelName: "openai/gpt-oss-120b",
         });
+      } else {
+        // Sync bot branding if missing or unconfigured
+        await User.updateOne(
+          { email: d.email },
+          {
+            $set: {
+              botName: d.botName,
+              welcomeMessage: d.welcomeMessage,
+              theme: d.theme,
+              chatbotAvatar: d.avatar,
+              primaryColor: d.primaryColor,
+              chatbot_token: d.token,
+            }
+          }
+        );
       }
     }
   } catch (err) {
