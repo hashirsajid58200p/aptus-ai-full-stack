@@ -6,7 +6,7 @@
 
 Multi-tenant chatbot platform: train on FAQs and Markdown, pick an LLM provider in the dashboard, embed the same bot on any site with the npm widget.
 
-**Live app:** [aptus-ai-full-stack.vercel.app](https://aptus-ai-full-stack.vercel.app)  
+**Live app:** [aptus-ai.vercel.app](https://aptus-ai.vercel.app)  
 **npm widget:** [aptus-ai-chatbot-widget](https://www.npmjs.com/package/aptus-ai-chatbot-widget) · [GitHub](https://github.com/hashirsajid58200p/aptus-ai-chatbot-widget)
 
 ---
@@ -18,7 +18,7 @@ Multi-tenant chatbot platform: train on FAQs and Markdown, pick an LLM provider 
 | Platform (this repo) | https://github.com/hashirsajid58200p/aptus-ai-full-stack |
 | Embeddable widget | https://github.com/hashirsajid58200p/aptus-ai-chatbot-widget |
 | npm package | https://www.npmjs.com/package/aptus-ai-chatbot-widget |
-| Production | https://aptus-ai-full-stack.vercel.app |
+| Production | https://aptus-ai.vercel.app |
 
 ---
 

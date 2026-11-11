@@ -70,7 +70,7 @@ import { ChatBot } from 'aptus-ai-chatbot-widget';
 
 <ChatBot
   token="A1ED-CD70379B-E72B6C6D"
-  apiUrl={typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:3100/api/v1' : 'https://aptus-ai-full-stack.vercel.app/api/v1'}
+  apiUrl={typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:3100/api/v1' : 'https://aptus-ai.vercel.app/api/v1'}
   wantToShowSuggestions={true}
 />
 ```
