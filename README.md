@@ -1,101 +1,96 @@
-# ⚡ Aptus AI — Grounded AI Chatbot Platform
+# Aptus AI
 
-[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![Express](https://img.shields.io/badge/Backend-Express.js%204-lightgrey?style=flat-square&logo=express)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
-[![Groq AI](https://img.shields.io/badge/AI-Groq%20Llama%203.3-orange?style=flat-square)](https://groq.com/)
 [![npm](https://img.shields.io/npm/v/aptus-ai-chatbot-widget?style=flat-square&color=FF4D00&logo=npm)](https://www.npmjs.com/package/aptus-ai-chatbot-widget)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 
-Aptus AI is an enterprise-grade customer support automation and conversational AI SaaS platform. Train on verified business FAQs and Markdown documentation, select from 11+ leading AI inference providers, and deploy across any website or application via an ultra-lightweight npm package or a single HTML script tag.
+Multi-tenant chatbot platform: train on FAQs and Markdown, pick an LLM provider in the dashboard, embed the same bot on any site with the npm widget.
+
+**Live app:** [aptus-ai-full-stack.vercel.app](https://aptus-ai-full-stack.vercel.app)  
+**npm widget:** [aptus-ai-chatbot-widget](https://www.npmjs.com/package/aptus-ai-chatbot-widget) · [GitHub](https://github.com/hashirsajid58200p/aptus-ai-chatbot-widget)
 
 ---
 
-## 📸 Platform Previews
+## Links
 
-### 🏠 Landing Page (Neo-Brutalist Architecture)
+| What | URL |
+|------|-----|
+| Platform (this repo) | https://github.com/hashirsajid58200p/aptus-ai-full-stack |
+| Embeddable widget | https://github.com/hashirsajid58200p/aptus-ai-chatbot-widget |
+| npm package | https://www.npmjs.com/package/aptus-ai-chatbot-widget |
+| Production | https://aptus-ai-full-stack.vercel.app |
+
+---
+
+## Screenshots
+
+### Landing
 ![Aptus AI Home Page](previews/home_page.png)
 
----
-
-### 📖 Setup Guide & Developer Documentation
+### Docs
 ![Setup Guide](previews/setup_guide.png)
 
----
-
-### 🧠 Business Dashboard & Live Chat Sandbox
+### Business dashboard
 ![Business Dashboard](previews/business_dashboard.png)
 
----
-
-### 🔐 Authentication & Token Access
+### Auth
 ![Login Page](previews/login_page.png)
 
----
-
-### 📊 Super Admin Dashboard
+### Admin
 ![Admin Dashboard](previews/admin_dashboard.png)
 
----
+### Demo sites with the widget
 
-### 🎨 Live Widget Integrations on Real Sites
-| FitLife Pro (Dark Mode) | VeloVita Wellness (Light Theme) | NexusCloud (Tech Dark) |
+| FitLife Pro | VeloVita Wellness | NexusCloud |
 |---|---|---|
 | ![FitLife Pro](previews/fitlifepro_preview.png) | ![VeloVita Wellness](previews/velovita_preview.png) | ![NexusCloud](previews/nexuscloud_preview.png) |
 
 ---
 
-## ✨ Key Features & Capabilities
+## What it does
 
-- **Strict Knowledge Grounding & Zero Hallucinations**: Responses are strictly derived from verified FAQs and business documentation. The AI never fabricates rates or false pricing.
-- **Knowledge Base Safety Gate**: Chatbot requires at least 10 FAQs or 1,000 words of Markdown (up to 5,000 words) before activating, ensuring thorough grounding.
-- **Universal GitHub Flavored Markdown (GFM)**: Full GFM rendering across bot messages, test sandbox, and documentation preview with support for headings, multi-column tables, syntax code blocks, checklists, and blockquotes.
-- **11+ LLM Providers & Custom APIs**: Native out-of-the-box Groq LPU inference, plus direct support for OpenAI (GPT-4o), Google Gemini, DeepSeek (V3/R1), Anthropic Claude, Mistral, Perplexity, Cohere, xAI, OpenRouter, and custom OpenAI-compatible endpoints (Ollama / vLLM).
-- **Live Human Agent Takeover**: Business owners can monitor visitor sessions live in the dashboard inbox and take over any chat with direct responses, pausing AI auto-replies until handed back.
-- **Real-Time Voice AI (Streaming STT)**: Browser-native Web Speech streaming with instant word-by-word interim results paired with Groq Whisper Large v3 Turbo server-side audio fallback.
-- **Unified Visitor Sessions**: Intelligently consolidates repeat chats from the same visitor ID into a single chronological timeline (earliest chats at top, newly sent below).
-- **Domain Whitelisting & Origin Security**: Token authentication paired with strict domain restrictions protects API token allowances against unauthorized scraping or hotlinking.
-- **14 Built-in Themes & Visual Presets**: Zero-code switching between `aptus` (Signature Burnt Orange Neo-Brutalist), `boty` (Organic Beige/Green), `chatgpt` (Charcoal/Emerald), `compute` (Retro CRT Cyan), `crosshaven` (Editorial Luxury Navy), `studio` (Dark Yellow), `energy` (Neon Lime), `smarthome` (Emerald Cyan), `superdesign` (Pastel Violet), `professional` (Corporate Blue), `github` (Dimmed Slate), `dracula` (Syntax Purple), `nord` (Nordic Frost), and `cyberpunk` (High-Voltage Neon).
-- **Zero-Config Remote Synchronization**: Widget avatar, theme presets, colors, and welcome greetings update immediately from the dashboard without redeploying website code.
+- Answers only from business Q&A and Markdown (knowledge gate: 10 FAQs or 1,000+ words before chat unlocks).
+- 11+ inference providers via dashboard keys (Groq, OpenAI, Gemini, Anthropic, DeepSeek, Mistral, Perplexity, Cohere, xAI, OpenRouter, custom OpenAI-compatible).
+- Live agent takeover over Socket.io.
+- Voice input: browser Web Speech + Groq Whisper on the server.
+- Domain allowlist + chatbot token for embeds.
+- 14 theme presets synced from the dashboard without redeploying the host site.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## Repo layout
 
-### Frontend Application
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS, NextUI, Custom Neo-Brutalist design tokens
-- **Markdown**: Custom Full-Spec GitHub Flavored Markdown Renderer
-- **State Management**: Redux Toolkit & React Redux
-- **Animations & Icons**: Framer Motion, Lucide React, React Icons
+```
+aptus-ai-full-stack/
+├── backend/          Express API, MongoDB, Socket.io, LLM gateway
+├── frontend/         Next.js 14 portal (business + admin)
+├── demo/             FitLife_Pro, NexusCloud_Pro, VeloVita_Wellness
+├── previews/         README screenshots
+└── vercel.json       Frontend + backend services + /api rewrites
+```
 
-### Backend Server & Microservices
-- **Runtime**: Node.js & Express.js 4 with clustering & compression
-- **Database**: MongoDB Atlas with direct resilient replica set failover
-- **AI Engine**: Multi-Model Provider Gateway with Groq LPU, OpenAI, Gemini, Claude, Ollama
-- **Speech Engine**: Web Speech API + Groq Whisper Large v3 Turbo
-- **Real-Time Layer**: Socket.IO & WebSocket event streaming
-- **Security**: JWT authentication, HTTP-only cookies, Rate Limiting, Domain CORS validation
-
-### NPM Widget (`aptus-ai-chatbot-widget`)
-- **Package**: `aptus-ai-chatbot-widget` v1.0.13
-- **Bundler**: `tsup` (Dual output: ESM + CommonJS + TypeScript declarations)
-- **Zero Heavy Dependencies**: Inline vector SVGs, standalone GFM parser, zero CSS framework conflicts
+The widget lives in a **separate** repo and package: `aptus-ai-chatbot-widget` (current published version **1.0.17**).
 
 ---
 
-## 🚀 Quick Start Guide
+## Stack
 
-### 1. Install Widget via NPM
+| Layer | Tech |
+|-------|------|
+| Frontend | Next.js 14, Tailwind, Redux Toolkit |
+| Backend | Node, Express, Mongoose, Socket.io |
+| Data | MongoDB Atlas |
+| Widget | React, styled-components, tsup (ESM + CJS) |
+
+---
+
+## Quick start: widget
 
 ```bash
 npm install aptus-ai-chatbot-widget
 ```
 
-### 2. Embed In React / Next.js
-
 ```jsx
-import React from 'react';
 import { ChatBot } from 'aptus-ai-chatbot-widget';
 
 export default function RootLayout({ children }) {
@@ -103,8 +98,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         {children}
-
-        <ChatBot 
+        <ChatBot
           token="YOUR_BUSINESS_TOKEN"
           apiUrl="https://your-api.domain.com/api/v1"
         />
@@ -114,57 +108,59 @@ export default function RootLayout({ children }) {
 }
 ```
 
+Full props and themes: [widget README](https://github.com/hashirsajid58200p/aptus-ai-chatbot-widget#readme).
+
 ---
 
-## 💻 Local Development Setup
+## Local development
 
-### 1. Backend
+### Backend
 
 ```bash
-cd aptus-ai-full-stack/backend
+cd backend
 npm install
+# copy backend/config/.env.example → backend/config/.env and fill values
 npm run server
 ```
 
-Create `backend/config/.env`:
-```env
-PORT=3100
-DB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRE=10d
-COOKIE_EXPIRE=10
-GROQ_API_KEY=your_groq_api_key
-ADMIN_EMAIL=aptusai@example.com
-ADMIN_PASSWORD=your_admin_password
-ADMIN_JWT_SECRET=your_admin_jwt_secret
-```
+Minimum `.env` keys: `DB_URI`, `JWT_SECRET`, `ADMIN_JWT_SECRET`, `GROQ_API_KEY` (landing STT / demo fallback), `FRONTEND_URL`.
 
-### 2. Frontend
+### Frontend
 
 ```bash
-cd aptus-ai-full-stack/frontend
+cd frontend
 npm install
+# frontend/.env.local → NEXT_PUBLIC_API_URL=/api/v1  (or http://localhost:3100/api/v1)
 npm run dev
 ```
 
-Create `frontend/.env.local`:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3100/api/v1
-```
-
----
-
-## 🧪 Comprehensive Verification Suite
-
-Run the full end-to-end automated verification test suite:
+### Tests
 
 ```bash
-cd aptus-ai-full-stack/backend
+cd backend
 node test-suite.js
 ```
 
 ---
 
-## 📄 License
+## Demos
 
-Distributed under the **MIT License**.
+| Demo | Stack | Dev port |
+|------|--------|----------|
+| FitLife_Pro | Next.js | (Next default) |
+| NexusCloud_Pro | Vite | 3005 |
+| VeloVita_Wellness | Vite | 3006 |
+
+Each embeds `aptus-ai-chatbot-widget` with a seeded demo token.
+
+---
+
+## Deploy (Vercel)
+
+`vercel.json` wires Next frontend + Express backend, with `/api/*` rewritten to the backend. Set project env vars from `backend/config/.env.example` and `frontend/.env.example`. Use `NEXT_PUBLIC_API_URL=/api/v1` on the same project so the browser stays same-origin.
+
+---
+
+## License
+
+[MIT](./LICENSE) © Hashir Sajid (Aptus AI)
