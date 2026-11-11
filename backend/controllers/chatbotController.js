@@ -8,17 +8,10 @@ const Message = require("../models/messageModel");
 
 // GET /api/v1/chatbot/getDetails?token=... — validate a chatbot token and return safe business info
 exports.getDetails = catchAsyncError(async (req, res, next) => {
-  const token = req.query.token || req.headers["x-chatbot-token"];
-
-  if (!token) {
-    return res.status(400).json({
-      success: false,
-      message: "Token is required",
-    });
-  }
-
-  const owner = await User.findOne({ chatbot_token: token }).select(
-    "bussinessName bussinessCategory email chatbot_token createdAt provider modelName isLiveAgent liveAgentAvailable theme primaryColor botName welcomeMessage chatbotAvatar allowedDomain allowedDomains"
+  const owner = req.owner || await User.findOne({ 
+    chatbot_token: req.query.token || req.headers["x-chatbot-token"] 
+  }).select(
+    "bussinessName bussinessCategory createdAt provider modelName isLiveAgent liveAgentAvailable theme primaryColor botName welcomeMessage chatbotAvatar allowedDomain allowedDomains"
   );
 
   if (!owner) {
@@ -34,11 +27,9 @@ exports.getDetails = catchAsyncError(async (req, res, next) => {
       id: owner._id,
       bussinessName: owner.bussinessName,
       bussinessCategory: owner.bussinessCategory,
-      email: owner.email,
-      token: owner.chatbot_token,
       registeredAt: owner.createdAt,
       provider: owner.provider || 'groq',
-      modelName: owner.modelName || 'llama-3.3-70b-versatile',
+      modelName: owner.modelName || 'openai/gpt-oss-120b',
       isLiveAgent: owner.isLiveAgent || false,
       liveAgentAvailable: owner.liveAgentAvailable || false,
       theme: owner.theme || 'aptus',
@@ -87,7 +78,9 @@ CRITICAL ACCURACY & GROUNDING RULES:
 
 // POST /api/v1/chatbot/getResponse — Primary Chat Endpoint
 exports.getResponse = catchAsyncError(async (req, res, next) => {
-  const { messages, message, session_id } = req.body;
+  const messages = req.body.messages;
+  const message = req.body.message || req.body.Message;
+  const session_id = req.body.session_id || req.body.sessionId;
 
   if (!message || !session_id) {
     return res.status(400).json({
@@ -126,6 +119,14 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     return res.status(404).json({
       success: false,
       message: "Session not found",
+    });
+  }
+
+  // Prevent cross-tenant session hijacking (IDOR)
+  if (session.chatbotId && session.chatbotId.toString() !== chatbot_id.toString()) {
+    return res.status(403).json({
+      success: false,
+      message: "This session does not belong to this chatbot token.",
     });
   }
 
@@ -246,7 +247,44 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
     });
   } catch (genErr) {
     console.warn("Primary LLM generation failed:", genErr.message);
-    throw genErr;
+    const friendlyErrorMessage = "I'm temporarily having trouble connecting to my AI service. Please try again in a moment or contact our support team.";
+    
+    // Store user message in session history first so conversation transcript is preserved
+    const userMessageDoc = await Message.create({
+      sessionId: session_id,
+      message,
+      role: "user",
+      sender: "user",
+      tokensUsed: 0,
+      chatbotId: owner._id,
+    }).catch(() => null);
+
+    if (userMessageDoc) {
+      session.messages.push(userMessageDoc._id);
+    }
+
+    // Store bot error message in session history
+    const errorBotMsg = await Message.create({
+      message: friendlyErrorMessage,
+      sessionId: session._id,
+      role: 'chatbot',
+      sender: 'ai',
+      tokensUsed: 0,
+      chatbotId: owner._id,
+    }).catch(() => null);
+
+    if (errorBotMsg) {
+      session.messages.push(errorBotMsg._id);
+      await session.save().catch(() => null);
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: friendlyErrorMessage,
+      isError: true,
+      action: null,
+      tokensUsed: 0,
+    });
   }
 
   const replyText = completion.text;
@@ -360,8 +398,11 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
   if (provider && validProviders.includes(provider)) {
     user.provider = provider;
   }
-  if (modelName) {
-    user.modelName = modelName;
+  if (modelName !== undefined) {
+    if (typeof modelName !== 'string' || modelName.trim() === '') {
+      return res.status(400).json({ success: false, message: "Model name cannot be empty." });
+    }
+    user.modelName = modelName.trim();
   }
 
   const applyKeyUpdate = (field, val) => {
@@ -384,6 +425,42 @@ exports.updateModelSettings = catchAsyncError(async (req, res, next) => {
 
   if (customBaseUrl !== undefined) {
     user.customBaseUrl = customBaseUrl;
+  }
+
+  // Validate modelName against provider's active models if API key exists
+  if (modelName && user.provider !== 'custom') {
+    let activeKey = null;
+    if (user.provider === 'openai') activeKey = user.openaiApiKey;
+    else if (user.provider === 'groq') activeKey = user.groqApiKey;
+    else if (user.provider === 'gemini') activeKey = user.geminiApiKey;
+    else if (user.provider === 'deepseek') activeKey = user.deepseekApiKey;
+    else if (user.provider === 'mistral') activeKey = user.mistralApiKey;
+    else if (user.provider === 'cohere') activeKey = user.cohereApiKey;
+    else if (user.provider === 'perplexity') activeKey = user.perplexityApiKey;
+    else if (user.provider === 'anthropic') activeKey = user.anthropicApiKey;
+    else if (user.provider === 'xai') activeKey = user.xaiApiKey;
+    else if (user.provider === 'openrouter') activeKey = user.openrouterApiKey;
+
+    if (activeKey) {
+      try {
+        const availableModels = await LLMService.listModels(user.provider, activeKey, user.customBaseUrl);
+        if (Array.isArray(availableModels) && availableModels.length > 0) {
+          const modelExists = availableModels.some((m) => m.id === user.modelName || m.name === user.modelName);
+          if (!modelExists) {
+            return res.status(400).json({
+              success: false,
+              message: `Model "${user.modelName}" is not recognized or available for provider "${user.provider}". Please select a model from the list.`,
+            });
+          }
+        }
+      } catch (listErr) {
+        console.warn(`[updateModelSettings] Could not verify models with provider ${user.provider}: ${listErr.message}`);
+        return res.status(400).json({
+          success: false,
+          message: `Failed to verify models for provider "${user.provider}": ${listErr.message}. Please check your API key and settings.`,
+        });
+      }
+    }
   }
 
   await user.save();

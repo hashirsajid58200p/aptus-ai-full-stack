@@ -251,9 +251,15 @@ const userReducer = createSlice({
     builder.addCase(generateNewToken.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(generateNewToken.fulfilled, (state) => {
+    builder.addCase(generateNewToken.fulfilled, (state, action) => {
       state.loading = false;
       state.isTokenGenerated = true;
+      if (action.payload?.token && state.user) {
+        state.user.chatbot_token = action.payload.token;
+        if (typeof window !== "undefined") {
+          localStorage.setItem("aptus_user", JSON.stringify(state.user));
+        }
+      }
     });
     builder.addCase(generateNewToken.rejected, (state) => {
       state.loading = false;

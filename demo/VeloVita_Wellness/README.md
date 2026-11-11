@@ -1,6 +1,6 @@
 # VeloVita Wellness Hub — Demo Integration Site
 
-> Premier Athletic Performance & Recovery Sanctuary showcasing the official `aptus-ai-chatbot-widget` (v1.0.13) integration.
+> Premier Athletic Performance & Recovery Sanctuary showcasing the official `aptus-ai-chatbot-widget` (v1.0.16) integration.
 
 ---
 
@@ -13,9 +13,9 @@ npm install
 
 ### 2. Run Development Server
 ```bash
-npm run dev -- --port 5174
+npm run dev
 ```
-Open [http://localhost:5174](http://localhost:5174) in your browser.
+Open [http://localhost:3006](http://localhost:3006) in your browser.
 
 ---
 

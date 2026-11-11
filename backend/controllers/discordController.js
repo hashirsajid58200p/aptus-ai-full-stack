@@ -34,17 +34,31 @@ exports.handleDiscordWebhook = catchAsyncError(async (req, res, next) => {
   if (token) {
     owner = await User.findOne({ chatbot_token: token });
   }
-  if (!owner) {
-    // Fallback to first active business chatbot if token not specified
+  if (!owner && process.env.NODE_ENV !== 'production') {
+    // Development fallback only
     owner = await User.findOne({ bussinessName: { $exists: true } });
   }
 
   if (!owner) {
     return res.status(404).json({
       success: false,
-      message: 'No registered chatbot found for Discord integration.',
+      message: 'Valid chatbot token is required for Discord integration.',
     });
   }
+
+  // Resolve active API key based on business provider settings
+  let activeApiKey = null;
+  if (owner.provider === 'openai') activeApiKey = owner.openaiApiKey;
+  else if (owner.provider === 'groq') activeApiKey = owner.groqApiKey;
+  else if (owner.provider === 'gemini') activeApiKey = owner.geminiApiKey;
+  else if (owner.provider === 'deepseek') activeApiKey = owner.deepseekApiKey;
+  else if (owner.provider === 'mistral') activeApiKey = owner.mistralApiKey;
+  else if (owner.provider === 'cohere') activeApiKey = owner.cohereApiKey;
+  else if (owner.provider === 'perplexity') activeApiKey = owner.perplexityApiKey;
+  else if (owner.provider === 'anthropic') activeApiKey = owner.anthropicApiKey;
+  else if (owner.provider === 'xai') activeApiKey = owner.xaiApiKey;
+  else if (owner.provider === 'openrouter') activeApiKey = owner.openrouterApiKey;
+  else if (owner.provider === 'custom') activeApiKey = owner.customApiKey;
 
   // Prepare business knowledge context
   const businessDetailsText = (owner.bussinessDetails || [])
@@ -59,7 +73,8 @@ ${businessDetailsText ? `\nBusiness FAQ:\n${businessDetailsText}` : ''}`;
   const llm = new LLMService({
     provider: owner.provider || 'groq',
     model: owner.modelName,
-    apiKey: owner.openaiApiKey,
+    apiKey: activeApiKey,
+    customBaseUrl: owner.customBaseUrl,
   });
 
   const completion = await llm.generateText(userMessage, {
@@ -74,18 +89,26 @@ ${businessDetailsText ? `\nBusiness FAQ:\n${businessDetailsText}` : ''}`;
     await recordTokenUsage(owner._id, completion.usage.totalTokens);
   }
 
-  // If a Discord webhook URL was provided, dispatch directly to channel
+  // If a Discord webhook URL was provided, validate domain to prevent SSRF
   const webhookUrl = req.body.webhook_url || req.headers['x-discord-webhook-url'];
   if (webhookUrl) {
     try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: replyText,
-          username: `${owner.bussinessName} Bot`,
-        }),
-      });
+      const parsedUrl = new URL(webhookUrl);
+      const isDiscordHost = parsedUrl.protocol === 'https:' && 
+        (parsedUrl.hostname === 'discord.com' || parsedUrl.hostname === 'discordapp.com' || parsedUrl.hostname.endsWith('.discord.com'));
+
+      if (!isDiscordHost) {
+        console.warn('⚠️ Blocked SSRF attempt: webhook URL must belong to discord.com:', webhookUrl);
+      } else {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: replyText,
+            username: `${owner.bussinessName} Bot`,
+          }),
+        });
+      }
     } catch (whErr) {
       console.error('Failed to post to Discord webhook URL:', whErr.message);
     }

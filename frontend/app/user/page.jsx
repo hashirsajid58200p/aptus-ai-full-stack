@@ -68,7 +68,7 @@ export default function UserDashboard() {
     dispatch(logout());
   };
 
-  if (!isMounted || !isInitialized || loading || !user) {
+  if (!isMounted || !isInitialized || (!user && loading) || !user) {
     return <Loader />;
   }
 

@@ -28,7 +28,9 @@ app.use(async (req, res, next) => {
     await connectDB();
     if (!isSeeded) {
       isSeeded = true;
-      seedAccounts().catch((err) => console.warn("Seed error:", err.message));
+      if (process.env.SEED_ON_START === 'true' || process.env.NODE_ENV !== 'production') {
+        seedAccounts().catch((err) => console.warn("Seed error:", err.message));
+      }
     }
     next();
   } catch (err) {
@@ -36,14 +38,25 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Universal CORS & Preflight handler (must be placed before rate limiter)
+// CORS & Preflight handler (must be placed before rate limiter)
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  const isDev = process.env.NODE_ENV !== "production";
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+  const isTrustedOrigin = origin && (
+    origin === frontendUrl ||
+    origin.endsWith(".vercel.app") ||
+    (isDev && (origin.includes("localhost") || origin.includes("127.0.0.1")))
+  );
+
   if (origin) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
+    if (isTrustedOrigin) {
+      res.header("Access-Control-Allow-Origin", origin);
+      res.header("Access-Control-Allow-Credentials", "true");
+    }
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Chatbot-Token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Chatbot-Token, x-chatbot-token");
   } else {
     res.header("Access-Control-Allow-Origin", "*");
   }

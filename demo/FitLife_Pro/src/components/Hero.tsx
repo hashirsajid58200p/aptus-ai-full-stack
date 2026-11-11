@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { DumbbellIcon } from "./Icons";
+import gymHero from "../../public/gym_hero.png";
 
 export default function Hero() {
   return (
@@ -63,7 +64,7 @@ export default function Hero() {
         <div className="md:col-span-5 relative w-full h-[320px] sm:h-[400px] md:h-[450px] rounded-2xl overflow-hidden shadow-2xl border border-neutral-900 group">
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent z-10" />
           <Image 
-            src="/gym_hero.png" 
+            src={gymHero} 
             alt="FitLife Pro Gym Luxury Interior"
             fill
             priority

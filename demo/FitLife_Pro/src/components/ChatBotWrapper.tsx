@@ -13,7 +13,7 @@ const ChatBot = dynamic(
 export default function ChatBotWrapper() {
   const apiUrl = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3100/api/v1'
-    : 'https://aptus-ai-full-stack.vercel.app/api/v1';
+    : `${typeof window !== 'undefined' ? window.location.origin : ''}/api/v1`;
 
   return (
     <ChatBot

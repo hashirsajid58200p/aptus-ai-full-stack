@@ -1,21 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { generateNewToken, loadUser, clearState } from '@/slices/userSlice';
+import { generateNewToken, clearState } from '@/slices/userSlice';
 import toast from 'react-hot-toast';
 import { Copy, ShieldAlert } from 'lucide-react';
 
 const Token = () => {
   const dispatch = useDispatch();
-  const { isTokenGenerated, user, error } = useSelector(state => state.user);
-
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
+  const { isTokenGenerated, user, error, loading } = useSelector(state => state.user);
 
   useEffect(() => {
     if (isTokenGenerated) {
       dispatch(clearState());
-      dispatch(loadUser());
       toast.success('New Token Generated Successfully');
     }
     if (error) {
@@ -26,7 +21,7 @@ const Token = () => {
 
   const handleGenerateNewToken = () => {
     if (window.confirm("Are you sure you want to Generate new token?")) {
-      dispatch(generateNewToken(user));
+      dispatch(generateNewToken());
     }
   };
 
@@ -60,10 +55,11 @@ const Token = () => {
         <span>Keep this token secret. Do not share it publicly.</span>
       </p>
       <button
-        className="btn-neo-primary px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold"
+        className="btn-neo-primary px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold disabled:opacity-60 disabled:cursor-not-allowed"
         onClick={handleGenerateNewToken}
+        disabled={loading}
       >
-        RESET TOKEN
+        {loading ? "GENERATING..." : "RESET TOKEN"}
       </button>
     </div>
   );

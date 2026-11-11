@@ -57,10 +57,12 @@ export default function Features() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service, idx) => {
             const Icon = service.icon;
+            const cardId = idx === 0 ? 'coaching' : (idx === 2 ? 'amenities' : undefined);
             return (
               <div
                 key={idx}
-                className="wellness-card p-6 flex flex-col justify-between"
+                id={cardId}
+                className="wellness-card p-6 flex flex-col justify-between scroll-mt-24"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

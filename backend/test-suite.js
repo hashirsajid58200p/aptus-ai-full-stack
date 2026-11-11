@@ -194,6 +194,96 @@ async function runTestSuite() {
       });
     });
 
+    // 9. API Key Masking in userModel
+    console.log("\n🔹 Step 9: Testing API key masking in userModel toJSON...");
+    const userJson = testUser.toJSON();
+    const isGroqMasked = !userJson.groqApiKey || userJson.groqApiKey.includes("•");
+    const isOpenAIMasked = !userJson.openAiApiKey || userJson.openAiApiKey.includes("•");
+    assert(isGroqMasked && isOpenAIMasked, "userModel toJSON correctly masks API keys");
+
+    // 10. Session IDOR Protection
+    console.log("\n🔹 Step 10: Testing Session IDOR Protection via HTTP POST getResponse...");
+    let otherUser = await User.findOne({ _id: { $ne: testUser._id } });
+    if (!otherUser) {
+      otherUser = await User.create({
+        name: "Other Business",
+        email: `other-${Date.now()}@example.com`,
+        password: "Password123!",
+        chatbot_token: `token-other-${Date.now()}`,
+        bussinessName: "Other Labs",
+        knowledgeMarkdown: "# Test\n" + "word ".repeat(1050),
+      });
+    } else {
+      otherUser.knowledgeMarkdown = "# Test\n" + "word ".repeat(1050);
+      await otherUser.save();
+    }
+
+    const testSession = await Session.create({
+      username: "IDOR Visitor",
+      email: "visitor@example.com",
+      chatbotId: testUser._id,
+    });
+
+    const testServerIdor = http.createServer(app);
+    await new Promise((resolve) => testServerIdor.listen(0, resolve));
+    const idorPort = testServerIdor.address().port;
+
+    let idorBlocked = false;
+    try {
+      const res = await fetch(`http://127.0.0.1:${idorPort}/api/v1/chatbot/getResponse`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-chatbot-token": otherUser.chatbot_token,
+        },
+        body: JSON.stringify({
+          session_id: testSession._id.toString(),
+          message: "Unauthorized probe",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 403 && data.message?.includes("does not belong")) {
+        idorBlocked = true;
+      }
+    } catch (err) {
+      console.warn("IDOR test request error:", err.message);
+    } finally {
+      testServerIdor.close();
+      await Session.deleteOne({ _id: testSession._id });
+    }
+
+    assert(idorBlocked, "HTTP POST getResponse with token B + session A correctly returns HTTP 403 Forbidden");
+
+    // 11. Socket.io agent_join JWT Authentication
+    console.log("\n🔹 Step 11: Testing Socket.io JWT authentication on agent_join...");
+    const testServer2 = http.createServer(app);
+    initSocket(testServer2);
+    await new Promise((resolve) => testServer2.listen(0, resolve));
+    const testPort2 = testServer2.address().port;
+    const agentSocket = Client(`http://127.0.0.1:${testPort2}`, { transports: ["websocket"] });
+    await new Promise((resolve) => {
+      agentSocket.on("connect", () => {
+        agentSocket.emit("agent_join", {
+          chatbotId: testUser._id.toString(),
+          authToken: "invalid-jwt-token"
+        });
+      });
+      agentSocket.on("error", (data) => {
+        assert(
+          data && (data.message.includes("Invalid") || data.message.includes("Authentication") || data.message.includes("Unauthorized")),
+          "Socket.io agent_join rejected unauthenticated/invalid JWT token with error event"
+        );
+        agentSocket.disconnect();
+        testServer2.close();
+        resolve();
+      });
+      setTimeout(() => {
+        agentSocket.disconnect();
+        testServer2.close();
+        resolve();
+      }, 3000);
+    });
+
     console.log("\n===========================================================");
     console.log(`🎉 TEST SUMMARY: ${passedTests}/${totalTests} TESTS PASSED!`);
     console.log("===========================================================\n");

@@ -46,6 +46,7 @@ export default function AdminLoginPage() {
       if (res.data?.success) {
         if (res.data.token) {
           localStorage.setItem("adminToken", res.data.token);
+          document.cookie = `adminToken=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         }
         toast.success("Admin authenticated successfully!");
         router.push("/admin/dashboard");

@@ -86,6 +86,14 @@ exports.addMessageToSession = catchAsyncError(async (req, res, next) => {
         });
     }
 
+    // Prevent cross-tenant session hijacking (IDOR)
+    if (session.chatbotId && session.chatbotId.toString() !== chatbotId.toString()) {
+        return res.status(403).json({
+            success: false,
+            message: "Unauthorized: Session does not belong to this chatbot token."
+        });
+    }
+
     const user_message = await Message.create({
         message: userMessage,
         sessionId,

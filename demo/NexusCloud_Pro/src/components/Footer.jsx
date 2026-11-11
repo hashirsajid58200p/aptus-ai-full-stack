@@ -21,7 +21,7 @@ export default function Footer() {
           <div className="flex items-center space-x-6 text-sm text-slate-400">
             <a href="#features" className="hover:text-indigo-400 transition-colors">Documentation</a>
             <a href="#pricing" className="hover:text-indigo-400 transition-colors">Pricing SLA</a>
-            <a href="#support" className="hover:text-indigo-400 transition-colors">System Status</a>
+            <a href="#pricing" className="hover:text-indigo-400 transition-colors">System Status</a>
           </div>
 
         </div>

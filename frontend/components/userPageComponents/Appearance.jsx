@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { FaRobot } from "react-icons/fa";
-import { TbRobot, TbRobotFace, TbMessageChatbot } from "react-icons/tb";
+import { TbRobot, TbRobotFace, TbMessageChatbot, TbUser } from "react-icons/tb";
 import { RiRobot2Line, RiRobot3Line, RiRobotLine } from "react-icons/ri";
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
@@ -845,7 +845,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
             <div className="p-4 sm:p-6 bg-[#F5F2EB] flex flex-col items-center justify-center min-h-[460px]">
               <div
-                className="w-full max-w-[320px] flex flex-col transition-all duration-200 overflow-hidden"
+                className="w-full max-w-[350px] flex flex-col transition-all duration-200 overflow-hidden"
                 style={{
                   backgroundColor: activeConfig.containerBg,
                   border: activeConfig.wrapperBorder || "1px solid #e5e7eb",
@@ -867,7 +867,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs"
                       style={{
-                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                        backgroundColor: "rgba(0, 0, 0, 0.08)",
                         color: effectiveHeaderColor,
                       }}
                     >
@@ -875,7 +875,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                     </div>
                     <div>
                       <h4
-                        className="font-extrabold text-xs uppercase leading-tight tracking-wide"
+                        className="font-extrabold text-xs leading-tight tracking-wide"
                         style={{ color: effectiveHeaderColor }}
                       >
                         {botName}
@@ -897,6 +897,19 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         borderRadius: effectiveButtonRadius,
                         color: effectiveHeaderColor,
                       }}
+                      title="Start Fresh New Chat"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                    </div>
+                    <div
+                      className="w-7 h-7 flex items-center justify-center border transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        borderColor: "rgba(255, 255, 255, 0.35)",
+                        borderRadius: effectiveButtonRadius,
+                        color: effectiveHeaderColor,
+                      }}
+                      title="Request Live Human Agent"
                     >
                       <Headphones className="w-3.5 h-3.5" />
                     </div>
@@ -908,6 +921,7 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                         borderRadius: effectiveButtonRadius,
                         color: effectiveHeaderColor,
                       }}
+                      title="Close Chat"
                     >
                       <X className="w-3.5 h-3.5" />
                     </div>
@@ -916,46 +930,99 @@ export default function AppearanceTab({ user, onUserUpdate }) {
 
                 {/* Chat Body */}
                 <div
-                  className="p-3.5 min-h-[200px] flex flex-col gap-2.5 justify-end text-xs transition-colors"
+                  className="p-4 min-h-[230px] flex flex-col gap-3 justify-end text-xs transition-colors"
                   style={{ backgroundColor: activeConfig.messagesBg }}
                 >
                   {/* Bot Greeting Bubble */}
-                  <div
-                    className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
-                    style={{
-                      backgroundColor: activeConfig.botBubbleBg,
-                      color: activeConfig.botBubbleColor,
-                      border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: effectiveBubbleRadius,
-                    }}
-                  >
-                    {welcomeMessage}
+                  <div className="flex items-end gap-2 self-start max-w-[88%]">
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 overflow-hidden shadow-sm"
+                      style={{
+                        backgroundColor:
+                          activeConfig.messagesBg &&
+                          (activeConfig.messagesBg.startsWith("#1") ||
+                            activeConfig.messagesBg.startsWith("#2") ||
+                            activeConfig.messagesBg.startsWith("#0") ||
+                            activeConfig.messagesBg === "#333333")
+                            ? "rgba(255, 255, 255, 0.15)"
+                            : "rgba(0, 0, 0, 0.08)",
+                        color: activeConfig.botBubbleColor || "#1a1a1a",
+                      }}
+                    >
+                      {renderAvatarPreview(15, activeConfig.botBubbleColor || "#1a1a1a")}
+                    </div>
+                    <div
+                      className="px-3.5 py-2.5 text-[12px] sm:text-[13px] font-normal leading-[1.5]"
+                      style={{
+                        backgroundColor: activeConfig.botBubbleBg,
+                        color: activeConfig.botBubbleColor,
+                        border: activeConfig.botBubbleBorder || "none",
+                        borderRadius: effectiveBubbleRadius,
+                        boxShadow: activeConfig.botBubbleShadow || "none",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {welcomeMessage}
+                    </div>
                   </div>
 
                   {/* User Bubble */}
-                  <div
-                    className="self-end max-w-[85%] p-2.5 text-[11px] font-semibold leading-relaxed"
-                    style={{
-                      backgroundColor: effectiveUserBubbleBg,
-                      color: effectiveUserBubbleColor,
-                      border: activeConfig.userBubbleBorder || "none",
-                      borderRadius: effectiveBubbleRadius,
-                    }}
-                  >
-                    How do I integrate this on my website?
+                  <div className="flex items-end gap-2 self-end max-w-[88%]">
+                    <div
+                      className="px-3.5 py-2.5 text-[12px] sm:text-[13px] font-medium leading-[1.5]"
+                      style={{
+                        backgroundColor: effectiveUserBubbleBg,
+                        color: effectiveUserBubbleColor,
+                        border: activeConfig.userBubbleBorder || "none",
+                        borderRadius: effectiveBubbleRadius,
+                        boxShadow: activeConfig.userBubbleShadow || "none",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      hi
+                    </div>
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 overflow-hidden shadow-sm"
+                      style={{
+                        backgroundColor: effectiveUserBubbleBg,
+                        color: effectiveUserBubbleColor,
+                      }}
+                    >
+                      <TbUser size={16} />
+                    </div>
                   </div>
 
                   {/* Bot Answer Bubble */}
-                  <div
-                    className="self-start max-w-[85%] p-2.5 text-[11px] font-medium leading-relaxed"
-                    style={{
-                      backgroundColor: activeConfig.botBubbleBg,
-                      color: activeConfig.botBubbleColor,
-                      border: activeConfig.botBubbleBorder || "none",
-                      borderRadius: effectiveBubbleRadius,
-                    }}
-                  >
-                    Install <code className="font-mono text-[10px] opacity-90">aptus-ai-chatbot-widget</code> and pass your token!
+                  <div className="flex items-end gap-2 self-start max-w-[88%]">
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 overflow-hidden shadow-sm"
+                      style={{
+                        backgroundColor:
+                          activeConfig.messagesBg &&
+                          (activeConfig.messagesBg.startsWith("#1") ||
+                            activeConfig.messagesBg.startsWith("#2") ||
+                            activeConfig.messagesBg.startsWith("#0") ||
+                            activeConfig.messagesBg === "#333333")
+                            ? "rgba(255, 255, 255, 0.15)"
+                            : "rgba(0, 0, 0, 0.08)",
+                        color: activeConfig.botBubbleColor || "#1a1a1a",
+                      }}
+                    >
+                      {renderAvatarPreview(15, activeConfig.botBubbleColor || "#1a1a1a")}
+                    </div>
+                    <div
+                      className="px-3.5 py-2.5 text-[12px] sm:text-[13px] font-normal leading-[1.5]"
+                      style={{
+                        backgroundColor: activeConfig.botBubbleBg,
+                        color: activeConfig.botBubbleColor,
+                        border: activeConfig.botBubbleBorder || "none",
+                        borderRadius: effectiveBubbleRadius,
+                        boxShadow: activeConfig.botBubbleShadow || "none",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      Hi there! 👋 How can I assist you today—membership details, a guest pass, class schedule, or anything else?
+                    </div>
                   </div>
                 </div>
 
@@ -1011,14 +1078,16 @@ export default function AppearanceTab({ user, onUserUpdate }) {
                   Launcher:
                 </span>
                 <div
-                  className="w-10 h-10 flex items-center justify-center border-2 border-[#1a1a1a] shadow-neo-sm"
+                  className="w-11 h-11 flex items-center justify-center transition-all"
                   style={{
                     backgroundColor: effectiveToggleBg,
                     color: effectiveToggleColor,
                     borderRadius: effectiveToggleRadius,
+                    border: activeConfig.toggleBorder || "none",
+                    boxShadow: activeConfig.toggleShadow || "0 4px 14px rgba(0, 0, 0, 0.15)",
                   }}
                 >
-                  {renderAvatarPreview(20, effectiveToggleColor)}
+                  {renderAvatarPreview(22, effectiveToggleColor)}
                 </div>
               </div>
             </div>

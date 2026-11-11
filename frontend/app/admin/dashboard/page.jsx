@@ -123,6 +123,8 @@ export default function AdminDashboardPage() {
       if (err.response?.status === 401 || err.response?.status === 403) {
         toast.error("Session expired or unauthorized. Please log in.");
         localStorage.removeItem("adminToken");
+      document.cookie = "adminToken=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = "adminToken=; path=/; max-age=0; SameSite=Lax";
         router.push("/admin/login");
       } else {
         toast.error("Failed to load analytics");
@@ -243,6 +245,7 @@ export default function AdminDashboardPage() {
       console.error("Logout error", err);
     } finally {
       localStorage.removeItem("adminToken");
+      document.cookie = "adminToken=; path=/; max-age=0; SameSite=Lax";
       toast.success("Admin logged out successfully");
       router.push("/admin/login");
     }
@@ -274,7 +277,9 @@ export default function AdminDashboardPage() {
     setTestingToken(true);
     setTokenStatus(null);
     try {
-      const res = await axios.get(`${API_URL}/chatbot/getDetails?token=${testToken.trim()}`);
+      const res = await axios.get(`${API_URL}/chatbot/getDetails`, {
+        headers: { "x-chatbot-token": testToken.trim() },
+      });
       if (res.data?.success) {
         setTokenStatus({
           valid: true,

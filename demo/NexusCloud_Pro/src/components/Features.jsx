@@ -66,10 +66,12 @@ export default function Features() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, idx) => {
             const Icon = feature.icon;
+            const cardId = idx === 1 ? 'backup' : (idx === 4 ? 'support' : undefined);
             return (
               <div
                 key={idx}
-                className="glass-panel glass-panel-hover p-8 rounded-2xl transition-all duration-300 flex flex-col justify-between group"
+                id={cardId}
+                className="glass-panel glass-panel-hover p-8 rounded-2xl transition-all duration-300 flex flex-col justify-between group scroll-mt-24"
               >
                 <div>
                   <div className={`w-12 h-12 rounded-xl ${feature.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>

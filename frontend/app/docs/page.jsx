@@ -145,23 +145,6 @@ export default function RootLayout({ children }) {
                   </div>
                 </div>
 
-                {/* 3. HTML / Shopify */}
-                <div className="space-y-2">
-                  <label className="font-syne font-bold text-xs uppercase text-[#1a1a1a] block">
-                    3. Or HTML / Shopify Script Tag
-                  </label>
-                  <div className="border-2 border-[#1a1a1a] shadow-neo-sm">
-                    <pre className="bg-[#1a1a1a] p-3 text-xs font-mono text-white overflow-x-auto leading-relaxed">
-{`<script
-  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.13/dist/index.js"
-  data-token="YOUR_BUSINESS_TOKEN"
-  data-api-url="${baseurl}"
-  defer>
-</script>`}
-                    </pre>
-                  </div>
-                </div>
-
                 {/* Training Requirement Callout */}
                 <div className="p-3.5 bg-[#FDF9F0] border-2 border-[#1a1a1a] shadow-neo-sm flex items-start gap-2.5">
                   <span className="px-2 py-0.5 bg-[#FF4D00] text-white font-mono text-[10px] font-black uppercase shrink-0">

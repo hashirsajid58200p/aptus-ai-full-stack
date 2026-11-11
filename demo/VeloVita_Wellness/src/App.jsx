@@ -9,7 +9,7 @@ import { ChatBot } from 'aptus-ai-chatbot-widget';
 export default function App() {
   const apiUrl = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3100/api/v1'
-    : 'https://aptus-ai-full-stack.vercel.app/api/v1';
+    : `${typeof window !== 'undefined' ? window.location.origin : ''}/api/v1`;
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-900 selection:bg-emerald-500 selection:text-white relative">

@@ -114,17 +114,6 @@ export default function RootLayout({ children }) {
 }
 ```
 
-### 3. Embed In HTML / Shopify / WordPress
-
-```html
-<script
-  src="https://unpkg.com/aptus-ai-chatbot-widget@1.0.13/dist/index.js"
-  data-token="YOUR_BUSINESS_TOKEN"
-  data-api-url="https://your-api.domain.com/api/v1"
-  defer>
-</script>
-```
-
 ---
 
 ## 💻 Local Development Setup

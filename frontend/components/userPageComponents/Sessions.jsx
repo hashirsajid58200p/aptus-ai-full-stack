@@ -15,6 +15,8 @@ import {
 import baseurl from "@/store/baseurl";
 import toast from "react-hot-toast";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
 
 const formatMessageTime = (dateStr) => {
   if (!dateStr) return "";
@@ -69,6 +71,49 @@ export default function Sessions() {
   const [sendingAgentMsg, setSendingAgentMsg] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const socketRef = useRef(null);
+  const { user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const authToken = typeof window !== "undefined" ? localStorage.getItem("aptus_token") : null;
+    const socketServerUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL ||
+      (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:3100" : "/");
+
+    const socket = io(socketServerUrl, {
+      transports: ["websocket", "polling"],
+      auth: { token: authToken },
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      socket.emit("agent_join", {
+        chatbotId: user._id,
+        agentId: user._id,
+        authToken: authToken,
+      });
+    });
+
+    socket.on("error", (err) => {
+      console.warn("[Live Agent Socket Error]", err);
+    });
+
+    socket.on("incoming_handoff_request", () => {
+      toast("A visitor is requesting live human support!", { icon: "🛎️" });
+      fetchSessions();
+    });
+
+    socket.on("receive_message", () => {
+      fetchSessions();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user?._id]);
 
   const getAuthHeaders = () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("aptus_token") : null;

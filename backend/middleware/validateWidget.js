@@ -2,6 +2,23 @@ const mongoose = require("mongoose");
 const catchAsyncError = require("./catchAsyncError");
 const User = require("../models/userModel");
 
+function normalizeHost(value) {
+  if (!value) return '';
+  try {
+    const u = value.includes('://') ? new URL(value) : new URL(`https://${value}`);
+    return u.hostname.toLowerCase();
+  } catch {
+    return String(value).toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+  }
+}
+
+function hostMatchesDomain(host, allowed) {
+  const d = normalizeHost(allowed);
+  const h = normalizeHost(host);
+  if (!d || !h) return false;
+  return h === d || h.endsWith(`.${d}`);
+}
+
 const validateWidget = catchAsyncError(async (req, res, next) => {
   const token = req.body.token || req.headers["x-chatbot-token"] || req.query.token;
 
@@ -31,24 +48,25 @@ const validateWidget = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  // Domain Origin Validation (if owner has allowedDomain configured)
-  if (owner.allowedDomain && owner.allowedDomain.trim() !== "") {
-    const requestOrigin = req.headers.origin || req.headers.referer;
+  // Domain Origin Validation (check allowedDomains array and legacy allowedDomain)
+  const configuredDomains = [
+    ...(Array.isArray(owner.allowedDomains) ? owner.allowedDomains : []),
+    ...(owner.allowedDomain && typeof owner.allowedDomain === 'string' ? [owner.allowedDomain] : [])
+  ].filter(Boolean);
 
-    if (requestOrigin) {
-      try {
-        const allowedHost = new URL(owner.allowedDomain.includes("://") ? owner.allowedDomain : `https://${owner.allowedDomain}`).hostname;
-        const requestHost = new URL(requestOrigin).hostname;
+  if (configuredDomains.length > 0) {
+    const requestHost = normalizeHost(req.headers.origin || req.headers.referer || "");
+    const isDev = process.env.NODE_ENV !== 'production';
 
-        if (allowedHost !== requestHost && requestHost !== "localhost" && requestHost !== "127.0.0.1") {
-          return res.status(403).json({
-            success: false,
-            message: `Forbidden: Request origin (${requestHost}) is not authorized for this chatbot token`,
-          });
-        }
-      } catch (err) {
-        console.error("Origin parsing error:", err);
-      }
+    const isAuthorized = configuredDomains.some(domain => {
+      return hostMatchesDomain(requestHost, domain) || (isDev && (requestHost === "localhost" || requestHost === "127.0.0.1"));
+    });
+
+    if (!isAuthorized) {
+      return res.status(403).json({
+        success: false,
+        message: `Forbidden: Request origin (${requestHost || 'unknown'}) is not authorized for this chatbot token`,
+      });
     }
   }
 

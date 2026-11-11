@@ -1,6 +1,9 @@
 "use client";
+import { useState } from "react";
 
 export default function Footer() {
+  const [subscribed, setSubscribed] = useState(false);
+
   return (
     <footer className="border-t border-neutral-900 bg-neutral-950 py-12">
       <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-4 gap-8">
@@ -35,28 +38,32 @@ export default function Footer() {
         <div className="space-y-4">
           <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Get Gym News</h4>
           <p className="text-xs text-neutral-500">Subscribe for free trial offers and class updates.</p>
-          <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
-            <input 
-              type="email" 
-              placeholder="Enter email"
-              className="bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-xs text-white focus:outline-none focus:border-lime-400 w-full"
-              required
-            />
-            <button 
-              type="submit"
-              className="px-4 py-2 rounded-full text-xs font-semibold uppercase bg-lime-400 text-neutral-950 hover:bg-lime-300 transition-colors"
-            >
-              Join
-            </button>
-          </form>
+          {subscribed ? (
+            <p className="text-xs text-lime-400 font-semibold py-2">✓ You are on the VIP guest list!</p>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }} className="flex gap-2">
+              <input 
+                type="email" 
+                placeholder="Enter email"
+                className="bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-xs text-white focus:outline-none focus:border-lime-400 w-full"
+                required
+              />
+              <button 
+                type="submit"
+                className="px-4 py-2 rounded-full text-xs font-semibold uppercase bg-lime-400 text-neutral-950 hover:bg-lime-300 transition-colors"
+              >
+                Join
+              </button>
+            </form>
+          )}
         </div>
       </div>
       
       <div className="mx-auto max-w-7xl px-6 mt-12 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-[10px] text-neutral-600">&copy; {new Date().getFullYear()} FitLife Pro. All rights reserved. Powered by Aptus AI Chatbot.</p>
         <div className="flex gap-4 text-[10px] text-neutral-600">
-          <a href="#" className="hover:underline">Privacy Policy</a>
-          <a href="#" className="hover:underline">Terms of Service</a>
+          <a href="#faqs" className="hover:underline">Privacy & Policies</a>
+          <a href="#pricing" className="hover:underline">Terms of Membership</a>
         </div>
       </div>
     </footer>

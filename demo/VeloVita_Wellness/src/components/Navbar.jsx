@@ -29,10 +29,10 @@ export default function Navbar() {
           <a href="#memberships" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
             Membership Plans
           </a>
-          <a href="#coaching" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
+          <a href="#services" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
             Nutrition & Coaching
           </a>
-          <a href="#amenities" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
+          <a href="#memberships" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
             Spa & Recovery
           </a>
         </nav>

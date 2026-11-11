@@ -1,6 +1,6 @@
 # NexusCloud Solutions — Demo Integration Site
 
-> Next-Generation Enterprise Cloud Infrastructure & Hosting Platform showcasing the official `aptus-ai-chatbot-widget` (v1.0.13) integration.
+> Next-Generation Enterprise Cloud Infrastructure & Hosting Platform showcasing the official `aptus-ai-chatbot-widget` (v1.0.16) integration.
 
 ---
 
@@ -15,7 +15,7 @@ npm install
 ```bash
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:3005](http://localhost:3005) in your browser.
 
 ---
 

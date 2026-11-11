@@ -14,9 +14,6 @@ const seedAccounts = async () => {
         password: "AptusAI2026!",
       });
       console.log("🌱 [Seed] Super Admin created: aptusai@example.com");
-    } else {
-      existingAdmin.password = "AptusAI2026!";
-      await existingAdmin.save();
     }
 
     // 2. Ensure Aptus AI Business exists

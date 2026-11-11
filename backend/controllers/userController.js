@@ -222,9 +222,36 @@ exports.deleteBussinessDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
+function normalizeHost(value) {
+  if (!value) return '';
+  try {
+    const u = value.includes('://') ? new URL(value) : new URL(`https://${value}`);
+    return u.hostname.toLowerCase();
+  } catch {
+    return String(value).toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+  }
+}
+
+function hostMatchesDomain(host, allowed) {
+  const d = normalizeHost(allowed);
+  const h = normalizeHost(host);
+  if (!d || !h) return false;
+  return h === d || h.endsWith(`.${d}`);
+}
+
 // Return the users details by finding through the chatbot_token
 exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
-  const { token } = req.query;
+  const headerToken = req.headers["x-chatbot-token"];
+  const queryToken = req.query.token;
+
+  if (process.env.NODE_ENV === "production" && !headerToken && queryToken) {
+    return res.status(400).json({
+      success: false,
+      message: "Query parameter token is deprecated and disabled in production. Please provide token via 'x-chatbot-token' header.",
+    });
+  }
+
+  const token = headerToken || queryToken;
 
   const user = await User.findOne({ chatbot_token: token });
 
@@ -233,12 +260,16 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
   }
 
   // Domain Verification (Allow localhost in dev, or check whitelist)
-  const origin = req.headers.origin || req.headers.referer || "";
-  if (user.allowedDomains && user.allowedDomains.length > 0) {
-    const isAllowed = user.allowedDomains.some(domain => {
-      const cleanDomain = domain.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-      const cleanOrigin = origin.toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-      return cleanOrigin.includes(cleanDomain) || cleanOrigin.includes("localhost") || cleanOrigin.includes("127.0.0.1");
+  const configuredDomains = [
+    ...(Array.isArray(user.allowedDomains) ? user.allowedDomains : []),
+    ...(user.allowedDomain && typeof user.allowedDomain === 'string' ? [user.allowedDomain] : [])
+  ].filter(Boolean);
+
+  if (configuredDomains.length > 0) {
+    const requestHost = normalizeHost(req.headers.origin || req.headers.referer || "");
+    const isDev = process.env.NODE_ENV !== 'production';
+    const isAllowed = configuredDomains.some(domain => {
+      return hostMatchesDomain(requestHost, domain) || (isDev && (requestHost === "localhost" || requestHost === "127.0.0.1"));
     });
     if (!isAllowed) {
       return res.status(403).json({
@@ -384,6 +415,7 @@ exports.generateNewToken = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "New token generated successfully",
+    token: user.chatbot_token,
   });
 });
 

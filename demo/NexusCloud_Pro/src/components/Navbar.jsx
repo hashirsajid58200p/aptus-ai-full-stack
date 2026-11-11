@@ -28,10 +28,10 @@ export default function Navbar() {
           <a href="#pricing" className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
             Hosting Plans
           </a>
-          <a href="#backup" className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
+          <a href="#features" className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
             Automated Backups
           </a>
-          <a href="#support" className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
+          <a href="#pricing" className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
             24/7 Support
           </a>
         </nav>

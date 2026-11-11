@@ -14,7 +14,7 @@ const sendToken = (user, statusCode, res, message) => {
   };
   
 
-  const userResponse = user.toObject ? user.toObject() : { ...user };
+  const userResponse = typeof user.toJSON === "function" ? user.toJSON() : (user.toObject ? user.toObject() : { ...user });
   delete userResponse.password;
 
   res.status(statusCode)

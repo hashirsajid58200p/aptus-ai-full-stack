@@ -1,4 +1,5 @@
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 const Session = require('../models/sessionModel');
 const Message = require('../models/messageModel');
 const User = require('../models/userModel');
@@ -9,9 +10,24 @@ const activeAgents = new Map();
 const activeSessions = new Map();
 
 function initSocket(server) {
+  const isDev = process.env.NODE_ENV !== 'production';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const configuredOrigins = process.env.SOCKET_CORS_ORIGINS 
+    ? process.env.SOCKET_CORS_ORIGINS.split(',').map((s) => s.trim()) 
+    : [];
+
   const io = new Server(server, {
     cors: {
-      origin: '*',
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (isDev && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+          return callback(null, true);
+        }
+        if (origin === frontendUrl || origin.endsWith('.vercel.app') || configuredOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+      },
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -21,28 +37,82 @@ function initSocket(server) {
     console.log(`🔌 [Socket.io] Client connected: ${socket.id}`);
 
     // --- AGENT EVENTS ---
-    socket.on('agent_join', async ({ chatbotId, agentId }) => {
-      socket.chatbotId = chatbotId;
-      socket.agentId = agentId;
-      socket.isAgent = true;
+    socket.on('agent_join', async ({ chatbotId, agentId, authToken }) => {
+      try {
+        if (!chatbotId) return;
 
-      const room = `agent_${chatbotId}`;
-      socket.join(room);
+        // Authenticate agent via JWT token
+        const token = authToken || socket.handshake.auth?.token || socket.handshake.headers?.authorization?.replace(/^Bearer\s+/i, '');
+        if (!token) {
+          console.warn(`[Socket.io] Rejected agent_join without authToken for chatbotId: ${chatbotId}`);
+          socket.emit('error', { message: 'Authentication required for agent access' });
+          return;
+        }
 
-      if (!activeAgents.has(chatbotId)) {
-        activeAgents.set(chatbotId, new Set());
+        if (!process.env.JWT_SECRET) {
+          console.error('[Socket.io] JWT_SECRET is not configured on server');
+          socket.emit('error', { message: 'Server configuration error: JWT_SECRET missing' });
+          return;
+        }
+
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          if (String(decoded.id) !== String(chatbotId)) {
+            console.warn(`[Socket.io] Rejected agent_join: token user ${decoded.id} does not match chatbot ${chatbotId}`);
+            socket.emit('error', { message: 'Unauthorized: Token does not own this chatbot' });
+            return;
+          }
+        } catch (jwtErr) {
+          console.warn(`[Socket.io] Invalid JWT on agent_join: ${jwtErr.message}`);
+          socket.emit('error', { message: 'Invalid or expired authentication token' });
+          return;
+        }
+
+        const user = await User.findById(chatbotId).catch(() => null);
+        if (!user) {
+          console.warn(`[Socket.io] Rejected unauthorized agent_join for invalid chatbotId: ${chatbotId}`);
+          return;
+        }
+
+        const normChatbotId = String(chatbotId);
+        socket.chatbotId = normChatbotId;
+        socket.agentId = agentId;
+        socket.isAgent = true;
+
+        const room = `agent_${normChatbotId}`;
+        socket.join(room);
+
+        if (!activeAgents.has(normChatbotId)) {
+          activeAgents.set(normChatbotId, new Set());
+        }
+        activeAgents.get(normChatbotId).add(socket.id);
+
+        // Mark agent available in User document
+        await User.findByIdAndUpdate(normChatbotId, { liveAgentAvailable: true, isLiveAgent: true }).catch(() => {});
+
+        // Re-ensure agent is in map in case of concurrent disconnect of previous socket
+        if (!activeAgents.has(normChatbotId)) {
+          activeAgents.set(normChatbotId, new Set());
+        }
+        activeAgents.get(normChatbotId).add(socket.id);
+
+        const onlineCount = activeAgents.get(normChatbotId)?.size || 1;
+        console.log(`👨‍💼 Agent ${agentId || socket.id} joined ${room}. Online count: ${onlineCount}`);
+        io.to(room).emit('agent_status_update', { onlineAgents: onlineCount });
+      } catch (err) {
+        console.error('[Socket.io] Error in agent_join:', err);
       }
-      activeAgents.get(chatbotId).add(socket.id);
-
-      // Mark agent available in User document
-      await User.findByIdAndUpdate(chatbotId, { liveAgentAvailable: true, isLiveAgent: true }).catch(() => {});
-
-      console.log(`👨‍💼 Agent ${agentId || socket.id} joined ${room}. Online count: ${activeAgents.get(chatbotId).size}`);
-      io.to(room).emit('agent_status_update', { onlineAgents: activeAgents.get(chatbotId).size });
     });
 
     // --- VISITOR / SESSION EVENTS ---
-    socket.on('join_session', ({ sessionId, chatbotId }) => {
+    socket.on('join_session', async ({ sessionId, chatbotId }) => {
+      if (!sessionId || !chatbotId) return;
+      const session = await Session.findOne({ _id: sessionId, chatbotId }).catch(() => null);
+      if (!session) {
+        console.warn(`[Socket.io] Rejected join_session for non-matching sessionId: ${sessionId} and chatbotId: ${chatbotId}`);
+        return;
+      }
+
       socket.sessionId = sessionId;
       socket.chatbotId = chatbotId;
       const room = `session_${sessionId}`;
@@ -183,18 +253,22 @@ function initSocket(server) {
 
     // Disconnect handling
     socket.on('disconnect', async () => {
-      if (socket.isAgent && socket.chatbotId) {
-        const agents = activeAgents.get(socket.chatbotId);
-        if (agents) {
-          agents.delete(socket.id);
-          if (agents.size === 0) {
-            activeAgents.delete(socket.chatbotId);
-            await User.findByIdAndUpdate(socket.chatbotId, { liveAgentAvailable: false }).catch(() => {});
+      try {
+        if (socket.isAgent && socket.chatbotId) {
+          const agents = activeAgents.get(socket.chatbotId);
+          if (agents) {
+            agents.delete(socket.id);
+            if (agents.size === 0) {
+              activeAgents.delete(socket.chatbotId);
+              await User.findByIdAndUpdate(socket.chatbotId, { liveAgentAvailable: false }).catch(() => {});
+            }
+            io.to(`agent_${socket.chatbotId}`).emit('agent_status_update', { onlineAgents: agents.size });
           }
-          io.to(`agent_${socket.chatbotId}`).emit('agent_status_update', { onlineAgents: agents.size });
         }
+        console.log(`🔌 Client disconnected: ${socket.id}`);
+      } catch (err) {
+        console.error('[Socket.io] Error in disconnect:', err);
       }
-      console.log(`🔌 Client disconnected: ${socket.id}`);
     });
   });
 
