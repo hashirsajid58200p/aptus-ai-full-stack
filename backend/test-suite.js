@@ -205,20 +205,15 @@ async function runTestSuite() {
 
     // 10. Session IDOR Protection
     console.log("\n🔹 Step 10: Testing Session IDOR Protection via HTTP POST getResponse...");
-    let otherUser = await User.findOne({ _id: { $ne: testUser._id } });
-    if (!otherUser) {
-      otherUser = await User.create({
-        name: "Other Business",
-        email: `other-${Date.now()}@example.com`,
-        password: "Password123!",
-        chatbot_token: `token-other-${Date.now()}`,
-        bussinessName: "Other Labs",
-        knowledgeMarkdown: "# Test\n" + "word ".repeat(1050),
-      });
-    } else {
-      otherUser.knowledgeMarkdown = "# Test\n" + "word ".repeat(1050);
-      await otherUser.save();
-    }
+    // Always use a disposable user — never overwrite another account's knowledgeMarkdown
+    const otherUser = await User.create({
+      name: "Other Business",
+      email: `other-${Date.now()}@example.com`,
+      password: "Password123!",
+      chatbot_token: `token-other-${Date.now()}`,
+      bussinessName: "Other Labs",
+      knowledgeMarkdown: "# Test\n" + "word ".repeat(1050),
+    });
 
     const testSession = await Session.create({
       username: "IDOR Visitor",
@@ -252,6 +247,7 @@ async function runTestSuite() {
     } finally {
       testServerIdor.close();
       await Session.deleteOne({ _id: testSession._id });
+      await User.deleteOne({ _id: otherUser._id });
     }
 
     assert(idorBlocked, "HTTP POST getResponse with token B + session A correctly returns HTTP 403 Forbidden");
