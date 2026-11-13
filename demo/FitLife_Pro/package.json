@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "aptus-ai-chatbot-widget": "^1.0.17",
+    "aptus-ai-chatbot-widget": "^1.0.18",
     "next": "^15.1.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",

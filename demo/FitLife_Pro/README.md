@@ -1,6 +1,6 @@
 # FitLife Pro — Demo Integration Site
 
-> Next.js Athletic Training & Conditioning Facility showcasing the official `aptus-ai-chatbot-widget` (v1.0.13) integration.
+> Next.js Athletic Training & Conditioning Facility showcasing the official `aptus-ai-chatbot-widget` (v1.0.18) integration.
 
 ---
 
