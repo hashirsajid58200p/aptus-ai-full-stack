@@ -39,6 +39,7 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
   const [customBaseUrl, setCustomBaseUrl] = useState(user?.customBaseUrl || "");
 
   const [allModels, setAllModels] = useState([]);
+  const [modelsByProvider, setModelsByProvider] = useState({});
   const [loadingModels, setLoadingModels] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -64,13 +65,16 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
     }
   }, [user]);
 
-  const fetchAllConnectedModels = async () => {
+  const fetchAllConnectedModels = async (forceRefresh = false) => {
     setLoadingModels(true);
     try {
-      const res = await fetch(`${baseurl}/user/models?provider=all`, { credentials: "include" });
+      const res = await fetch(`${baseurl}/user/models?provider=all${forceRefresh ? "&refresh=true" : ""}`, { credentials: "include" });
       const data = await res.json();
       if (data.success) {
         setAllModels(Array.isArray(data.models) ? data.models : []);
+        if (data.modelsByProvider) {
+          setModelsByProvider(data.modelsByProvider);
+        }
       }
     } catch (err) {
       console.warn("Could not fetch models:", err.message);
@@ -159,6 +163,11 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
   // Switch active model immediately
   const handleSelectModel = async (model) => {
+    if (!isKeySavedInDb && selectedTab !== "groq") {
+      toast.error(`Please save your ${currentProviderMeta.name} API key first to activate this model.`);
+      return;
+    }
+
     const targetProvider = model.provider || selectedTab;
     const targetModelId = model.id;
     setProvider(targetProvider);
@@ -187,8 +196,17 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
   };
 
   const providerModels = useMemo(() => {
+    if (modelsByProvider && Array.isArray(modelsByProvider[selectedTab]) && modelsByProvider[selectedTab].length > 0) {
+      return modelsByProvider[selectedTab];
+    }
     return allModels.filter((m) => m.provider === selectedTab);
-  }, [allModels, selectedTab]);
+  }, [modelsByProvider, allModels, selectedTab]);
+
+  const isCurrentModelDeprecated = useMemo(() => {
+    if (provider !== selectedTab || !modelName) return false;
+    if (loadingModels || providerModels.length === 0) return false;
+    return !providerModels.some((m) => m.id === modelName);
+  }, [provider, selectedTab, modelName, loadingModels, providerModels]);
 
   return (
     <div className="bg-white border-3 border-[#1a1a1a] shadow-neo-lg p-6 sm:p-8 flex flex-col gap-6">
@@ -286,13 +304,33 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
 
       {/* Models List for Selected Provider */}
       <div className="border-t-2 border-[#1a1a1a] pt-4">
+        {isCurrentModelDeprecated && (
+          <div className="mb-3 p-3 bg-amber-100 border-2 border-[#1a1a1a] shadow-neo-sm text-xs font-bold text-[#1a1a1a] flex items-center justify-between">
+            <span>⚠️ Your selected model &quot;{modelName}&quot; is unlisted or deprecated on {currentProviderMeta.name}. Please select one of the active models below.</span>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-3">
-          <label className="block text-xs font-black uppercase text-[#1a1a1a]">
-            Models ({providerModels.length})
-          </label>
-          {loadingModels && (
-            <RefreshCw className="w-3.5 h-3.5 text-[#1a1a1a] animate-spin" />
-          )}
+          <div className="flex items-center gap-2">
+            <label className="block text-xs font-black uppercase text-[#1a1a1a]">
+              Models ({providerModels.length})
+            </label>
+            {!isKeySavedInDb && selectedTab !== "groq" && (
+              <span className="text-[10px] font-extrabold uppercase bg-amber-200 text-[#1a1a1a] border border-[#1a1a1a] px-1.5 py-0.5 shadow-neo-sm">
+                Curated Preview
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => fetchAllConnectedModels(true)}
+            disabled={loadingModels}
+            className="px-2 py-1 bg-[#FDF9F0] hover:bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] text-[10px] font-extrabold uppercase flex items-center gap-1 shadow-neo-sm cursor-pointer disabled:opacity-50"
+            title="Refresh models dynamically from provider"
+          >
+            <RefreshCw className={`w-3 h-3 ${loadingModels ? "animate-spin text-[#FF4D00]" : ""}`} />
+            <span>REFRESH</span>
+          </button>
         </div>
 
         {providerModels.length === 0 ? (
@@ -316,13 +354,33 @@ export default function AnalyticsUsage({ user, onUserUpdate }) {
                       : "bg-[#FDF9F0] hover:bg-white text-[#1a1a1a]"
                   }`}
                 >
-                  <div className="font-bold text-xs truncate">{m.name || m.id}</div>
-                  <div
-                    className={`font-mono text-[10px] truncate mt-0.5 ${
-                      isSelected ? "text-white/80" : "text-gray-500"
-                    }`}
-                  >
-                    {m.id}
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-xs truncate">{m.name || m.id}</div>
+                    {m.reasoning && (
+                      <span className={`text-[9px] font-extrabold uppercase px-1 ml-1 border border-[#1a1a1a] shrink-0 ${
+                        isSelected ? "bg-purple-900 text-white" : "bg-purple-100 text-purple-800"
+                      }`}>
+                        Reasoning
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <div
+                      className={`font-mono text-[10px] truncate ${
+                        isSelected ? "text-white/80" : "text-gray-500"
+                      }`}
+                    >
+                      {m.id}
+                    </div>
+                    {m.contextWindow && (
+                      <span
+                        className={`text-[9px] font-mono shrink-0 ml-1 ${
+                          isSelected ? "text-white/70" : "text-gray-400"
+                        }`}
+                      >
+                        {Math.round(m.contextWindow / 1024)}k ctx
+                      </span>
+                    )}
                   </div>
                 </button>
               );

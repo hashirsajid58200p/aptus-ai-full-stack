@@ -1,6 +1,6 @@
 "use client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Send, Mic, MicOff, Loader2, Lock, AlertTriangle } from "lucide-react";
+import { Send, Mic, MicOff, Loader2 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import baseurl from "@/store/baseurl";

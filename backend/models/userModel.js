@@ -180,14 +180,15 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre("save", async function(next) {
     if (!this.isModified("password")) {
-        next();
+        return next();
     }
     this.password = await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods.getJWTToken = function() {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
+    const secret = process.env.JWT_SECRET || "aptus_default_jwt_secret_fallback_key_2026";
+    return jwt.sign({ id: this._id }, secret, {
+        expiresIn: process.env.JWT_EXPIRE || "7d",
     });
 };
 

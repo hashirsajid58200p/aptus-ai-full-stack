@@ -177,6 +177,16 @@ exports.getOwnerSessions = catchAsyncError(async (req, res, next) => {
     });
 });
 
+// Helper to neutralize CSV Formula Injection (=, +, -, @, tab, cr)
+function sanitizeCsvCell(val) {
+    if (val === null || val === undefined) return '';
+    let str = String(val);
+    if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+    }
+    return str.replace(/"/g, '""');
+}
+
 // Export Chat History as CSV
 exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
     const ownerId = req.user._id;
@@ -192,11 +202,10 @@ exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
 
     for (const session of sessions) {
         if (!session.messages || session.messages.length === 0) {
-            csv += `"${session._id}","${session.username}","${session.email}","${session.phone || ''}","${session.status}","N/A","No messages","${session.createdAt.toISOString()}"\n`;
+            csv += `"${sanitizeCsvCell(session._id)}","${sanitizeCsvCell(session.username)}","${sanitizeCsvCell(session.email)}","${sanitizeCsvCell(session.phone || '')}","${sanitizeCsvCell(session.status)}","N/A","No messages","${session.createdAt ? session.createdAt.toISOString() : ''}"\n`;
         } else {
             for (const msg of session.messages) {
-                const escapedText = (msg.message || "").replace(/"/g, '""');
-                csv += `"${session._id}","${session.username}","${session.email}","${session.phone || ''}","${session.status}","${msg.sender || msg.role}","${escapedText}","${msg.createdAt ? msg.createdAt.toISOString() : ''}"\n`;
+                csv += `"${sanitizeCsvCell(session._id)}","${sanitizeCsvCell(session.username)}","${sanitizeCsvCell(session.email)}","${sanitizeCsvCell(session.phone || '')}","${sanitizeCsvCell(session.status)}","${sanitizeCsvCell(msg.sender || msg.role)}","${sanitizeCsvCell(msg.message || '')}","${msg.createdAt ? msg.createdAt.toISOString() : ''}"\n`;
             }
         }
     }
@@ -210,6 +219,13 @@ exports.exportSessionsCSV = catchAsyncError(async (req, res, next) => {
 exports.takeoverSession = catchAsyncError(async (req, res, next) => {
     const { sessionId, action } = req.body;
     const ownerId = req.user._id;
+
+    if (!sessionId || typeof sessionId !== 'string' || !mongoose.Types.ObjectId.isValid(sessionId)) {
+        return res.status(400).json({
+            success: false,
+            message: "Valid session ID format is required",
+        });
+    }
 
     const session = await Session.findOne({ _id: sessionId, chatbotId: ownerId });
     if (!session) {
@@ -240,7 +256,14 @@ exports.sendAgentMessage = catchAsyncError(async (req, res, next) => {
     const { sessionId, message } = req.body;
     const ownerId = req.user._id;
 
-    if (!sessionId || !message || !message.trim()) {
+    if (!sessionId || typeof sessionId !== 'string' || !mongoose.Types.ObjectId.isValid(sessionId)) {
+        return res.status(400).json({
+            success: false,
+            message: "Valid session ID format is required",
+        });
+    }
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
         return res.status(400).json({
             success: false,
             message: "Please enter a message to send",
@@ -276,10 +299,10 @@ exports.sendAgentMessage = catchAsyncError(async (req, res, next) => {
 // Get session messages & live status for widget visitor
 exports.getSessionMessages = catchAsyncError(async (req, res, next) => {
     const { sessionId } = req.query;
-    if (!sessionId) {
+    if (!sessionId || typeof sessionId !== 'string' || !mongoose.Types.ObjectId.isValid(sessionId)) {
         return res.status(400).json({
             success: false,
-            message: "Session ID is required",
+            message: "Valid session ID format is required",
         });
     }
 
@@ -301,10 +324,10 @@ exports.getSessionMessages = catchAsyncError(async (req, res, next) => {
 // Visitor requests human agent takeover via widget
 exports.requestLiveAgent = catchAsyncError(async (req, res, next) => {
     const { sessionId } = req.body;
-    if (!sessionId) {
+    if (!sessionId || typeof sessionId !== 'string' || !mongoose.Types.ObjectId.isValid(sessionId)) {
         return res.status(400).json({
             success: false,
-            message: "Session ID is required",
+            message: "Valid session ID format is required",
         });
     }
 

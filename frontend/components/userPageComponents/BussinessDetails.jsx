@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { MdDeleteOutline, MdInfoOutline, MdOutlineEdit } from "react-icons/md";
+import { MdInfoOutline } from "react-icons/md";
 import {
   List,
   LayoutGrid,
-  ChevronDown,
   Trash2,
   Plus,
   Pencil,
@@ -15,7 +14,6 @@ import {
   Save,
   Eye,
   Code,
-  BookOpen,
 } from "lucide-react";
 import axios from "axios";
 import baseurl from "@/store/baseurl";

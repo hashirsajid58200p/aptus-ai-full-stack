@@ -31,8 +31,8 @@ exports.handleDiscordWebhook = catchAsyncError(async (req, res, next) => {
 
   // Find business chatbot owner
   let owner = null;
-  if (token) {
-    owner = await User.findOne({ chatbot_token: token });
+  if (token && typeof token === 'string' && token.trim() !== '') {
+    owner = await User.findOne({ chatbot_token: token.trim() });
   }
   if (!owner && process.env.NODE_ENV !== 'production') {
     // Development fallback only

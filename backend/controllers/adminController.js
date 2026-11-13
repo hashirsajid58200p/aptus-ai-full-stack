@@ -49,12 +49,14 @@ const loginAdmin = async (req, res, next) => {
       expiresIn: "7d",
     });
 
+    const isProduction = process.env.NODE_ENV === "production";
     const cookieExpireDays = parseInt(process.env.COOKIE_EXPIRE || "7", 10);
     const options = {
       expires: new Date(Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
+      path: "/",
     };
 
     return res.status(200).cookie("adminToken", token, options).json({
@@ -71,9 +73,13 @@ const loginAdmin = async (req, res, next) => {
 // Logout Admin
 const logoutAdmin = async (req, res, next) => {
   try {
-    res.cookie("adminToken", null, {
-      expires: new Date(Date.now()),
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("adminToken", "", {
+      expires: new Date(0),
       httpOnly: true,
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
+      path: "/",
     });
 
     return res.status(200).json({
@@ -202,7 +208,15 @@ const getAllBusinesses = async (req, res, next) => {
 // Get Single Business Details by ID (password explicitly excluded)
 const getBusinessById = async (req, res, next) => {
   try {
-    const business = await User.findById(req.params.id).select("-password");
+    const { id } = req.params;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid business ID format",
+      });
+    }
+
+    const business = await User.findById(id).select("-password");
 
     if (!business) {
       return res.status(404).json({
@@ -269,6 +283,13 @@ const deleteBusiness = async (req, res, next) => {
 const updateBusiness = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid business ID format",
+      });
+    }
+
     const {
       name,
       email,
@@ -338,6 +359,13 @@ const updateBusiness = async (req, res, next) => {
 const updateTokenLimit = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid business ID format",
+      });
+    }
+
     const { tokenLimit } = req.body;
 
     if (tokenLimit === undefined || isNaN(Number(tokenLimit))) {

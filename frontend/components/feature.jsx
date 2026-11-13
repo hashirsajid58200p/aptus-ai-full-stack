@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Terminal, Key, Palette, Cpu, Headphones, Mic, ShieldCheck, Sparkles } from 'lucide-react';
+import { Terminal, Cpu, Headphones, Mic, ShieldCheck, Sparkles } from 'lucide-react';
 
 export default function KeyBenefitsSection() {
   const benefits = [

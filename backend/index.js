@@ -29,10 +29,12 @@ app.use((req, res, next) => {
 
   const isTrustedOrigin = !origin ||
     origin === frontendUrl ||
-    origin.endsWith(".vercel.app") ||
+    (origin.endsWith(".vercel.app") && (origin.includes("aptus") || isDev)) ||
     (isDev && (origin.includes("localhost") || origin.includes("127.0.0.1")));
 
-  const isWidgetPath = req.path.startsWith("/api/v1/user/token/verify") || req.path.startsWith("/api/v1/chatbot");
+  const isWidgetPath = req.path.startsWith("/api/v1/user/token/verify") ||
+    req.path.startsWith("/api/v1/chatbot") ||
+    req.path.startsWith("/api/v1/session");
 
   if (origin) {
     if (isTrustedOrigin) {
@@ -72,8 +74,8 @@ app.use(async (req, res, next) => {
 
 app.use(morgan("dev"));
 app.use(compression());
-app.use(express.json({ limit: "150mb" }));
-app.use(express.urlencoded({ limit: "150mb", extended: true }));
+app.use(express.json({ limit: "25mb" }));
+app.use(express.urlencoded({ limit: "25mb", extended: true }));
 app.use(cookieParser());
 
 const limiter = rateLimit({

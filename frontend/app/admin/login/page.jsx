@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import baseurl from "@/store/baseurl";
-import { ShieldCheck, Lock, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();

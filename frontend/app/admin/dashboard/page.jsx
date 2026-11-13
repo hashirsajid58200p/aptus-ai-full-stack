@@ -16,13 +16,9 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
   Eye,
-  X,
   Key,
-  HelpCircle,
   RefreshCw,
-  ArrowLeft,
   BarChart3,
   PieChart,
   Activity,
@@ -32,12 +28,10 @@ import {
   Copy,
   Zap,
   Globe,
-  Layers,
   ChevronDown,
   Trash2,
   AlertTriangle,
   Edit2,
-  Briefcase,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {

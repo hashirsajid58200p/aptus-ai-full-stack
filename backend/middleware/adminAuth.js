@@ -2,13 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const isAdminAuthenticated = async (req, res, next) => {
   try {
-    let adminToken = req.cookies.adminToken;
+    let adminToken = req.cookies?.adminToken;
 
     if (!adminToken && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
       adminToken = req.headers.authorization.split(" ")[1];
     }
 
-    if (!adminToken) {
+    if (!adminToken || typeof adminToken !== "string" || adminToken.trim() === "") {
       return res.status(401).json({
         success: false,
         message: "Admin authentication required. Please log in.",
@@ -23,7 +23,7 @@ const isAdminAuthenticated = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(adminToken, secret);
+    const decoded = jwt.verify(adminToken.trim(), secret);
 
     if (decoded.role !== "admin") {
       return res.status(403).json({

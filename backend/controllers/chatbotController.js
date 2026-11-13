@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const LLMService = require("../utils/llmService");
 const FunctionCallingEngine = require("../utils/functionCalling");
@@ -8,11 +9,13 @@ const Message = require("../models/messageModel");
 
 // GET /api/v1/chatbot/getDetails?token=... — validate a chatbot token and return safe business info
 exports.getDetails = catchAsyncError(async (req, res, next) => {
-  const owner = req.owner || await User.findOne({ 
-    chatbot_token: req.query.token || req.headers["x-chatbot-token"] 
+  const token = req.query.token || req.headers["x-chatbot-token"];
+  const cleanToken = typeof token === "string" ? token.trim() : "";
+  const owner = req.owner || (cleanToken ? await User.findOne({ 
+    chatbot_token: cleanToken 
   }).select(
     "bussinessName bussinessCategory createdAt provider modelName isLiveAgent liveAgentAvailable theme primaryColor botName welcomeMessage chatbotAvatar allowedDomain allowedDomains"
-  );
+  ) : null);
 
   if (!owner) {
     return res.status(404).json({
@@ -82,10 +85,17 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
   const message = req.body.message || req.body.Message;
   const session_id = req.body.session_id || req.body.sessionId;
 
-  if (!message || !session_id) {
+  if (!message || typeof message !== 'string' || !session_id || typeof session_id !== 'string') {
     return res.status(400).json({
       success: false,
-      message: "Please enter message and session_id",
+      message: "Please enter valid message and session_id",
+    });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(session_id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid session ID format",
     });
   }
 
@@ -328,10 +338,17 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 exports.transcribeAudio = catchAsyncError(async (req, res, next) => {
   const { audio, mimeType, language, prompt, token } = req.body;
 
-  if (!audio) {
+  if (!audio || typeof audio !== 'string') {
     return res.status(400).json({
       success: false,
-      message: "Audio data (base64) is required",
+      message: "Audio data (base64 string) is required",
+    });
+  }
+
+  if (audio.length > 30 * 1024 * 1024) {
+    return res.status(400).json({
+      success: false,
+      message: "Audio payload exceeds maximum size limit (25MB)",
     });
   }
 
@@ -569,17 +586,25 @@ exports.generateTextGeneral = catchAsyncError(async (req, res, next) => {
   const { prompt, provider, model, apiKey } = req.body;
   const owner = req.user || req.owner;
 
-  if (!prompt) {
+  if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({
       success: false,
-      message: "Please provide a prompt",
+      message: "Please provide a valid prompt string",
     });
   }
 
-  const effectiveProvider = provider || owner?.provider || 'groq';
-  const effectiveModel = model || owner?.modelName || 'openai/gpt-oss-120b';
+  if (prompt.length > 5000) {
+    return res.status(400).json({
+      success: false,
+      message: "Prompt exceeds maximum allowed length (5000 characters)",
+    });
+  }
 
-  let activeApiKey = apiKey || null;
+  const isWidgetCaller = !req.user;
+  const effectiveProvider = (isWidgetCaller ? owner?.provider : provider || owner?.provider) || 'groq';
+  const effectiveModel = (isWidgetCaller ? owner?.modelName : model || owner?.modelName) || 'openai/gpt-oss-120b';
+
+  let activeApiKey = (!isWidgetCaller && apiKey) ? apiKey : null;
   if (!activeApiKey && owner) {
     if (effectiveProvider === 'openai') activeApiKey = owner.openaiApiKey;
     else if (effectiveProvider === 'groq') activeApiKey = owner.groqApiKey;

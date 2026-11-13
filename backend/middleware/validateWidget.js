@@ -5,33 +5,39 @@ const User = require("../models/userModel");
 function normalizeHost(value) {
   if (!value) return '';
   try {
-    const u = value.includes('://') ? new URL(value) : new URL(`https://${value}`);
+    const raw = String(value).trim();
+    const u = raw.includes('://') ? new URL(raw) : new URL(`https://${raw}`);
     return u.hostname.toLowerCase();
   } catch {
-    return String(value).toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+    return String(value).toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0].trim();
   }
 }
 
 function hostMatchesDomain(host, allowed) {
-  const d = normalizeHost(allowed);
+  const rawAllowed = String(allowed || '').trim().toLowerCase();
+  if (!rawAllowed) return false;
+  if (rawAllowed === '*') return true;
+  const d = normalizeHost(rawAllowed.replace(/^\*\./, ''));
   const h = normalizeHost(host);
   if (!d || !h) return false;
   return h === d || h.endsWith(`.${d}`);
 }
 
 const validateWidget = catchAsyncError(async (req, res, next) => {
-  const token = req.body.token || req.headers["x-chatbot-token"] || req.query.token;
+  const rawToken = req.body?.token || req.headers["x-chatbot-token"] || req.query?.token;
 
-  if (!token) {
+  if (!rawToken || typeof rawToken !== 'string' || rawToken.trim() === '') {
     return res.status(400).json({
       success: false,
       message: "Chatbot authentication token is required",
     });
   }
 
-  // Validate session_id format if provided in request body
-  const session_id = req.body.session_id || req.body.sessionId;
-  if (session_id && !mongoose.Types.ObjectId.isValid(session_id)) {
+  const token = rawToken.trim();
+
+  // Validate session_id format if provided in request body or query
+  const session_id = req.body?.session_id || req.body?.sessionId || req.query?.sessionId || req.query?.session_id;
+  if (session_id && (typeof session_id !== 'string' || !mongoose.Types.ObjectId.isValid(session_id))) {
     return res.status(400).json({
       success: false,
       message: "Invalid session ID format",
@@ -55,7 +61,8 @@ const validateWidget = catchAsyncError(async (req, res, next) => {
   ].filter(Boolean);
 
   if (configuredDomains.length > 0) {
-    const requestHost = normalizeHost(req.headers.origin || req.headers.referer || "");
+    const rawOrigin = req.headers.origin || req.headers.referer || "";
+    const requestHost = normalizeHost(rawOrigin);
     const isDev = process.env.NODE_ENV !== 'production';
 
     const isAuthorized = configuredDomains.some(domain => {
@@ -78,3 +85,5 @@ const validateWidget = catchAsyncError(async (req, res, next) => {
 });
 
 module.exports = validateWidget;
+module.exports.normalizeHost = normalizeHost;
+module.exports.hostMatchesDomain = hostMatchesDomain;

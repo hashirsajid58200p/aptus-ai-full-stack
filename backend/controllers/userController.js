@@ -16,6 +16,13 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
     bussinessCategory,
   } = req.body;
 
+  if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
+    return res.status(400).json({
+      success: false,
+      message: "Valid email and password are required",
+    });
+  }
+
   const userExists = await User.findOne({ email });
 
   if (userExists) {
@@ -48,10 +55,10 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
 
   // check if email and password is entered by user
-  if (!email || !password) {
+  if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     return res.status(400).json({
       success: false,
-      message: "Please enter email & password",
+      message: "Please enter valid email & password",
     });
   }
 
@@ -222,22 +229,7 @@ exports.deleteBussinessDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
-function normalizeHost(value) {
-  if (!value) return '';
-  try {
-    const u = value.includes('://') ? new URL(value) : new URL(`https://${value}`);
-    return u.hostname.toLowerCase();
-  } catch {
-    return String(value).toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
-  }
-}
-
-function hostMatchesDomain(host, allowed) {
-  const d = normalizeHost(allowed);
-  const h = normalizeHost(host);
-  if (!d || !h) return false;
-  return h === d || h.endsWith(`.${d}`);
-}
+const { normalizeHost, hostMatchesDomain } = require("../middleware/validateWidget");
 
 // Return the users details by finding through the chatbot_token
 exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
@@ -251,8 +243,16 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
     });
   }
 
-  const token = headerToken || queryToken;
+  const rawToken = headerToken || queryToken;
 
+  if (!rawToken || typeof rawToken !== 'string' || rawToken.trim() === '') {
+    return res.status(400).json({
+      success: false,
+      message: "Valid chatbot authentication token is required",
+    });
+  }
+
+  const token = rawToken.trim();
   const user = await User.findOne({ chatbot_token: token });
 
   if (!user) {
@@ -266,7 +266,8 @@ exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
   ].filter(Boolean);
 
   if (configuredDomains.length > 0) {
-    const requestHost = normalizeHost(req.headers.origin || req.headers.referer || "");
+    const rawOrigin = req.headers.origin || req.headers.referer || "";
+    const requestHost = normalizeHost(rawOrigin);
     const isDev = process.env.NODE_ENV !== 'production';
     const isAllowed = configuredDomains.some(domain => {
       return hostMatchesDomain(requestHost, domain) || (isDev && (requestHost === "localhost" || requestHost === "127.0.0.1"));
@@ -350,22 +351,25 @@ exports.updateAppearance = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// List models dynamically for provider and API key
+// List models dynamically for provider and API key with TTL caching and fallback
 exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   const user = req.user;
   const provider = req.query.provider || req.body.provider || 'all';
   const customBaseUrl = req.query.customBaseUrl || req.body.customBaseUrl || user.customBaseUrl;
+  const forceRefresh = req.query.refresh === 'true' || req.body.refresh === true;
 
   const LLMService = require("../utils/llmService");
 
   if (provider === 'all') {
-    const result = await LLMService.listAllConnectedModels(user);
+    const result = await LLMService.listAllConnectedModels(user, { forceRefresh });
     return res.status(200).json({
       success: true,
       provider: 'all',
       connectedProviders: result.connectedProviders,
       modelsByProvider: result.modelsByProvider,
       models: result.models,
+      currentProvider: user.provider,
+      currentModel: user.modelName,
     });
   }
 
@@ -375,7 +379,7 @@ exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   }
   if (!apiKey) {
     if (provider === 'openai') apiKey = user.openaiApiKey;
-    else if (provider === 'groq') apiKey = user.groqApiKey;
+    else if (provider === 'groq') apiKey = user.groqApiKey || process.env.GROQ_API_KEY;
     else if (provider === 'gemini') apiKey = user.geminiApiKey;
     else if (provider === 'deepseek') apiKey = user.deepseekApiKey;
     else if (provider === 'mistral') apiKey = user.mistralApiKey;
@@ -388,16 +392,26 @@ exports.getAvailableModels = catchAsyncError(async (req, res, next) => {
   }
 
   try {
-    const models = await LLMService.listModels(provider, apiKey, customBaseUrl);
+    const models = await LLMService.listModels(provider, apiKey, customBaseUrl, { forceRefresh });
+    const isCurrentModelValid = Array.isArray(models) && models.some(m => m.id === user.modelName || m.name === user.modelName);
     res.status(200).json({
       success: true,
       provider,
       models,
+      hasKey: !!apiKey,
+      currentModel: user.modelName,
+      isCurrentModelValid,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
+    const fallbackModels = LLMService.CURATED_FALLBACK_MODELS[provider] || [];
+    res.status(200).json({
+      success: true,
+      provider,
+      models: fallbackModels,
+      hasKey: !!apiKey,
+      currentModel: user.modelName,
+      isCurrentModelValid: fallbackModels.some(m => m.id === user.modelName),
+      warning: err.message,
     });
   }
 });

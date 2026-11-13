@@ -16,10 +16,11 @@ const dashboardCors = cors({
     if (allowedOrigins.includes(origin)) return callback(null, true);
     
     // Check flexible patterns (localhost, 127.0.0.1, vercel preview deployments)
+    const isDev = process.env.NODE_ENV !== "production";
     if (
       origin.startsWith("http://localhost:") ||
       origin.startsWith("http://127.0.0.1:") ||
-      origin.endsWith(".vercel.app")
+      (origin.endsWith(".vercel.app") && (origin.includes("aptus") || isDev))
     ) {
       return callback(null, true);
     }

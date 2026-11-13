@@ -7,7 +7,6 @@ import {
   Palette,
   Copy,
   Check,
-  ExternalLink,
 } from "lucide-react";
 import NavBar from "@/components/navbar";
 import baseurl from "@/store/baseurl";
