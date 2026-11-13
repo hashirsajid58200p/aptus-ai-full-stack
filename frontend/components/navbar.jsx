@@ -1,19 +1,35 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Button } from "components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loadUser } from "@/slices/userSlice";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [cachedUser, setCachedUser] = useState(null);
   const router = useRouter();
-  const { loading, user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { loading, user, isInitialized } = useSelector((state) => state.user);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    try {
+      const stored = localStorage.getItem("aptus_user");
+      if (stored) {
+        setCachedUser(JSON.parse(stored));
+      }
+    } catch (_e) {}
+
+    if (!isInitialized && !loading) {
+      dispatch(loadUser());
+    }
+  }, [dispatch, isInitialized, loading]);
+
+  const activeUser = user || cachedUser;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -58,19 +74,19 @@ export default function Navbar() {
             >
               FAQ
             </a>
-            <a
+            <Link
               href="/docs"
               className="text-[#1a1a1a] hover:text-[#FF4D00] inline-flex items-center px-1 pt-1 text-xs lg:text-sm font-extrabold uppercase tracking-wider transition-colors"
             >
               SETUP GUIDE
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Buttons */}
           <div className="hidden md:flex md:items-center gap-3">
-            {!isMounted || (loading && !user) ? (
+            {!isMounted || (loading && !activeUser) ? (
               <div className="w-28 h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
-            ) : user ? (
+            ) : activeUser ? (
               <Button
                 onClick={() => router.push("/user")}
                 className="btn-neo px-5 lg:px-6 py-2 rounded-none text-xs lg:text-sm"
@@ -129,18 +145,18 @@ export default function Navbar() {
             >
               FAQ
             </a>
-            <a
+            <Link
               href="/docs"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 text-base font-extrabold uppercase text-[#1a1a1a] hover:bg-[#BFF000] border-2 border-transparent hover:border-[#1a1a1a]"
             >
               SETUP GUIDE
-            </a>
+            </Link>
 
             <div className="pt-2">
-              {!isMounted || (loading && !user) ? (
+              {!isMounted || (loading && !activeUser) ? (
                 <div className="w-full h-10 border-2 border-[#1a1a1a] bg-gray-200 animate-pulse"></div>
-              ) : user ? (
+              ) : activeUser ? (
                 <Button
                   onClick={() => router.push("/user")}
                   className="w-full btn-neo py-3 rounded-none"

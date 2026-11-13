@@ -10,14 +10,18 @@ import {
 } from "lucide-react";
 import NavBar from "@/components/navbar";
 import baseurl from "@/store/baseurl";
+import { useDispatch } from "react-redux";
+import { loadUser } from "@/slices/userSlice";
 
 export default function DocsPage() {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("quickstart");
   const [copiedKey, setCopiedKey] = useState(null);
 
   useEffect(() => {
     document.title = "Setup Guide — Aptus AI";
-  }, []);
+    dispatch(loadUser());
+  }, [dispatch]);
 
   const copyCode = (text, key) => {
     navigator.clipboard.writeText(text);
