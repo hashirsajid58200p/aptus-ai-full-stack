@@ -1,7 +1,9 @@
 const User = require("../models/userModel");
 const Admin = require("../models/adminModel");
 
-const SHARED_PASSWORD = "AptusAI2026!";
+// Unique passwords derived from account/business names (keep in sync with Notion)
+const ADMIN_PASSWORD = "AptusAdmin2026!";
+const APTUS_BIZ_PASSWORD = "AptusAI2026!";
 
 const seedAccounts = async () => {
   try {
@@ -11,7 +13,7 @@ const seedAccounts = async () => {
     if (!existingAdmin) {
       await Admin.create({
         email: adminEmail,
-        password: SHARED_PASSWORD,
+        password: ADMIN_PASSWORD,
       });
       console.log("🌱 [Seed] Super Admin created: aptusai@example.com");
     }
@@ -23,7 +25,7 @@ const seedAccounts = async () => {
       await User.create({
         name: "Aptus AI Business",
         email: "business-aptus@example.com",
-        password: SHARED_PASSWORD,
+        password: APTUS_BIZ_PASSWORD,
         bussinessName: "Aptus AI",
         bussinessCategory: "AI & Automation",
         bussinessDescription: "Aptus AI delivers cutting-edge intelligent chatbot widgets, multi-model LLM generation, and automated customer support for modern SaaS platforms.",
@@ -37,8 +39,8 @@ const seedAccounts = async () => {
         modelName: "openai/gpt-oss-120b",
       });
     } else {
-      // Keep demo login in sync with documented credentials
-      aptusBiz.password = SHARED_PASSWORD;
+      // Keep demo login in sync with documented credentials (password only — never touch knowledgeMarkdown)
+      aptusBiz.password = APTUS_BIZ_PASSWORD;
       aptusBiz.email = "business-aptus@example.com";
       await aptusBiz.save();
     }
@@ -47,6 +49,7 @@ const seedAccounts = async () => {
     const demos = [
       {
         email: "nexuscloud@example.com",
+        password: "NexusCloud2026!",
         token: "A1ED-CD70379B-E72B6C6D",
         name: "NexusCloud Admin",
         bussinessName: "NexusCloud Solutions",
@@ -59,6 +62,7 @@ const seedAccounts = async () => {
       },
       {
         email: "velovitawellness@example.com",
+        password: "VeloVita2026!",
         token: "A1ED-EEB2866D-48C86113",
         name: "VeloVita Manager",
         bussinessName: "VeloVita Wellness Hub",
@@ -71,6 +75,7 @@ const seedAccounts = async () => {
       },
       {
         email: "fitlifepro@example.com",
+        password: "FitLifePro2026!",
         token: "A1ED-E8E08127-D535E9F7",
         name: "FitLife Pro Coach",
         bussinessName: "FitLife Pro",
@@ -89,7 +94,7 @@ const seedAccounts = async () => {
         await User.create({
           name: d.name,
           email: d.email,
-          password: SHARED_PASSWORD,
+          password: d.password,
           bussinessName: d.bussinessName,
           bussinessCategory: d.bussinessCategory,
           botName: d.botName,
@@ -104,14 +109,14 @@ const seedAccounts = async () => {
           modelName: "openai/gpt-oss-120b",
         });
       } else {
-        // Sync bot branding + documented demo password
+        // Sync bot branding + documented demo password (never touch knowledgeMarkdown)
         exists.botName = d.botName;
         exists.welcomeMessage = d.welcomeMessage;
         exists.theme = d.theme;
         exists.chatbotAvatar = d.avatar;
         exists.primaryColor = d.primaryColor;
         exists.chatbot_token = d.token;
-        exists.password = SHARED_PASSWORD;
+        exists.password = d.password;
         // Keep public demo embeds working on production host (tests must not leave sticky allowlists)
         exists.allowedDomains = [];
         exists.allowedDomain = null;

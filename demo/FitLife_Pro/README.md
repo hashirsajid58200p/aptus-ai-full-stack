@@ -27,7 +27,7 @@ Manage this chatbot, update themes, view chat sessions, or adjust knowledge base
 | --- | --- |
 | **Login Portal** | `http://localhost:3000/start` |
 | **Email** | `fitlifepro@example.com` |
-| **Password** | `FitLife2026!` |
+| **Password** | `FitLifePro2026!` |
 | **Chatbot Token** | `A1ED-E8E08127-D535E9F7` |
 | **Default Theme** | `chatgpt` (Modern Dark / Emerald) |
 | **Primary Color** | `#A3E635` (Lime Green) |
