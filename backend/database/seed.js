@@ -1,19 +1,24 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const Admin = require("../models/adminModel");
 
+// Unique credentials per seeded account (keep in sync with Notion Project Secrets + demo READMEs)
+const ADMIN_PASSWORD = "AptusAdmin2026!";
+const LANDING_PASSWORD = "AptusBiz2026!";
+
 const seedAccounts = async () => {
   try {
-    // 1. Seed Admin
+    // 1. Seed / sync Super Admin
     const adminEmail = "aptusai@example.com";
-    let existingAdmin = await Admin.findOne({ email: adminEmail });
+    let existingAdmin = await Admin.findOne({ email: adminEmail }).select("+password");
     if (!existingAdmin) {
       await Admin.create({
         email: adminEmail,
-        password: "AptusAI2026!",
+        password: ADMIN_PASSWORD,
       });
       console.log("🌱 [Seed] Super Admin created: aptusai@example.com");
+    } else {
+      existingAdmin.password = ADMIN_PASSWORD;
+      await existingAdmin.save();
     }
 
     // 2. Ensure Aptus AI Business exists
@@ -23,7 +28,7 @@ const seedAccounts = async () => {
       await User.create({
         name: "Aptus AI Business",
         email: "business-aptus@example.com",
-        password: "AptusAI2026!",
+        password: LANDING_PASSWORD,
         bussinessName: "Aptus AI",
         bussinessCategory: "AI & Automation",
         bussinessDescription: "Aptus AI delivers cutting-edge intelligent chatbot widgets, multi-model LLM generation, and automated customer support for modern SaaS platforms.",
@@ -35,18 +40,22 @@ const seedAccounts = async () => {
         tokenLimit: 1000000,
         provider: "groq",
         modelName: "openai/gpt-oss-120b",
+        allowedDomains: [],
+        allowedDomain: null,
       });
     } else {
-      // Keep demo login in sync with documented credentials
-      aptusBiz.password = "AptusAI2026!";
+      aptusBiz.password = LANDING_PASSWORD;
       aptusBiz.email = "business-aptus@example.com";
+      aptusBiz.allowedDomains = [];
+      aptusBiz.allowedDomain = null;
       await aptusBiz.save();
     }
 
-    // 3. Ensure Demo Businesses exist
+    // 3. Ensure Demo Businesses exist (unique passwords per account)
     const demos = [
       {
         email: "nexuscloud@example.com",
+        password: "NexusCloud2026!",
         token: "A1ED-CD70379B-E72B6C6D",
         name: "NexusCloud Admin",
         bussinessName: "NexusCloud Solutions",
@@ -59,6 +68,7 @@ const seedAccounts = async () => {
       },
       {
         email: "velovitawellness@example.com",
+        password: "VeloVita2026!",
         token: "A1ED-EEB2866D-48C86113",
         name: "VeloVita Manager",
         bussinessName: "VeloVita Wellness Hub",
@@ -71,6 +81,7 @@ const seedAccounts = async () => {
       },
       {
         email: "fitlifepro@example.com",
+        password: "FitLife2026!",
         token: "A1ED-E8E08127-D535E9F7",
         name: "FitLife Pro Coach",
         bussinessName: "FitLife Pro",
@@ -80,7 +91,7 @@ const seedAccounts = async () => {
         theme: "chatgpt",
         primaryColor: "#A3E635",
         avatar: "cyber",
-      }
+      },
     ];
 
     for (const d of demos) {
@@ -89,7 +100,7 @@ const seedAccounts = async () => {
         await User.create({
           name: d.name,
           email: d.email,
-          password: "AptusAI2026!",
+          password: d.password,
           bussinessName: d.bussinessName,
           bussinessCategory: d.bussinessCategory,
           botName: d.botName,
@@ -102,17 +113,17 @@ const seedAccounts = async () => {
           tokenLimit: 1000000,
           provider: "groq",
           modelName: "openai/gpt-oss-120b",
+          allowedDomains: [],
+          allowedDomain: null,
         });
       } else {
-        // Sync bot branding + documented demo password
         exists.botName = d.botName;
         exists.welcomeMessage = d.welcomeMessage;
         exists.theme = d.theme;
         exists.chatbotAvatar = d.avatar;
         exists.primaryColor = d.primaryColor;
         exists.chatbot_token = d.token;
-        exists.password = "AptusAI2026!";
-        // Keep public demo embeds working on production host (tests must not leave sticky allowlists)
+        exists.password = d.password;
         exists.allowedDomains = [];
         exists.allowedDomain = null;
         await exists.save();
