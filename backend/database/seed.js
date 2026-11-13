@@ -112,6 +112,9 @@ const seedAccounts = async () => {
         exists.primaryColor = d.primaryColor;
         exists.chatbot_token = d.token;
         exists.password = "AptusAI2026!";
+        // Keep public demo embeds working on production host (tests must not leave sticky allowlists)
+        exists.allowedDomains = [];
+        exists.allowedDomain = null;
         await exists.save();
       }
     }
