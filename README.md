@@ -69,7 +69,7 @@ aptus-ai-full-stack/
 └── vercel.json       Frontend + backend services + /api rewrites
 ```
 
-The widget lives in a **separate** repo and package: `aptus-ai-chatbot-widget` (current published version **1.0.18**).
+The widget lives in a **separate** repo and package: `aptus-ai-chatbot-widget` (current published version **1.0.19**).
 
 ---
 

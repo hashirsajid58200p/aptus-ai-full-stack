@@ -1,6 +1,6 @@
 # VeloVita Wellness Hub — Demo Integration Site
 
-> Premier Athletic Performance & Recovery Sanctuary showcasing the official `aptus-ai-chatbot-widget` (v1.0.18) integration.
+> Premier Athletic Performance & Recovery Sanctuary showcasing the official `aptus-ai-chatbot-widget` (v1.0.19) integration.
 
 ---
 

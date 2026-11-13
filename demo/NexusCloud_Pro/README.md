@@ -1,6 +1,6 @@
 # NexusCloud Solutions — Demo Integration Site
 
-> Next-Generation Enterprise Cloud Infrastructure & Hosting Platform showcasing the official `aptus-ai-chatbot-widget` (v1.0.18) integration.
+> Next-Generation Enterprise Cloud Infrastructure & Hosting Platform showcasing the official `aptus-ai-chatbot-widget` (v1.0.19) integration.
 
 ---
 
